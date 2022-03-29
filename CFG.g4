@@ -1,8 +1,8 @@
 grammar CFG;
 
-program: environmentSection behaviorSection updateSection outputSection EOF;
+program: environmentSection behaviorSection? updateSection? outputSection? EOF;
 
-environmentSection: 'Simulation Environment' '{' line* '}';
+environmentSection: 'Simulation Environment' '{' line* endCondition? '}';
 
 behaviorSection: 'Simulation Behavior' '{' line* '}';
 
@@ -10,12 +10,23 @@ updateSection: 'Simulation Update' '{' line* '}';
 
 outputSection: 'Simulation Output' '{' line* '}';
 
-line: dcl | Comment | MultiComment;
+line: initCondition
+    | dcl
+    | statement
+    | assignment SemiColon
+    | expr SemiColon
+    | Comment
+    | MultiComment;
 
 dcl: functionDcl
    | listDcl
    | classDcl
-   | statement;
+   | objDcl SemiColon
+   | primVarDcl SemiColon;
+
+endCondition: 'EndCondition' '{' (statement | assignment | expr | primVarDcl)* 'return' expr SemiColon '}';
+
+initCondition: 'InitCondition<' type '>' '{' (statement | assignment | expr | primVarDcl)* '}';
 
 /* FUNCTION CALL
     Void function: function TestFunction() { }
@@ -24,36 +35,37 @@ dcl: functionDcl
 functionDcl: 'function' identifier funcParams stmtBody
            | 'function' primType identifier funcParams funcReturnBody;
 
-funcReturnBody: '{' (statement | listDcl)* 'return' expr';' '}';
+funcReturnBody: '{' (statement | assignment SemiColon | functionCall SemiColon | primVarDcl SemiColon | objDcl SemiColon | listDcl )* 'return' expr SemiColon '}';
 
-funcParams: '(' (primType identifier (Comma primType identifier)*)? ')';
+funcParams: '(' ( (type identifier) | listParam (Comma type identifier)* )? ')';
+
+listParam: 'List<' type '>' identifier;
 
 //  List<Road> roadList {Road1, Road2};
-listDcl: 'List<' type '>' identifier ('{' params (Comma params)* '}')? ';';
+listDcl: 'List<' type '>' identifier ('{' params (Comma params)* '}')? SemiColon;
 
 classDcl: type identifier classBody;
 
 classBody: '{' classPropDcl* '}';
 
-classPropDcl: functionDcl
+classPropDcl: contructorDcl
+            | functionDcl
             | listDcl
-            | statement;
+            | primVarDcl ';'
+            | statement
+            | assignment SemiColon
+            | expr SemiColon;
+
+objDcl: type identifier Equals constructorCall;
+
+contructorDcl: 'constructor' 'Create<' type '>' funcParams '{' (statement | assignment SemiColon | functionCall SemiColon | primVarDcl SemiColon | objDcl SemiColon | listDcl )* '}';
+
+constructorCall: 'Create<' type '>' '(' (params (Comma params)* )? ')';
 
 primVarDcl: primType identifier (Equals expr)?;
 
-type: primType | complexType | identifier;
-
-primType: ' number ' | ' string ' | ' bool ';
-
-// Node node = Nodes[RandomInt(0, IONode.length)];
-complexType: ' Vehicle ' | ' Node ';
-
-statement: primVarDcl ';'
-         | selectiveCtrl
-         | iterativeCtrl
-         | assignment ';';
-
-stmtBody: '{' (statement | listDcl)* '}';
+statement: selectiveCtrl
+         | iterativeCtrl;
 
 selectiveCtrl: ifElseStmt | switchStmt;
 
@@ -69,6 +81,8 @@ ifElseStmt: 'if' '(' expr ')' stmtBody elseIfStmt?;
 elseIfStmt: 'else' stmtBody
           | 'else if' '(' expr ')' stmtBody elseIfStmt?;
 
+switchStmt: 'switch' '(' expr ')' switchBody;
+
 /* SWITCH STATEMENT
     switch(identifier) {
         case 1:
@@ -79,51 +93,63 @@ elseIfStmt: 'else' stmtBody
             x = 0;
     }
 */
-switchStmt: 'switch' '(' expr ')' switchBody;
-
-switchBody: '{' ('case' numberLiteral ':' expr* )+ ('default:' expr*)? '}';
+switchBody: '{' ('case' (numberLiteral | type) ':' (assignment ';' | expr ';' | statement)* )+ ('default:' expr*)? '}';
 
 iterativeCtrl: whileLoop | forLoop;
 
 // while(Sentinal) { }
 whileLoop: 'while' '('expr')' stmtBody;
 
-forLoop: 'for' identifier 'in range' '(' (numberLiteral | identifier) ')' stmtBody;
+forLoop: 'for' identifier 'in range' '(' (numberLiteral | identifier ('.' identifier)* ) ')' stmtBody;
 
-assignment: identifier Equals expr;
+stmtBody: '{' (statement | assignment SemiColon | primVarDcl SemiColon | objDcl SemiColon | listDcl SemiColon |functionCall SemiColon)* '}';
 
-identifier: Letter (Letter | Number)*;
+assignment: (identifier ('.' identifier)* ) Equals (identifier | expr);
 
-params: literal | identifier;
+expr: functionCall
+    | expr '.' expr
+    | expr '[' expr ']' expr?
+    | '(' expr ')'
+    | expr '^' expr
+    | expr ('*' | '/' | '%') expr
+    | expr ('+' | '-') expr
+    | expr ('<=' | '>=' | '<' | '>') expr
+    | expr ('==' | '!=') expr
+    | expr ('&&' | ' and ') expr
+    | expr ('||' | ' or ') expr
+    | literal
+    | identifier;
 
-literal: numberLiteral | stringLiteral | boolLiteral | Letter+;
+functionCall: identifier ('.' identifier)* '(' (params (Comma params)* )? ')';
+
+params: literal | identifier  | constructorCall | expr;
+
+type: primType | complexType | identifier;
+
+primType: 'number ' | 'string ' | 'bool ';
+
+// Node node = Nodes[RandomInt(0, IONode.length)];
+complexType: ' Vehicle ' | ' Node ' | ' List<' type '>';
+
+identifier: Letter (Letter | Number*);
+
+literal: numberLiteral | stringLiteral | boolLiteral;
 
 numberLiteral: (Number | Number '.' Number)+;
 
 stringLiteral: '"' (Letter | Number)+ '"';
 
-boolLiteral: Bool;
+boolLiteral: bool;
 
-expr: identifier '(' (params (Comma params)* )? ')'
-    | '(' expr ')'
-    | expr '^' expr
-    | expr ('*' | '/' | '%') expr
-    | expr ('+' | '-') expr
-    | expr ('<=' | '>=' | '<' | '>')
-    | expr ('==' | '!=') expr
-    | expr ('&&' | ' and ') expr
-    | expr ('||' | ' or ') expr
-    | assignment
-    | literal;
+bool: 'true' | 'false';
 
 Number: ('0'..'9');
 
-Letter: ('a'..'z') | ('A'..'Z') | ('_');
-
-Bool: 'true' | 'false';
+Letter: (('a'..'z') | ('A'..'Z') | ('_'))+;
 
 Comma: ',';
 Equals: '=';
+SemiColon: ';';
 
 Comment: '//' ~('\r' | '\n')* -> skip;
 
