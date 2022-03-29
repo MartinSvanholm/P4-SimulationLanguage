@@ -1,4 +1,4 @@
-// Generated from C:/Users/marti/OneDrive/Dokumenter/GitHub/P4-SimulationLanguage\CFG.g4 by ANTLR 4.9.2
+// Generated from C:/Users/Martin Svanholm/Documents/GitHub/P4-SimulationLanguage\CFG.g4 by ANTLR 4.9.2
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 
 /**
@@ -76,18 +76,6 @@ public interface CFGVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitFuncReturnBody(CFGParser.FuncReturnBodyContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link CFGParser#funcParams}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitFuncParams(CFGParser.FuncParamsContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link CFGParser#listParam}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitListParam(CFGParser.ListParamContext ctx);
-	/**
 	 * Visit a parse tree produced by {@link CFGParser#listDcl}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -112,12 +100,6 @@ public interface CFGVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitClassPropDcl(CFGParser.ClassPropDclContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link CFGParser#objDcl}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitObjDcl(CFGParser.ObjDclContext ctx);
-	/**
 	 * Visit a parse tree produced by {@link CFGParser#contructorDcl}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -129,6 +111,12 @@ public interface CFGVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitConstructorCall(CFGParser.ConstructorCallContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link CFGParser#objDcl}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitObjDcl(CFGParser.ObjDclContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link CFGParser#primVarDcl}.
 	 * @param ctx the parse tree
@@ -220,6 +208,24 @@ public interface CFGVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitParams(CFGParser.ParamsContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link CFGParser#multipleParams}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitMultipleParams(CFGParser.MultipleParamsContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link CFGParser#dclParams}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDclParams(CFGParser.DclParamsContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link CFGParser#multipleDclParams}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitMultipleDclParams(CFGParser.MultipleDclParamsContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link CFGParser#type}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -273,4 +279,10 @@ public interface CFGVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitBool(CFGParser.BoolContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link CFGParser#codeBlock}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitCodeBlock(CFGParser.CodeBlockContext ctx);
 }

@@ -1,0 +1,146 @@
+//Mandatory "behavior" section
+//Here the user defines the classes and their behavior
+Simulation Behavior {
+    //Defining the "Car" class
+    Vehicle Car {
+        number weight;
+        number breakDistance = 10;
+        number breakPower = 3;
+
+        //The constructor for the class
+        constructor Create<Car>() {
+            this.length = Random(4, 5);
+            this.speed = 0;
+            this.position = 0;
+            this.acceleration = Random(2, 3);
+            this.weight = Random(900, 1200);
+
+            //Creates a random start- and end-node for the car
+            List<Node> tempNodes;
+            tempNodes.Add(Nodes[RandomInt(0, IONodes.length)]);
+            bool Sentinal = true;
+            while(Sentinal) {
+                Node node = Nodes[RandomInt(0, IONode.length)];
+                if(node != this.tempNodes[0]) {
+                    this.tempNodes.Add(Nodes[RandomInt(0, IONodes.length)]);
+                    Sentinal = false;
+                }
+            }
+
+            //Generates the optimal path between the start- and end-node
+            this.path = this.PathFinding(tempNodes);
+
+            //Determines the driving direction for the car.
+            if (nodes.GetIndex(path[0]) < nodes.GetIndex(path[1])) {
+                this.direction = true;
+            } else {
+                this.direction = false;
+            }
+        }
+
+        //Function to check if the car should be able to move
+        function bool IsClearToDrive() {
+            bool isCarInfront;
+            List<Car> tempList;
+
+            //Adds all cars on the same road, and going in the same direction, to a temporary list
+            for car in range (this.road.carList) {
+                if(car.direction == this.direction) {
+                    tempList.Add(car);
+                }
+            }
+
+            //Sorting the temporary list based on the position of the cars
+            tempList.Sort(Car.position);
+
+            //Checking if a car exists infront of the agent. If this is the case, that car is saved in a variable
+            if(tempList.GetIndex(this) == (tempList.length - 1)) {
+                isCarInfront = false;
+            } else {
+                isCarInfront = true;
+                Car carInFront = tempList[tempList.GetIndex(this) + 1];
+            }
+
+            //Returns true if the car has appropriate distance to drive, and false if it should start to break.
+            return carInFront.position - this.position > this.breakDistance;
+        }
+
+        //Accelerates the car, if appropriate, and propells the car forward
+        function Drive() {
+            if(this.road.speedLimit < this.speed) {
+                this.speed = this.speed + this.acceleration;
+            }
+
+            this.position = this.position + this.speed;
+        }
+
+        //Deaccelerated the car, and propells the car forward
+        function Break() {
+            this.speed = this.speed + this.breakPower;
+
+            if (this.speed <= 0) {
+                this.speed = 0;
+            }
+
+            this.position = this.position + this.speed;
+        }
+    }
+
+    //Defining the "IONode" class
+    Node IONode {
+        //The constructor for the class
+        constructor Create<IONode>(List<Node> connections) {
+            this.connections = connections;
+        }
+
+        //Another constructor for the class
+        //This is needed when creating the first node
+        constructor Create<IONode>() {}
+    }
+
+    //Defining the "Lightregulation" class
+    Node Ligthregulation {
+        string lightState1;
+        string lightState2;
+        number timer = 0;
+
+        //The constructor for the class
+        constructor Create<Ligthregulation>(List<Node> connections) {
+            this.connections = connections;
+        }
+
+        //Function changing the state of the traffic light, based on time
+        function ChangeLigth() {
+            this.timer = Simulation.CurrentTick % 740;
+
+            switch(currTick) {
+                case 0:
+                    lightState1 = "red";
+                    lightState2 = "red";
+                case 10:
+                    lightState1 = "red";
+                    lightState2 = "yellowStart";
+                case 30:
+                    lightState1 = "red";
+                    lightState2 = "green";
+                case 330:
+                    lightState1 = "red";
+                    lightState2 = "yellowStop";
+                case 370:
+                    lightState1 = "red";
+                    lightState2 = "red";
+                case 380:
+                    lightState1 = "yellowStart";
+                    lightState2 = "red";
+                case 400:
+                    lightState1 = "green";
+                    lightState2 = "red";
+                case 700:
+                    lightState1 = "yellowStop";
+                    lightState2 = "red";
+                default:
+                    //Default case
+            }
+        }
+    }
+}

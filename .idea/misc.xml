@@ -6,7 +6,7 @@
         <PerGrammarGenerationSettings>
           <option name="fileName" value="$PROJECT_DIR$/CFG.g4" />
           <option name="autoGen" value="true" />
-          <option name="outputDir" value="C:\Users\marti\OneDrive\Dokumenter\GitHub\P4-SimulationLanguage\src" />
+          <option name="outputDir" value="C:\Users\Martin Svanholm\Documents\GitHub\P4-SimulationLanguage\src" />
           <option name="libDir" value="" />
           <option name="encoding" value="" />
           <option name="pkg" value="" />
@@ -16,7 +16,7 @@
       </list>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_17" project-jdk-name="18" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_17">
     <output url="file://$PROJECT_DIR$/out" />
   </component>
 </project>

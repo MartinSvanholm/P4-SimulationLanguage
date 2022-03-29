@@ -1,6 +1,6 @@
 grammar CFG;
 
-program: environmentSection behaviorSection? updateSection? outputSection? EOF;
+program: environmentSection? behaviorSection? updateSection? outputSection? EOF;
 
 environmentSection: 'Simulation Environment' '{' line* endCondition? '}';
 
@@ -13,7 +13,7 @@ outputSection: 'Simulation Output' '{' line* '}';
 line: initCondition
     | dcl
     | statement
-    | assignment SemiColon
+    | assignment
     | expr SemiColon
     | Comment
     | MultiComment;
@@ -21,28 +21,24 @@ line: initCondition
 dcl: functionDcl
    | listDcl
    | classDcl
-   | objDcl SemiColon
-   | primVarDcl SemiColon;
+   | objDcl
+   | primVarDcl;
 
-endCondition: 'EndCondition' '{' (statement | assignment | expr | primVarDcl)* 'return' expr SemiColon '}';
+endCondition: 'EndCondition' '{' codeBlock* 'return' expr SemiColon '}';
 
-initCondition: 'InitCondition<' type '>' '{' (statement | assignment | expr | primVarDcl)* '}';
+initCondition: 'InitCondition<' type '>' '{' codeBlock* '}';
 
 /* FUNCTION CALL
     Void function: function TestFunction() { }
     With return type: function bool IsClearToDrive() { }
 */
-functionDcl: 'function' identifier funcParams stmtBody
-           | 'function' primType identifier funcParams funcReturnBody;
+functionDcl: 'function' identifier dclParams stmtBody
+           | 'function' primType identifier dclParams funcReturnBody;
 
-funcReturnBody: '{' (statement | assignment SemiColon | functionCall SemiColon | primVarDcl SemiColon | objDcl SemiColon | listDcl )* 'return' expr SemiColon '}';
-
-funcParams: '(' ( (type identifier) | listParam (Comma type identifier)* )? ')';
-
-listParam: 'List<' type '>' identifier;
+funcReturnBody: '{' codeBlock* 'return' expr SemiColon '}';
 
 //  List<Road> roadList {Road1, Road2};
-listDcl: 'List<' type '>' identifier ('{' params (Comma params)* '}')? SemiColon;
+listDcl: 'List<' type '>' identifier ('{' params multipleParams '}')? SemiColon;
 
 classDcl: type identifier classBody;
 
@@ -51,21 +47,22 @@ classBody: '{' classPropDcl* '}';
 classPropDcl: contructorDcl
             | functionDcl
             | listDcl
-            | primVarDcl ';'
+            | primVarDcl
             | statement
-            | assignment SemiColon
+            | assignment
             | expr SemiColon;
 
-objDcl: type identifier Equals constructorCall;
+contructorDcl: 'constructor' 'Create<' type '>' dclParams '{' codeBlock* '}';
 
-contructorDcl: 'constructor' 'Create<' type '>' funcParams '{' (statement | assignment SemiColon | functionCall SemiColon | primVarDcl SemiColon | objDcl SemiColon | listDcl )* '}';
+constructorCall: 'Create<' type '>' '(' (params multipleParams)? ')';
 
-constructorCall: 'Create<' type '>' '(' (params (Comma params)* )? ')';
+objDcl: type identifier Equals (constructorCall | expr) SemiColon;
 
-primVarDcl: primType identifier (Equals expr)?;
+primVarDcl: primType identifier (Equals expr)? SemiColon;
 
 statement: selectiveCtrl
-         | iterativeCtrl;
+         | iterativeCtrl
+         | 'return' expr SemiColon;
 
 selectiveCtrl: ifElseStmt | switchStmt;
 
@@ -93,21 +90,20 @@ switchStmt: 'switch' '(' expr ')' switchBody;
             x = 0;
     }
 */
-switchBody: '{' ('case' (numberLiteral | type) ':' (assignment ';' | expr ';' | statement)* )+ ('default:' expr*)? '}';
+switchBody: '{' ('case' (numberLiteral | type) ':' codeBlock* )+ ('default:' expr*)? '}';
 
 iterativeCtrl: whileLoop | forLoop;
 
 // while(Sentinal) { }
 whileLoop: 'while' '('expr')' stmtBody;
 
-forLoop: 'for' identifier 'in range' '(' (numberLiteral | identifier ('.' identifier)* ) ')' stmtBody;
+forLoop: 'for' identifier 'in range' '(' (numberLiteral | identifier) ')' stmtBody;
 
-stmtBody: '{' (statement | assignment SemiColon | primVarDcl SemiColon | objDcl SemiColon | listDcl SemiColon |functionCall SemiColon)* '}';
+stmtBody: '{' codeBlock* '}';
 
-assignment: (identifier ('.' identifier)* ) Equals (identifier | expr);
+assignment: identifier Equals (identifier | expr) SemiColon;
 
 expr: functionCall
-    | expr '.' expr
     | expr '[' expr ']' expr?
     | '(' expr ')'
     | expr '^' expr
@@ -120,18 +116,24 @@ expr: functionCall
     | literal
     | identifier;
 
-functionCall: identifier ('.' identifier)* '(' (params (Comma params)* )? ')';
+functionCall: identifier '(' (params (Comma params)* )? ')';
 
-params: literal | identifier  | constructorCall | expr;
+params: expr | constructorCall;
+
+multipleParams: (Comma (constructorCall | expr))*;
+
+dclParams: '(' (type identifier multipleDclParams)? ')';
+
+multipleDclParams: (Comma type identifier)*;
 
 type: primType | complexType | identifier;
 
 primType: 'number ' | 'string ' | 'bool ';
 
 // Node node = Nodes[RandomInt(0, IONode.length)];
-complexType: ' Vehicle ' | ' Node ' | ' List<' type '>';
+complexType: 'Vehicle ' | 'Node ' | 'List<' type '>';
 
-identifier: Letter (Letter | Number*);
+identifier: Letter (Letter | Number*) ('.' identifier)*;
 
 literal: numberLiteral | stringLiteral | boolLiteral;
 
@@ -142,6 +144,8 @@ stringLiteral: '"' (Letter | Number)+ '"';
 boolLiteral: bool;
 
 bool: 'true' | 'false';
+
+codeBlock: dcl | statement | assignment | expr SemiColon;
 
 Number: ('0'..'9');
 

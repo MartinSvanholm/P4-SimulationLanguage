@@ -50,15 +50,14 @@ T__48=49
 T__49=50
 T__50=51
 T__51=52
-T__52=53
-Number=54
-Letter=55
-Comma=56
-Equals=57
-SemiColon=58
-Comment=59
-MultiComment=60
-WS=61
+Number=53
+Letter=54
+Comma=55
+Equals=56
+SemiColon=57
+Comment=58
+MultiComment=59
+WS=60
 'Simulation Environment'=1
 '{'=2
 '}'=3
@@ -70,11 +69,11 @@ WS=61
 'InitCondition<'=9
 '>'=10
 'function'=11
-'('=12
-')'=13
-'List<'=14
-'constructor'=15
-'Create<'=16
+'List<'=12
+'constructor'=13
+'Create<'=14
+'('=15
+')'=16
 'if'=17
 'else'=18
 'else if'=19
@@ -85,33 +84,32 @@ WS=61
 'while'=24
 'for'=25
 'in range'=26
-'.'=27
-'['=28
-']'=29
-'^'=30
-'*'=31
-'/'=32
-'%'=33
-'+'=34
-'-'=35
-'<='=36
-'>='=37
-'<'=38
-'=='=39
-'!='=40
-'&&'=41
-' and '=42
-'||'=43
-' or '=44
-'number '=45
-'string '=46
-'bool '=47
-' Vehicle '=48
-' Node '=49
-' List<'=50
-'"'=51
-'true'=52
-'false'=53
-','=56
-'='=57
-';'=58
+'['=27
+']'=28
+'^'=29
+'*'=30
+'/'=31
+'%'=32
+'+'=33
+'-'=34
+'<='=35
+'>='=36
+'<'=37
+'=='=38
+'!='=39
+'&&'=40
+' and '=41
+'||'=42
+' or '=43
+'number '=44
+'string '=45
+'bool '=46
+'Vehicle '=47
+'Node '=48
+'.'=49
+'"'=50
+'true'=51
+'false'=52
+','=55
+'='=56
+';'=57
