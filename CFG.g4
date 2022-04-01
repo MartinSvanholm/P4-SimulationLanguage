@@ -1,6 +1,6 @@
 grammar CFG;
 
-program: environmentSection behaviorSection? updateSection? outputSection? EOF;
+program: environmentSection behaviorSection updateSection outputSection EOF;
 
 environmentSection: 'Simulation Environment' '{' line* endCondition? '}';
 
