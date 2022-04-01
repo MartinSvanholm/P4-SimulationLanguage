@@ -3,7 +3,11 @@ package Main;
 import SymbolTable.*;
 import Visitors.*;
 
+import java.io.BufferedReader;
+import java.io.Console;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.file.NoSuchFileException;
 import java.util.Enumeration;
 
 import org.antlr.v4.runtime.CharStream;
@@ -24,9 +28,11 @@ public class Main {
     public static final String ANSI_WHITE = "\u001B[37m";
 
     public static void main(String[] args) {
+
         try {
-            String source = "debug.txt";
-            CharStream cs = fromFileName(source);
+            CharStream cs = null;
+            cs = fromFileName(args[0]);
+
             CFGLexer lexer = new CFGLexer(cs);
             CommonTokenStream token = new CommonTokenStream(lexer);
             CFGParser parser = new CFGParser(token);
@@ -41,6 +47,10 @@ public class Main {
             Printer Printer = new Printer(symbolTable);
 
             Printer.PrintValues();
+
+        } catch (NoSuchFileException exception) {
+            System.out.println(ANSI_RED + "File does not exist" + ANSI_RESET);
+
         } catch (IOException e) {
             e.printStackTrace();
         }
