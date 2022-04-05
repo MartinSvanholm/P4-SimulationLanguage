@@ -1,4 +1,4 @@
-// Generated from C:/Users/Martin Svanholm/Documents/GitHub/P4-SimulationLanguage\CFG.g4 by ANTLR 4.9.2
+package Main;// Generated from C:/Users/marti/OneDrive/Dokumenter/GitHub/P4-SimulationLanguage\CFG.g4 by ANTLR 4.9.2
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
 /**
@@ -117,6 +117,26 @@ public interface CFGListener extends ParseTreeListener {
 	 */
 	void exitFuncReturnBody(CFGParser.FuncReturnBodyContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link CFGParser#funcParams}.
+	 * @param ctx the parse tree
+	 */
+	void enterFuncParams(CFGParser.FuncParamsContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link CFGParser#funcParams}.
+	 * @param ctx the parse tree
+	 */
+	void exitFuncParams(CFGParser.FuncParamsContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link CFGParser#listParam}.
+	 * @param ctx the parse tree
+	 */
+	void enterListParam(CFGParser.ListParamContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link CFGParser#listParam}.
+	 * @param ctx the parse tree
+	 */
+	void exitListParam(CFGParser.ListParamContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link CFGParser#listDcl}.
 	 * @param ctx the parse tree
 	 */
@@ -157,6 +177,16 @@ public interface CFGListener extends ParseTreeListener {
 	 */
 	void exitClassPropDcl(CFGParser.ClassPropDclContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link CFGParser#objDcl}.
+	 * @param ctx the parse tree
+	 */
+	void enterObjDcl(CFGParser.ObjDclContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link CFGParser#objDcl}.
+	 * @param ctx the parse tree
+	 */
+	void exitObjDcl(CFGParser.ObjDclContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link CFGParser#contructorDcl}.
 	 * @param ctx the parse tree
 	 */
@@ -176,16 +206,6 @@ public interface CFGListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitConstructorCall(CFGParser.ConstructorCallContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link CFGParser#objDcl}.
-	 * @param ctx the parse tree
-	 */
-	void enterObjDcl(CFGParser.ObjDclContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link CFGParser#objDcl}.
-	 * @param ctx the parse tree
-	 */
-	void exitObjDcl(CFGParser.ObjDclContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link CFGParser#primVarDcl}.
 	 * @param ctx the parse tree
@@ -337,36 +357,6 @@ public interface CFGListener extends ParseTreeListener {
 	 */
 	void exitParams(CFGParser.ParamsContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link CFGParser#multipleParams}.
-	 * @param ctx the parse tree
-	 */
-	void enterMultipleParams(CFGParser.MultipleParamsContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link CFGParser#multipleParams}.
-	 * @param ctx the parse tree
-	 */
-	void exitMultipleParams(CFGParser.MultipleParamsContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link CFGParser#dclParams}.
-	 * @param ctx the parse tree
-	 */
-	void enterDclParams(CFGParser.DclParamsContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link CFGParser#dclParams}.
-	 * @param ctx the parse tree
-	 */
-	void exitDclParams(CFGParser.DclParamsContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link CFGParser#multipleDclParams}.
-	 * @param ctx the parse tree
-	 */
-	void enterMultipleDclParams(CFGParser.MultipleDclParamsContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link CFGParser#multipleDclParams}.
-	 * @param ctx the parse tree
-	 */
-	void exitMultipleDclParams(CFGParser.MultipleDclParamsContext ctx);
-	/**
 	 * Enter a parse tree produced by {@link CFGParser#type}.
 	 * @param ctx the parse tree
 	 */
@@ -456,14 +446,4 @@ public interface CFGListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitBool(CFGParser.BoolContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link CFGParser#codeBlock}.
-	 * @param ctx the parse tree
-	 */
-	void enterCodeBlock(CFGParser.CodeBlockContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link CFGParser#codeBlock}.
-	 * @param ctx the parse tree
-	 */
-	void exitCodeBlock(CFGParser.CodeBlockContext ctx);
 }

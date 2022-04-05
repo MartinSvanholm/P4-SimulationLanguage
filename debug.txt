@@ -1,0 +1,20 @@
+Simulation Environment {
+    number x = 5;
+    string test = "hej";
+
+    function test() {
+
+    }
+}
+
+Simulation Behavior {
+
+}
+
+Simulation Update {
+
+}
+
+Simulation Output {
+
+}
