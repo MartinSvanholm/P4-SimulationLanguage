@@ -1,6 +1,7 @@
+
 package SymbolTable;
 
-import Main.CFGParser;
+import Main.*;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
 

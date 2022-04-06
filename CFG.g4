@@ -1,6 +1,6 @@
 grammar CFG;
 
-program: environmentSection? behaviorSection? updateSection? outputSection? EOF;
+program: environmentSection behaviorSection? updateSection? outputSection? EOF;
 
 environmentSection: 'Simulation Environment' '{' line* endCondition? '}';
 
@@ -10,13 +10,14 @@ updateSection: 'Simulation Update' '{' line* '}';
 
 outputSection: 'Simulation Output' '{' line* '}';
 
-line: initCondition
-    | dcl
-    | statement
-    | assignment
-    | expr SemiColon
-    | Comment
-    | MultiComment;
+line: initCondition         #lineInitCondition
+    | dcl                   #lineDcl
+    | statement             #lineStatement
+    | assignment            #lineAssignment
+    | expr SemiColon        #lineExpr
+    | Comment               #lineComment
+    | MultiComment         #lineMultiComment
+    ;
 
 dcl: functionDcl
    | listDcl
@@ -103,18 +104,19 @@ stmtBody: '{' codeBlock* '}';
 
 assignment: identifier Equals (identifier | expr) SemiColon;
 
-expr: functionCall
-    | expr '[' expr ']' expr?
-    | '(' expr ')'
-    | expr '^' expr
-    | expr ('*' | '/' | '%') expr
-    | expr ('+' | '-') expr
-    | expr ('<=' | '>=' | '<' | '>') expr
-    | expr ('==' | '!=') expr
-    | expr ('&&' | ' and ') expr
-    | expr ('||' | ' or ') expr
-    | literal
-    | identifier;
+expr: functionCall                              # funcExpr
+    | expr '[' expr ']' expr?                   # arrExpr
+    | '(' expr ')'                              # parensExpr
+    | expr '^' expr                             # pvrExpr
+    | expr ('*' | '/' | '%') expr               # infixExpr
+    | left=expr op=('+' | '-') right=expr       # infixExpr
+    | expr ('<=' | '>=' | '<' | '>') expr       #compareExpr
+    | expr ('==' | '!=') expr                   #compareExpr
+    | expr ('&&' | ' and ') expr                #logicalExpr
+    | expr ('||' | ' or ')                      #logicalExpr
+    | literal                                   #literalExpr
+    | identifier                                #identifierExpr
+    ;
 
 functionCall: identifier '(' (params (Comma params)* )? ')';
 
@@ -146,6 +148,11 @@ boolLiteral: bool;
 bool: 'true' | 'false';
 
 codeBlock: dcl | statement | assignment | expr SemiColon;
+
+OP_ADD: '+';
+OP_SUB: '-';
+OP_MUL: '*';
+OP_DIV: '/';
 
 Number: ('0'..'9');
 

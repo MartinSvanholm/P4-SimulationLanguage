@@ -1,5 +1,7 @@
 package Main;
 
+import ASTNodes.EnvironmentNode;
+import ASTNodes.ExpressionNode;
 import SymbolTable.*;
 import Visitors.*;
 
@@ -33,11 +35,24 @@ public class Main {
             CharStream cs = null;
             cs = fromFileName(args[0]);
 
+            //System.out.println(cs);
+
             CFGLexer lexer = new CFGLexer(cs);
             CommonTokenStream token = new CommonTokenStream(lexer);
-            CFGParser parser = new CFGParser(token);
-            ParseTree tree = parser.program();
+            var parser = new CFGParser(token);
+            var cst = parser.program();
 
+            //System.out.println(cst.toStringTree());
+
+
+            BuildAstVisitor visitor = new BuildAstVisitor();
+
+            EnvironmentNode ast = (EnvironmentNode) visitor.visitProgram(cst);
+
+            for (var node : ast.nodes) {
+                System.out.println(node);
+            }
+            /*
             SymbolTable symbolTable = new SymbolTable();
 
             SymbolTableVisitor visitor = new SymbolTableVisitor(symbolTable);
@@ -46,7 +61,7 @@ public class Main {
 
             Printer Printer = new Printer(symbolTable);
 
-            Printer.PrintValues();
+            Printer.PrintValues();*/
 
         } catch (NoSuchFileException exception) {
             System.out.println(ANSI_RED + "File does not exist" + ANSI_RESET);

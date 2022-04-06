@@ -1,4 +1,5 @@
-package Main;// Generated from C:/Users/marti/OneDrive/Dokumenter/GitHub/P4-SimulationLanguage\CFG.g4 by ANTLR 4.9.2
+package Main;
+// Generated from C:/Users/Martin Svanholm/Documents/GitHub/P4-SimulationLanguage\CFG.g4 by ANTLR 4.9.2
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
 /**
@@ -57,15 +58,89 @@ public interface CFGListener extends ParseTreeListener {
 	 */
 	void exitOutputSection(CFGParser.OutputSectionContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link CFGParser#line}.
+	 * Enter a parse tree produced by the {@code lineInitCondition}
+	 * labeled alternative in {@link CFGParser#line}.
 	 * @param ctx the parse tree
 	 */
-	void enterLine(CFGParser.LineContext ctx);
+	void enterLineInitCondition(CFGParser.LineInitConditionContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link CFGParser#line}.
+	 * Exit a parse tree produced by the {@code lineInitCondition}
+	 * labeled alternative in {@link CFGParser#line}.
 	 * @param ctx the parse tree
 	 */
-	void exitLine(CFGParser.LineContext ctx);
+	void exitLineInitCondition(CFGParser.LineInitConditionContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code lineDcl}
+	 * labeled alternative in {@link CFGParser#line}.
+	 * @param ctx the parse tree
+	 */
+	void enterLineDcl(CFGParser.LineDclContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code lineDcl}
+	 * labeled alternative in {@link CFGParser#line}.
+	 * @param ctx the parse tree
+	 */
+	void exitLineDcl(CFGParser.LineDclContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code lineStatement}
+	 * labeled alternative in {@link CFGParser#line}.
+	 * @param ctx the parse tree
+	 */
+	void enterLineStatement(CFGParser.LineStatementContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code lineStatement}
+	 * labeled alternative in {@link CFGParser#line}.
+	 * @param ctx the parse tree
+	 */
+	void exitLineStatement(CFGParser.LineStatementContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code lineAssignment}
+	 * labeled alternative in {@link CFGParser#line}.
+	 * @param ctx the parse tree
+	 */
+	void enterLineAssignment(CFGParser.LineAssignmentContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code lineAssignment}
+	 * labeled alternative in {@link CFGParser#line}.
+	 * @param ctx the parse tree
+	 */
+	void exitLineAssignment(CFGParser.LineAssignmentContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code lineExpr}
+	 * labeled alternative in {@link CFGParser#line}.
+	 * @param ctx the parse tree
+	 */
+	void enterLineExpr(CFGParser.LineExprContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code lineExpr}
+	 * labeled alternative in {@link CFGParser#line}.
+	 * @param ctx the parse tree
+	 */
+	void exitLineExpr(CFGParser.LineExprContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code lineComment}
+	 * labeled alternative in {@link CFGParser#line}.
+	 * @param ctx the parse tree
+	 */
+	void enterLineComment(CFGParser.LineCommentContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code lineComment}
+	 * labeled alternative in {@link CFGParser#line}.
+	 * @param ctx the parse tree
+	 */
+	void exitLineComment(CFGParser.LineCommentContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code lineMultiComment}
+	 * labeled alternative in {@link CFGParser#line}.
+	 * @param ctx the parse tree
+	 */
+	void enterLineMultiComment(CFGParser.LineMultiCommentContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code lineMultiComment}
+	 * labeled alternative in {@link CFGParser#line}.
+	 * @param ctx the parse tree
+	 */
+	void exitLineMultiComment(CFGParser.LineMultiCommentContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link CFGParser#dcl}.
 	 * @param ctx the parse tree
@@ -117,26 +192,6 @@ public interface CFGListener extends ParseTreeListener {
 	 */
 	void exitFuncReturnBody(CFGParser.FuncReturnBodyContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link CFGParser#funcParams}.
-	 * @param ctx the parse tree
-	 */
-	void enterFuncParams(CFGParser.FuncParamsContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link CFGParser#funcParams}.
-	 * @param ctx the parse tree
-	 */
-	void exitFuncParams(CFGParser.FuncParamsContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link CFGParser#listParam}.
-	 * @param ctx the parse tree
-	 */
-	void enterListParam(CFGParser.ListParamContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link CFGParser#listParam}.
-	 * @param ctx the parse tree
-	 */
-	void exitListParam(CFGParser.ListParamContext ctx);
-	/**
 	 * Enter a parse tree produced by {@link CFGParser#listDcl}.
 	 * @param ctx the parse tree
 	 */
@@ -177,16 +232,6 @@ public interface CFGListener extends ParseTreeListener {
 	 */
 	void exitClassPropDcl(CFGParser.ClassPropDclContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link CFGParser#objDcl}.
-	 * @param ctx the parse tree
-	 */
-	void enterObjDcl(CFGParser.ObjDclContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link CFGParser#objDcl}.
-	 * @param ctx the parse tree
-	 */
-	void exitObjDcl(CFGParser.ObjDclContext ctx);
-	/**
 	 * Enter a parse tree produced by {@link CFGParser#contructorDcl}.
 	 * @param ctx the parse tree
 	 */
@@ -206,6 +251,16 @@ public interface CFGListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitConstructorCall(CFGParser.ConstructorCallContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link CFGParser#objDcl}.
+	 * @param ctx the parse tree
+	 */
+	void enterObjDcl(CFGParser.ObjDclContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link CFGParser#objDcl}.
+	 * @param ctx the parse tree
+	 */
+	void exitObjDcl(CFGParser.ObjDclContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link CFGParser#primVarDcl}.
 	 * @param ctx the parse tree
@@ -327,15 +382,113 @@ public interface CFGListener extends ParseTreeListener {
 	 */
 	void exitAssignment(CFGParser.AssignmentContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link CFGParser#expr}.
+	 * Enter a parse tree produced by the {@code infixExpr}
+	 * labeled alternative in {@link CFGParser#expr}.
 	 * @param ctx the parse tree
 	 */
-	void enterExpr(CFGParser.ExprContext ctx);
+	void enterInfixExpr(CFGParser.InfixExprContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link CFGParser#expr}.
+	 * Exit a parse tree produced by the {@code infixExpr}
+	 * labeled alternative in {@link CFGParser#expr}.
 	 * @param ctx the parse tree
 	 */
-	void exitExpr(CFGParser.ExprContext ctx);
+	void exitInfixExpr(CFGParser.InfixExprContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code funcExpr}
+	 * labeled alternative in {@link CFGParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void enterFuncExpr(CFGParser.FuncExprContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code funcExpr}
+	 * labeled alternative in {@link CFGParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void exitFuncExpr(CFGParser.FuncExprContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code literalExpr}
+	 * labeled alternative in {@link CFGParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void enterLiteralExpr(CFGParser.LiteralExprContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code literalExpr}
+	 * labeled alternative in {@link CFGParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void exitLiteralExpr(CFGParser.LiteralExprContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code logicalExpr}
+	 * labeled alternative in {@link CFGParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void enterLogicalExpr(CFGParser.LogicalExprContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code logicalExpr}
+	 * labeled alternative in {@link CFGParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void exitLogicalExpr(CFGParser.LogicalExprContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code arrExpr}
+	 * labeled alternative in {@link CFGParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void enterArrExpr(CFGParser.ArrExprContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code arrExpr}
+	 * labeled alternative in {@link CFGParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void exitArrExpr(CFGParser.ArrExprContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code parensExpr}
+	 * labeled alternative in {@link CFGParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void enterParensExpr(CFGParser.ParensExprContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code parensExpr}
+	 * labeled alternative in {@link CFGParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void exitParensExpr(CFGParser.ParensExprContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code pvrExpr}
+	 * labeled alternative in {@link CFGParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void enterPvrExpr(CFGParser.PvrExprContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code pvrExpr}
+	 * labeled alternative in {@link CFGParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void exitPvrExpr(CFGParser.PvrExprContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code identifierExpr}
+	 * labeled alternative in {@link CFGParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void enterIdentifierExpr(CFGParser.IdentifierExprContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code identifierExpr}
+	 * labeled alternative in {@link CFGParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void exitIdentifierExpr(CFGParser.IdentifierExprContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code compareExpr}
+	 * labeled alternative in {@link CFGParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void enterCompareExpr(CFGParser.CompareExprContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code compareExpr}
+	 * labeled alternative in {@link CFGParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void exitCompareExpr(CFGParser.CompareExprContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link CFGParser#functionCall}.
 	 * @param ctx the parse tree
@@ -356,6 +509,36 @@ public interface CFGListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitParams(CFGParser.ParamsContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link CFGParser#multipleParams}.
+	 * @param ctx the parse tree
+	 */
+	void enterMultipleParams(CFGParser.MultipleParamsContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link CFGParser#multipleParams}.
+	 * @param ctx the parse tree
+	 */
+	void exitMultipleParams(CFGParser.MultipleParamsContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link CFGParser#dclParams}.
+	 * @param ctx the parse tree
+	 */
+	void enterDclParams(CFGParser.DclParamsContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link CFGParser#dclParams}.
+	 * @param ctx the parse tree
+	 */
+	void exitDclParams(CFGParser.DclParamsContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link CFGParser#multipleDclParams}.
+	 * @param ctx the parse tree
+	 */
+	void enterMultipleDclParams(CFGParser.MultipleDclParamsContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link CFGParser#multipleDclParams}.
+	 * @param ctx the parse tree
+	 */
+	void exitMultipleDclParams(CFGParser.MultipleDclParamsContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link CFGParser#type}.
 	 * @param ctx the parse tree
@@ -446,4 +629,14 @@ public interface CFGListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitBool(CFGParser.BoolContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link CFGParser#codeBlock}.
+	 * @param ctx the parse tree
+	 */
+	void enterCodeBlock(CFGParser.CodeBlockContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link CFGParser#codeBlock}.
+	 * @param ctx the parse tree
+	 */
+	void exitCodeBlock(CFGParser.CodeBlockContext ctx);
 }

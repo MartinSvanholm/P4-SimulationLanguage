@@ -35,10 +35,6 @@ public class SymbolTableVisitor extends CFGBaseVisitor<Object> {
         return visitChildren(ctx);
     }
 
-    @Override public Object visitLine(CFGParser.LineContext ctx) {
-        return visitChildren(ctx);
-    }
-
     @Override public Object visitDcl(CFGParser.DclContext ctx) {
         return visitChildren(ctx);
     }
@@ -61,10 +57,6 @@ public class SymbolTableVisitor extends CFGBaseVisitor<Object> {
     }
 
     @Override public Object visitFuncReturnBody(CFGParser.FuncReturnBodyContext ctx) { return visitChildren(ctx); }
-
-    @Override public Object visitFuncParams(CFGParser.FuncParamsContext ctx) { return visitChildren(ctx); }
-
-    @Override public Object visitListParam(CFGParser.ListParamContext ctx) { return visitChildren(ctx); }
 
     @Override public Object visitListDcl(CFGParser.ListDclContext ctx) { return visitChildren(ctx); }
 
@@ -111,8 +103,6 @@ public class SymbolTableVisitor extends CFGBaseVisitor<Object> {
     @Override public Object visitStmtBody(CFGParser.StmtBodyContext ctx) { return visitChildren(ctx); }
 
     @Override public Object visitAssignment(CFGParser.AssignmentContext ctx) { return visitChildren(ctx); }
-
-    @Override public Object visitExpr(CFGParser.ExprContext ctx) { return visitChildren(ctx); }
 
     @Override public Object visitFunctionCall(CFGParser.FunctionCallContext ctx) { return visitChildren(ctx); }
 
