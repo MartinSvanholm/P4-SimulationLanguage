@@ -2,15 +2,3 @@ Simulation Environment {
     5 + 5;
     5 + 6;
 }
-
-Simulation Behavior {
-
-}
-
-Simulation Update {
-
-}
-
-Simulation Output {
-
-}

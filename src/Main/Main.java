@@ -1,20 +1,16 @@
 package Main;
 
-import ASTNodes.EnvironmentNode;
-import ASTNodes.ExpressionNode;
-import SymbolTable.*;
+import ASTNodes.Node;
+import ASTNodes.ProgramNode;
+import Parser.*;
 import Visitors.*;
 
-import java.io.BufferedReader;
-import java.io.Console;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.nio.file.NoSuchFileException;
-import java.util.Enumeration;
 
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.tree.ParseTree;
+
 import static org.antlr.v4.runtime.CharStreams.fromFileName;
 
 public class Main {
@@ -39,19 +35,22 @@ public class Main {
 
             CFGLexer lexer = new CFGLexer(cs);
             CommonTokenStream token = new CommonTokenStream(lexer);
-            var parser = new CFGParser(token);
-            var cst = parser.program();
+            CFGParser cfgParser = new CFGParser(token);
 
             //System.out.println(cst.toStringTree());
 
-
             BuildAstVisitor visitor = new BuildAstVisitor();
 
-            EnvironmentNode ast = (EnvironmentNode) visitor.visitProgram(cst);
+            Node ast = visitor.visitProgram(cfgParser.program());
 
-            for (var node : ast.nodes) {
+            ASTPrinter printer = new ASTPrinter();
+
+            printer.PrintAST(ast);
+
+            /*System.out.println(ast);
+            for (var node : ast.Nodes) {
                 System.out.println(node);
-            }
+            }*/
             /*
             SymbolTable symbolTable = new SymbolTable();
 

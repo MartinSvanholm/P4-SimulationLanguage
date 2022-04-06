@@ -1,172 +1,125 @@
 package Visitors;
 
 import ASTNodes.*;
-import Main.*;
-import com.sun.jdi.Value;
-import org.antlr.v4.runtime.tree.ParseTree;
+import ASTNodes.ExprNodes.*;
+import Parser.CFGParser;
+import Parser.CFGBaseVisitor;
+import Parser.CFGLexer;
 
-import java.io.Console;
+public class BuildAstVisitor extends CFGBaseVisitor<Node> {
+    @Override public Node visitProgram(CFGParser.ProgramContext ctx) {
+        ProgramNode programNode = new ProgramNode();
 
-public class BuildAstVisitor extends CFGBaseVisitor<ExpressionNode> {
-    @Override public ExpressionNode visitProgram(CFGParser.ProgramContext ctx) {
-        return visit(ctx.environmentSection());
-    }
-
-    @Override public ExpressionNode visitEnvironmentSection(CFGParser.EnvironmentSectionContext ctx) {
-        EnvironmentNode environmentNode = new EnvironmentNode();
-        for (var line : ctx.line()) {
-            environmentNode.nodes.add(visit(line));
+        for(var child : ctx.children) {
+            if(child.getClass().getSimpleName().equals("TerminalNodeImpl"))
+                continue;
+            programNode.Nodes.add(visit(child));
         }
-        return environmentNode;
+
+        return programNode;
     }
 
-    @Override public ExpressionNode visitBehaviorSection(CFGParser.BehaviorSectionContext ctx) {
+    @Override public Node visitEnvironmentSection(CFGParser.EnvironmentSectionContext ctx) {
+        SectionNode sectionNode = new SectionNode();
+
+        for(var child : ctx.children) {
+            if(child.getClass().getSimpleName().equals("TerminalNodeImpl"))
+                continue;
+            //System.out.println(child.getClass().getSimpleName());
+            sectionNode.Nodes.add(visit(child));
+        }
+
+        /*for (Node node : sectionNode.Nodes)
+            System.out.println(node);*/
+
+        return sectionNode;
+    }
+
+    @Override public Node visitBehaviorSection(CFGParser.BehaviorSectionContext ctx) {
+        SectionNode sectionNode = new SectionNode();
+
+        for(var child : ctx.children) {
+            sectionNode.Nodes.add(visit(child));
+        }
+
+        return sectionNode;
+    }
+
+    @Override public Node visitUpdateSection(CFGParser.UpdateSectionContext ctx) {
+        SectionNode sectionNode = new SectionNode();
+
+        for(var child : ctx.children) {
+            sectionNode.Nodes.add(visit(child));
+        }
+
+        return sectionNode;
+    }
+
+    @Override public Node visitOutputSection(CFGParser.OutputSectionContext ctx) {
+        SectionNode sectionNode = new SectionNode();
+
+        for(var child : ctx.children) {
+            sectionNode.Nodes.add(visit(child));
+        }
+
+        return sectionNode;
+    }
+
+    @Override public Node visitLine(CFGParser.LineContext ctx) {
+        return visit(ctx.getChild(0));
+    }
+
+    @Override public Node visitDcl(CFGParser.DclContext ctx) {
         return visitChildren(ctx);
     }
 
-    @Override public ExpressionNode visitUpdateSection(CFGParser.UpdateSectionContext ctx) {
-        return visitChildren(ctx);
-    }
+    @Override public Node visitEndCondition(CFGParser.EndConditionContext ctx) { return visitChildren(ctx); }
 
-    @Override public ExpressionNode visitOutputSection(CFGParser.OutputSectionContext ctx) {
-        return visitChildren(ctx);
-    }
+    @Override public Node visitInitCondition(CFGParser.InitConditionContext ctx) { return visitChildren(ctx); }
 
-    @Override public ExpressionNode visitLineExpr(CFGParser.LineExprContext ctx) {
-        return visit(ctx.expr());
-    }
+    @Override public Node visitFunctionDcl(CFGParser.FunctionDclContext ctx) { return visitChildren(ctx); }
 
-    @Override public ExpressionNode visitDcl(CFGParser.DclContext ctx) {
-        return visitChildren(ctx);
-    }
+    @Override public Node visitFuncReturnBody(CFGParser.FuncReturnBodyContext ctx) { return visitChildren(ctx); }
 
-    @Override public ExpressionNode visitEndCondition(CFGParser.EndConditionContext ctx) { return visitChildren(ctx); }
+    @Override public Node visitListDcl(CFGParser.ListDclContext ctx) { return visitChildren(ctx); }
 
-    @Override public ExpressionNode visitInitCondition(CFGParser.InitConditionContext ctx) { return visitChildren(ctx); }
+    @Override public Node visitClassDcl(CFGParser.ClassDclContext ctx) { return visitChildren(ctx); }
 
-    @Override public ExpressionNode visitFunctionDcl(CFGParser.FunctionDclContext ctx) { return visitChildren(ctx); }
+    @Override public Node visitClassBody(CFGParser.ClassBodyContext ctx) { return visitChildren(ctx); }
 
-    @Override public ExpressionNode visitFuncReturnBody(CFGParser.FuncReturnBodyContext ctx) { return visitChildren(ctx); }
+    @Override public Node visitClassPropDcl(CFGParser.ClassPropDclContext ctx) { return visitChildren(ctx); }
 
-    @Override public ExpressionNode visitListDcl(CFGParser.ListDclContext ctx) { return visitChildren(ctx); }
+    @Override public Node visitContructorDcl(CFGParser.ContructorDclContext ctx) { return visitChildren(ctx); }
 
-    @Override public ExpressionNode visitClassDcl(CFGParser.ClassDclContext ctx) { return visitChildren(ctx); }
+    @Override public Node visitConstructorCall(CFGParser.ConstructorCallContext ctx) { return visitChildren(ctx); }
 
-    @Override public ExpressionNode visitClassBody(CFGParser.ClassBodyContext ctx) { return visitChildren(ctx); }
+    @Override public Node visitObjDcl(CFGParser.ObjDclContext ctx) { return visitChildren(ctx); }
 
-    @Override public ExpressionNode visitClassPropDcl(CFGParser.ClassPropDclContext ctx) { return visitChildren(ctx); }
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     */
-    @Override public ExpressionNode visitContructorDcl(CFGParser.ContructorDclContext ctx) { return visitChildren(ctx); }
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     */
-    @Override public ExpressionNode visitConstructorCall(CFGParser.ConstructorCallContext ctx) { return visitChildren(ctx); }
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     */
-    @Override public ExpressionNode visitObjDcl(CFGParser.ObjDclContext ctx) { return visitChildren(ctx); }
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     */
-    @Override public ExpressionNode visitPrimVarDcl(CFGParser.PrimVarDclContext ctx) { return visitChildren(ctx); }
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     */
-    @Override public ExpressionNode visitStatement(CFGParser.StatementContext ctx) { return visitChildren(ctx); }
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     */
-    @Override public ExpressionNode visitSelectiveCtrl(CFGParser.SelectiveCtrlContext ctx) { return visitChildren(ctx); }
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     */
-    @Override public ExpressionNode visitIfElseStmt(CFGParser.IfElseStmtContext ctx) { return visitChildren(ctx); }
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     */
-    @Override public ExpressionNode visitElseIfStmt(CFGParser.ElseIfStmtContext ctx) { return visitChildren(ctx); }
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     */
-    @Override public ExpressionNode visitSwitchStmt(CFGParser.SwitchStmtContext ctx) { return visitChildren(ctx); }
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     */
-    @Override public ExpressionNode visitSwitchBody(CFGParser.SwitchBodyContext ctx) { return visitChildren(ctx); }
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     */
-    @Override public ExpressionNode visitIterativeCtrl(CFGParser.IterativeCtrlContext ctx) { return visitChildren(ctx); }
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     */
-    @Override public ExpressionNode visitWhileLoop(CFGParser.WhileLoopContext ctx) { return visitChildren(ctx); }
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     */
-    @Override public ExpressionNode visitForLoop(CFGParser.ForLoopContext ctx) { return visitChildren(ctx); }
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     */
-    @Override public ExpressionNode visitStmtBody(CFGParser.StmtBodyContext ctx) { return visitChildren(ctx); }
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     */
-    @Override public ExpressionNode visitAssignment(CFGParser.AssignmentContext ctx) { return visitChildren(ctx); }
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     */
-    @Override public ExpressionNode visitInfixExpr(CFGParser.InfixExprContext ctx) {
+    @Override public Node visitPrimVarDcl(CFGParser.PrimVarDclContext ctx) { return visitChildren(ctx); }
+
+    @Override public Node visitStatement(CFGParser.StatementContext ctx) { return visitChildren(ctx); }
+
+    @Override public Node visitSelectiveCtrl(CFGParser.SelectiveCtrlContext ctx) { return visitChildren(ctx); }
+
+    @Override public Node visitIfElseStmt(CFGParser.IfElseStmtContext ctx) { return visitChildren(ctx); }
+
+    @Override public Node visitElseIfStmt(CFGParser.ElseIfStmtContext ctx) { return visitChildren(ctx); }
+
+    @Override public Node visitSwitchStmt(CFGParser.SwitchStmtContext ctx) { return visitChildren(ctx); }
+
+    @Override public Node visitSwitchBody(CFGParser.SwitchBodyContext ctx) { return visitChildren(ctx); }
+
+    @Override public Node visitIterativeCtrl(CFGParser.IterativeCtrlContext ctx) { return visitChildren(ctx); }
+
+    @Override public Node visitWhileLoop(CFGParser.WhileLoopContext ctx) { return visitChildren(ctx); }
+
+    @Override public Node visitForLoop(CFGParser.ForLoopContext ctx) { return visitChildren(ctx); }
+
+    @Override public Node visitStmtBody(CFGParser.StmtBodyContext ctx) { return visitChildren(ctx); }
+
+    @Override public Node visitAssignment(CFGParser.AssignmentContext ctx) { return visitChildren(ctx); }
+
+    @Override public Node visitInfixExpr(CFGParser.InfixExprContext ctx) {
         InfixExpressionNode node;
 
         switch (ctx.op.getType()) {
@@ -189,178 +142,71 @@ public class BuildAstVisitor extends CFGBaseVisitor<ExpressionNode> {
                 return null;
         }
 
-        node.Left = visit(ctx.getChild(0));
-
-        System.out.println(node.Left);
-
-        node.Right = visit(ctx.getChild(1));
-
-        System.out.println(node.Right);
+        for(var child : ctx.children) {
+            if(child.getClass().getSimpleName().equals("TerminalNodeImpl"))
+                continue;
+            //System.out.println(child.getClass().getSimpleName());
+            node.Nodes.add(visit(child));
+        }
 
         return node;
     }
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     */
-    @Override public ExpressionNode visitFuncExpr(CFGParser.FuncExprContext ctx) { return visitChildren(ctx); }
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     */
-    @Override public ExpressionNode visitLiteralExpr(CFGParser.LiteralExprContext ctx) {
+
+    @Override public Node visitFuncExpr(CFGParser.FuncExprContext ctx) { return visitChildren(ctx); }
+
+    @Override public Node visitLiteralExpr(CFGParser.LiteralExprContext ctx) {
         return visitChildren(ctx);
     }
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     */
-    @Override public ExpressionNode visitLogicalExpr(CFGParser.LogicalExprContext ctx) {
 
-
+    @Override public Node visitLogicalExpr(CFGParser.LogicalExprContext ctx) {
         return visitChildren(ctx);
     }
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     */
-    @Override public ExpressionNode visitArrExpr(CFGParser.ArrExprContext ctx) { return visitChildren(ctx); }
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     */
-    @Override public ExpressionNode visitParensExpr(CFGParser.ParensExprContext ctx) { return visitChildren(ctx); }
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     */
-    @Override public ExpressionNode visitPvrExpr(CFGParser.PvrExprContext ctx) { return visitChildren(ctx); }
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     */
-    @Override public ExpressionNode visitIdentifierExpr(CFGParser.IdentifierExprContext ctx) { return visitChildren(ctx); }
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     */
-    @Override public ExpressionNode visitCompareExpr(CFGParser.CompareExprContext ctx) { return visitChildren(ctx); }
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     */
-    @Override public ExpressionNode visitFunctionCall(CFGParser.FunctionCallContext ctx) { return visitChildren(ctx); }
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     */
-    @Override public ExpressionNode visitParams(CFGParser.ParamsContext ctx) { return visitChildren(ctx); }
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     */
-    @Override public ExpressionNode visitMultipleParams(CFGParser.MultipleParamsContext ctx) { return visitChildren(ctx); }
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     */
-    @Override public ExpressionNode visitDclParams(CFGParser.DclParamsContext ctx) { return visitChildren(ctx); }
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     */
-    @Override public ExpressionNode visitMultipleDclParams(CFGParser.MultipleDclParamsContext ctx) { return visitChildren(ctx); }
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     */
-    @Override public ExpressionNode visitType(CFGParser.TypeContext ctx) { return visitChildren(ctx); }
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     */
-    @Override public ExpressionNode visitPrimType(CFGParser.PrimTypeContext ctx) { return visitChildren(ctx); }
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     */
-    @Override public ExpressionNode visitComplexType(CFGParser.ComplexTypeContext ctx) { return visitChildren(ctx); }
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     */
-    @Override public ExpressionNode visitIdentifier(CFGParser.IdentifierContext ctx) { return visitChildren(ctx); }
 
-    @Override public ExpressionNode visitLiteral(CFGParser.LiteralContext ctx) {
-        if (!ctx.numberLiteral().isEmpty()) {
-            NumbernNode test = new NumbernNode();
-            test.Value = Float.parseFloat(ctx.numberLiteral().getText());
-            return test;
-        }
-        return null;
+    @Override public Node visitArrExpr(CFGParser.ArrExprContext ctx) { return visitChildren(ctx); }
+
+    @Override public Node visitParensExpr(CFGParser.ParensExprContext ctx) { return visitChildren(ctx); }
+
+    @Override public Node visitPvrExpr(CFGParser.PvrExprContext ctx) { return visitChildren(ctx); }
+
+    @Override public Node visitIdentifierExpr(CFGParser.IdentifierExprContext ctx) { return visitChildren(ctx); }
+
+    @Override public Node visitCompareExpr(CFGParser.CompareExprContext ctx) { return visitChildren(ctx); }
+
+    @Override public Node visitFunctionCall(CFGParser.FunctionCallContext ctx) { return visitChildren(ctx); }
+
+    @Override public Node visitParams(CFGParser.ParamsContext ctx) { return visitChildren(ctx); }
+
+    @Override public Node visitMultipleParams(CFGParser.MultipleParamsContext ctx) { return visitChildren(ctx); }
+
+    @Override public Node visitDclParams(CFGParser.DclParamsContext ctx) { return visitChildren(ctx); }
+
+    @Override public Node visitMultipleDclParams(CFGParser.MultipleDclParamsContext ctx) { return visitChildren(ctx); }
+
+    @Override public Node visitType(CFGParser.TypeContext ctx) { return visitChildren(ctx); }
+
+    @Override public Node visitPrimType(CFGParser.PrimTypeContext ctx) { return visitChildren(ctx); }
+
+    @Override public Node visitComplexType(CFGParser.ComplexTypeContext ctx) { return visitChildren(ctx); }
+
+    @Override public Node visitIdentifier(CFGParser.IdentifierContext ctx) { return visitChildren(ctx); }
+
+    @Override public Node visitLiteral(CFGParser.LiteralContext ctx) {
+        return visitChildren(ctx);
     }
 
-    @Override public ExpressionNode visitNumberLiteral(CFGParser.NumberLiteralContext ctx) { return visitChildren(ctx); }
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     */
-    @Override public ExpressionNode visitStringLiteral(CFGParser.StringLiteralContext ctx) { return visitChildren(ctx); }
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     */
-    @Override public ExpressionNode visitBoolLiteral(CFGParser.BoolLiteralContext ctx) { return visitChildren(ctx); }
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     */
-    @Override public ExpressionNode visitBool(CFGParser.BoolContext ctx) { return visitChildren(ctx); }
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     */
-    @Override public ExpressionNode visitCodeBlock(CFGParser.CodeBlockContext ctx) { return visitChildren(ctx); }
+    @Override public Node visitNumberLiteral(CFGParser.NumberLiteralContext ctx) {
+        NumbernNode numbernNode = new NumbernNode();
+
+        numbernNode.Value = Float.parseFloat(ctx.getText());
+
+        return numbernNode;
+    }
+
+    @Override public Node visitStringLiteral(CFGParser.StringLiteralContext ctx) { return visitChildren(ctx); }
+
+    @Override public Node visitBoolLiteral(CFGParser.BoolLiteralContext ctx) { return visitChildren(ctx); }
+
+    @Override public Node visitBool(CFGParser.BoolContext ctx) { return visitChildren(ctx); }
+
+    @Override public Node visitCodeBlock(CFGParser.CodeBlockContext ctx) { return visitChildren(ctx); }
 }

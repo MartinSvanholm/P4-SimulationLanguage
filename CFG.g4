@@ -10,13 +10,13 @@ updateSection: 'Simulation Update' '{' line* '}';
 
 outputSection: 'Simulation Output' '{' line* '}';
 
-line: initCondition         #lineInitCondition
-    | dcl                   #lineDcl
-    | statement             #lineStatement
-    | assignment            #lineAssignment
-    | expr SemiColon        #lineExpr
-    | Comment               #lineComment
-    | MultiComment         #lineMultiComment
+line: initCondition
+    | dcl
+    | statement
+    | assignment
+    | expr SemiColon
+    | Comment
+    | MultiComment
     ;
 
 dcl: functionDcl
@@ -137,7 +137,10 @@ complexType: 'Vehicle ' | 'Node ' | 'List<' type '>';
 
 identifier: Letter (Letter | Number*) ('.' identifier)*;
 
-literal: numberLiteral | stringLiteral | boolLiteral;
+literal: numberLiteral
+       | stringLiteral
+       | boolLiteral
+       ;
 
 numberLiteral: (Number | Number '.' Number)+;
 

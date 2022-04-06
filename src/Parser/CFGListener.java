@@ -1,5 +1,5 @@
-package Main;
 // Generated from C:/Users/Martin Svanholm/Documents/GitHub/P4-SimulationLanguage\CFG.g4 by ANTLR 4.9.2
+package Parser;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
 /**
@@ -58,89 +58,15 @@ public interface CFGListener extends ParseTreeListener {
 	 */
 	void exitOutputSection(CFGParser.OutputSectionContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code lineInitCondition}
-	 * labeled alternative in {@link CFGParser#line}.
+	 * Enter a parse tree produced by {@link CFGParser#line}.
 	 * @param ctx the parse tree
 	 */
-	void enterLineInitCondition(CFGParser.LineInitConditionContext ctx);
+	void enterLine(CFGParser.LineContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code lineInitCondition}
-	 * labeled alternative in {@link CFGParser#line}.
+	 * Exit a parse tree produced by {@link CFGParser#line}.
 	 * @param ctx the parse tree
 	 */
-	void exitLineInitCondition(CFGParser.LineInitConditionContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code lineDcl}
-	 * labeled alternative in {@link CFGParser#line}.
-	 * @param ctx the parse tree
-	 */
-	void enterLineDcl(CFGParser.LineDclContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code lineDcl}
-	 * labeled alternative in {@link CFGParser#line}.
-	 * @param ctx the parse tree
-	 */
-	void exitLineDcl(CFGParser.LineDclContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code lineStatement}
-	 * labeled alternative in {@link CFGParser#line}.
-	 * @param ctx the parse tree
-	 */
-	void enterLineStatement(CFGParser.LineStatementContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code lineStatement}
-	 * labeled alternative in {@link CFGParser#line}.
-	 * @param ctx the parse tree
-	 */
-	void exitLineStatement(CFGParser.LineStatementContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code lineAssignment}
-	 * labeled alternative in {@link CFGParser#line}.
-	 * @param ctx the parse tree
-	 */
-	void enterLineAssignment(CFGParser.LineAssignmentContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code lineAssignment}
-	 * labeled alternative in {@link CFGParser#line}.
-	 * @param ctx the parse tree
-	 */
-	void exitLineAssignment(CFGParser.LineAssignmentContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code lineExpr}
-	 * labeled alternative in {@link CFGParser#line}.
-	 * @param ctx the parse tree
-	 */
-	void enterLineExpr(CFGParser.LineExprContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code lineExpr}
-	 * labeled alternative in {@link CFGParser#line}.
-	 * @param ctx the parse tree
-	 */
-	void exitLineExpr(CFGParser.LineExprContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code lineComment}
-	 * labeled alternative in {@link CFGParser#line}.
-	 * @param ctx the parse tree
-	 */
-	void enterLineComment(CFGParser.LineCommentContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code lineComment}
-	 * labeled alternative in {@link CFGParser#line}.
-	 * @param ctx the parse tree
-	 */
-	void exitLineComment(CFGParser.LineCommentContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code lineMultiComment}
-	 * labeled alternative in {@link CFGParser#line}.
-	 * @param ctx the parse tree
-	 */
-	void enterLineMultiComment(CFGParser.LineMultiCommentContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code lineMultiComment}
-	 * labeled alternative in {@link CFGParser#line}.
-	 * @param ctx the parse tree
-	 */
-	void exitLineMultiComment(CFGParser.LineMultiCommentContext ctx);
+	void exitLine(CFGParser.LineContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link CFGParser#dcl}.
 	 * @param ctx the parse tree

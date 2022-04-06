@@ -1,5 +1,5 @@
-package Main;
 // Generated from C:/Users/Martin Svanholm/Documents/GitHub/P4-SimulationLanguage\CFG.g4 by ANTLR 4.9.2
+package Parser;
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 
 /**
@@ -41,54 +41,11 @@ public interface CFGVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitOutputSection(CFGParser.OutputSectionContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code lineInitCondition}
-	 * labeled alternative in {@link CFGParser#line}.
+	 * Visit a parse tree produced by {@link CFGParser#line}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitLineInitCondition(CFGParser.LineInitConditionContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code lineDcl}
-	 * labeled alternative in {@link CFGParser#line}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitLineDcl(CFGParser.LineDclContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code lineStatement}
-	 * labeled alternative in {@link CFGParser#line}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitLineStatement(CFGParser.LineStatementContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code lineAssignment}
-	 * labeled alternative in {@link CFGParser#line}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitLineAssignment(CFGParser.LineAssignmentContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code lineExpr}
-	 * labeled alternative in {@link CFGParser#line}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitLineExpr(CFGParser.LineExprContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code lineComment}
-	 * labeled alternative in {@link CFGParser#line}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitLineComment(CFGParser.LineCommentContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code lineMultiComment}
-	 * labeled alternative in {@link CFGParser#line}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitLineMultiComment(CFGParser.LineMultiCommentContext ctx);
+	T visitLine(CFGParser.LineContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link CFGParser#dcl}.
 	 * @param ctx the parse tree

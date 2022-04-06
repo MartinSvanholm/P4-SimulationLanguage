@@ -1,4 +1,4 @@
-package ASTNodes;
+package ASTNodes.ExprNodes;
 
 public class DivisionNode extends InfixExpressionNode {
 }

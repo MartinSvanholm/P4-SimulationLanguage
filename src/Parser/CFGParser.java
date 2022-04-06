@@ -1,5 +1,5 @@
-package Main;
 // Generated from C:/Users/Martin Svanholm/Documents/GitHub/P4-SimulationLanguage\CFG.g4 by ANTLR 4.9.2
+package Parser;
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.*;
@@ -494,143 +494,39 @@ public class CFGParser extends Parser {
 	}
 
 	public static class LineContext extends ParserRuleContext {
-		public LineContext(ParserRuleContext parent, int invokingState) {
-			super(parent, invokingState);
-		}
-		@Override public int getRuleIndex() { return RULE_line; }
-	 
-		public LineContext() { }
-		public void copyFrom(LineContext ctx) {
-			super.copyFrom(ctx);
-		}
-	}
-	public static class LineInitConditionContext extends LineContext {
 		public InitConditionContext initCondition() {
 			return getRuleContext(InitConditionContext.class,0);
 		}
-		public LineInitConditionContext(LineContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof CFGListener ) ((CFGListener)listener).enterLineInitCondition(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof CFGListener ) ((CFGListener)listener).exitLineInitCondition(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CFGVisitor ) return ((CFGVisitor<? extends T>)visitor).visitLineInitCondition(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class LineStatementContext extends LineContext {
-		public StatementContext statement() {
-			return getRuleContext(StatementContext.class,0);
-		}
-		public LineStatementContext(LineContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof CFGListener ) ((CFGListener)listener).enterLineStatement(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof CFGListener ) ((CFGListener)listener).exitLineStatement(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CFGVisitor ) return ((CFGVisitor<? extends T>)visitor).visitLineStatement(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class LineDclContext extends LineContext {
 		public DclContext dcl() {
 			return getRuleContext(DclContext.class,0);
 		}
-		public LineDclContext(LineContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof CFGListener ) ((CFGListener)listener).enterLineDcl(this);
+		public StatementContext statement() {
+			return getRuleContext(StatementContext.class,0);
 		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof CFGListener ) ((CFGListener)listener).exitLineDcl(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CFGVisitor ) return ((CFGVisitor<? extends T>)visitor).visitLineDcl(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class LineMultiCommentContext extends LineContext {
-		public TerminalNode MultiComment() { return getToken(CFGParser.MultiComment, 0); }
-		public LineMultiCommentContext(LineContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof CFGListener ) ((CFGListener)listener).enterLineMultiComment(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof CFGListener ) ((CFGListener)listener).exitLineMultiComment(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CFGVisitor ) return ((CFGVisitor<? extends T>)visitor).visitLineMultiComment(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class LineAssignmentContext extends LineContext {
 		public AssignmentContext assignment() {
 			return getRuleContext(AssignmentContext.class,0);
 		}
-		public LineAssignmentContext(LineContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof CFGListener ) ((CFGListener)listener).enterLineAssignment(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof CFGListener ) ((CFGListener)listener).exitLineAssignment(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CFGVisitor ) return ((CFGVisitor<? extends T>)visitor).visitLineAssignment(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class LineExprContext extends LineContext {
 		public ExprContext expr() {
 			return getRuleContext(ExprContext.class,0);
 		}
 		public TerminalNode SemiColon() { return getToken(CFGParser.SemiColon, 0); }
-		public LineExprContext(LineContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof CFGListener ) ((CFGListener)listener).enterLineExpr(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof CFGListener ) ((CFGListener)listener).exitLineExpr(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CFGVisitor ) return ((CFGVisitor<? extends T>)visitor).visitLineExpr(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class LineCommentContext extends LineContext {
 		public TerminalNode Comment() { return getToken(CFGParser.Comment, 0); }
-		public LineCommentContext(LineContext ctx) { copyFrom(ctx); }
+		public TerminalNode MultiComment() { return getToken(CFGParser.MultiComment, 0); }
+		public LineContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_line; }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof CFGListener ) ((CFGListener)listener).enterLineComment(this);
+			if ( listener instanceof CFGListener ) ((CFGListener)listener).enterLine(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof CFGListener ) ((CFGListener)listener).exitLineComment(this);
+			if ( listener instanceof CFGListener ) ((CFGListener)listener).exitLine(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CFGVisitor ) return ((CFGVisitor<? extends T>)visitor).visitLineComment(this);
+			if ( visitor instanceof CFGVisitor ) return ((CFGVisitor<? extends T>)visitor).visitLine(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -643,7 +539,6 @@ public class CFGParser extends Parser {
 			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,8,_ctx) ) {
 			case 1:
-				_localctx = new LineInitConditionContext(_localctx);
 				enterOuterAlt(_localctx, 1);
 				{
 				setState(147);
@@ -651,7 +546,6 @@ public class CFGParser extends Parser {
 				}
 				break;
 			case 2:
-				_localctx = new LineDclContext(_localctx);
 				enterOuterAlt(_localctx, 2);
 				{
 				setState(148);
@@ -659,7 +553,6 @@ public class CFGParser extends Parser {
 				}
 				break;
 			case 3:
-				_localctx = new LineStatementContext(_localctx);
 				enterOuterAlt(_localctx, 3);
 				{
 				setState(149);
@@ -667,7 +560,6 @@ public class CFGParser extends Parser {
 				}
 				break;
 			case 4:
-				_localctx = new LineAssignmentContext(_localctx);
 				enterOuterAlt(_localctx, 4);
 				{
 				setState(150);
@@ -675,7 +567,6 @@ public class CFGParser extends Parser {
 				}
 				break;
 			case 5:
-				_localctx = new LineExprContext(_localctx);
 				enterOuterAlt(_localctx, 5);
 				{
 				setState(151);
@@ -685,7 +576,6 @@ public class CFGParser extends Parser {
 				}
 				break;
 			case 6:
-				_localctx = new LineCommentContext(_localctx);
 				enterOuterAlt(_localctx, 6);
 				{
 				setState(154);
@@ -693,7 +583,6 @@ public class CFGParser extends Parser {
 				}
 				break;
 			case 7:
-				_localctx = new LineMultiCommentContext(_localctx);
 				enterOuterAlt(_localctx, 7);
 				{
 				setState(155);
@@ -2570,7 +2459,9 @@ public class CFGParser extends Parser {
 		}
 	}
 	public static class InfixExprContext extends ExprContext {
+		public ExprContext left;
 		public Token op;
+		public ExprContext right;
 		public List<ExprContext> expr() {
 			return getRuleContexts(ExprContext.class);
 		}
@@ -2869,6 +2760,7 @@ public class CFGParser extends Parser {
 					case 3:
 						{
 						_localctx = new InfixExprContext(new ExprContext(_parentctx, _parentState));
+						((InfixExprContext)_localctx).left = _prevctx;
 						pushNewRecursionContext(_localctx, _startState, RULE_expr);
 						setState(414);
 						if (!(precpred(_ctx, 7))) throw new FailedPredicateException(this, "precpred(_ctx, 7)");
@@ -2884,7 +2776,7 @@ public class CFGParser extends Parser {
 							consume();
 						}
 						setState(416);
-						expr(8);
+						((InfixExprContext)_localctx).right = expr(8);
 						}
 						break;
 					case 4:

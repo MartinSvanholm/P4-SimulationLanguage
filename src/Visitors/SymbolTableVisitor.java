@@ -1,5 +1,5 @@
 package Visitors;
-import Main.*;
+import Parser.*;
 import SymbolTable.*;
 
 import javax.imageio.IIOException;
