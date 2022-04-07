@@ -22,8 +22,8 @@ line: initCondition
 dcl: functionDcl
    | listDcl
    | classDcl
-   | objDcl
-   | primVarDcl;
+   | objDcl;
+   //| primVarDcl;
 
 endCondition: 'EndCondition' '{' codeBlock* 'return' expr SemiColon '}';
 
@@ -48,7 +48,7 @@ classBody: '{' classPropDcl* '}';
 classPropDcl: contructorDcl
             | functionDcl
             | listDcl
-            | primVarDcl
+            //| primVarDcl
             | statement
             | assignment
             | expr SemiColon;
@@ -57,9 +57,9 @@ contructorDcl: 'constructor' 'Create<' type '>' dclParams '{' codeBlock* '}';
 
 constructorCall: 'Create<' type '>' '(' (params multipleParams)? ')';
 
-objDcl: type identifier Equals (constructorCall | expr) SemiColon;
+//primVarDcl: primType identifier (Equals expr)? SemiColon;
 
-primVarDcl: primType identifier (Equals expr)? SemiColon;
+objDcl: type identifier Equals (constructorCall | expr) SemiColon;
 
 statement: selectiveCtrl
          | iterativeCtrl
@@ -130,10 +130,10 @@ multipleDclParams: (Comma type identifier)*;
 
 type: primType | complexType | identifier;
 
-primType: 'number ' | 'string ' | 'bool ';
+primType: ' number ' | 'string' | 'bool';
 
 // Node node = Nodes[RandomInt(0, IONode.length)];
-complexType: 'Vehicle ' | 'Node ' | 'List<' type '>';
+complexType: 'Vehicle' | 'Node' | listType='List<' type '>';
 
 identifier: Letter (Letter | Number*) ('.' identifier)*;
 

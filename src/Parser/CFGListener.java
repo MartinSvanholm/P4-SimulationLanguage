@@ -188,16 +188,6 @@ public interface CFGListener extends ParseTreeListener {
 	 */
 	void exitObjDcl(CFGParser.ObjDclContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link CFGParser#primVarDcl}.
-	 * @param ctx the parse tree
-	 */
-	void enterPrimVarDcl(CFGParser.PrimVarDclContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link CFGParser#primVarDcl}.
-	 * @param ctx the parse tree
-	 */
-	void exitPrimVarDcl(CFGParser.PrimVarDclContext ctx);
-	/**
 	 * Enter a parse tree produced by {@link CFGParser#statement}.
 	 * @param ctx the parse tree
 	 */

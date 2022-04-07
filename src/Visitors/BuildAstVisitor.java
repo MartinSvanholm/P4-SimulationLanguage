@@ -1,6 +1,7 @@
 package Visitors;
 
 import ASTNodes.*;
+import ASTNodes.DclNodes.ObjDclNode;
 import ASTNodes.ExprNodes.*;
 import ASTNodes.ExprNodes.CompareNodes.*;
 import ASTNodes.ExprNodes.LogicalNodes.AndNode;
@@ -101,9 +102,21 @@ public class BuildAstVisitor extends CFGBaseVisitor<Node> {
 
     @Override public Node visitConstructorCall(CFGParser.ConstructorCallContext ctx) { return visitChildren(ctx); }
 
-    @Override public Node visitObjDcl(CFGParser.ObjDclContext ctx) { return visitChildren(ctx); }
+    @Override public Node visitObjDcl(CFGParser.ObjDclContext ctx) {
+        ObjDclNode node = new ObjDclNode();
 
-    @Override public Node visitPrimVarDcl(CFGParser.PrimVarDclContext ctx) { return visitChildren(ctx); }
+        node.Nodes.add(visit(ctx.identifier()));
+
+        if(ctx.constructorCall() != null) {
+            node.Nodes.add(visit(ctx.constructorCall()));
+        } else if(ctx.expr() != null) {
+            node.Nodes.add(visit(ctx.expr()));
+        }
+
+        node.Value = visit(ctx.type()).Value;
+
+        return node;
+    }
 
     @Override public Node visitStatement(CFGParser.StatementContext ctx) { return visitChildren(ctx); }
 
@@ -288,9 +301,25 @@ public class BuildAstVisitor extends CFGBaseVisitor<Node> {
 
     @Override public Node visitType(CFGParser.TypeContext ctx) { return visitChildren(ctx); }
 
-    @Override public Node visitPrimType(CFGParser.PrimTypeContext ctx) { return visitChildren(ctx); }
+    @Override public Node visitPrimType(CFGParser.PrimTypeContext ctx) {
+        TypeNode node = new TypeNode();
 
-    @Override public Node visitComplexType(CFGParser.ComplexTypeContext ctx) { return visitChildren(ctx); }
+        node.Value = ctx.getText();
+
+        return node;
+    }
+
+    @Override public Node visitComplexType(CFGParser.ComplexTypeContext ctx) {
+        TypeNode node = new TypeNode();
+
+        if(ctx.listType != null) {
+            node.Value = "List<" + visit(ctx.type()).Value + ">";
+        } else {
+            node.Value = ctx.getText();
+        }
+
+        return node;
+    }
 
     @Override public Node visitIdentifier(CFGParser.IdentifierContext ctx) {
         IdentifierNode node = new IdentifierNode();
@@ -315,7 +344,7 @@ public class BuildAstVisitor extends CFGBaseVisitor<Node> {
     @Override public Node visitStringLiteral(CFGParser.StringLiteralContext ctx) {
         StringNode stringNode = new StringNode();
 
-        stringNode.Value = ctx.getText();
+        stringNode.Value = ctx.getChild(1).getText();
 
         return stringNode;
     }

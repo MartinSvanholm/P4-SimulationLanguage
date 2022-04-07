@@ -1,3 +1,5 @@
 Simulation Environment {
-    x*5;
+    string x = "hej";
+
+    x = "Jeppe";
 }

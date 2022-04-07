@@ -232,18 +232,6 @@ public class CFGBaseListener implements CFGListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterPrimVarDcl(CFGParser.PrimVarDclContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitPrimVarDcl(CFGParser.PrimVarDclContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterStatement(CFGParser.StatementContext ctx) { }
 	/**
 	 * {@inheritDoc}

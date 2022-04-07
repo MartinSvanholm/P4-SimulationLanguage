@@ -119,12 +119,6 @@ public interface CFGVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitObjDcl(CFGParser.ObjDclContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link CFGParser#primVarDcl}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitPrimVarDcl(CFGParser.PrimVarDclContext ctx);
-	/**
 	 * Visit a parse tree produced by {@link CFGParser#statement}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
