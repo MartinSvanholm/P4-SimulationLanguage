@@ -27,8 +27,6 @@ public class Main {
 
     public static void main(String[] args) {
 
-        Node ast = null;
-
         try {
             CharStream cs = null;
             cs = fromFileName(args[0]);
@@ -39,7 +37,12 @@ public class Main {
 
             BuildAstVisitor visitor = new BuildAstVisitor();
 
-            ast = visitor.visitProgram(cfgParser.program());
+            Node ast = visitor.visitProgram(cfgParser.program());
+
+            ASTPrinter printer = new ASTPrinter();
+
+            if(ast != null)
+                printer.PrintAST(ast);
 
         } catch (NoSuchFileException exception) {
             System.out.println(ANSI_RED + "File does not exist" + ANSI_RESET);
@@ -47,11 +50,6 @@ public class Main {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        ASTPrinter printer = new ASTPrinter();
-        
-        if(ast != null)
-            printer.PrintAST(ast);
 
                     /*
             SymbolTable symbolTable = new SymbolTable();

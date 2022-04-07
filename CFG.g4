@@ -104,18 +104,18 @@ stmtBody: '{' codeBlock* '}';
 
 assignment: identifier Equals (identifier | expr) SemiColon;
 
-expr: functionCall                              # funcExpr
-    | expr '[' expr ']' expr?                   # arrExpr
-    | '(' expr ')'                              # parensExpr
-    | expr '^' expr                             # pvrExpr
-    | expr ('*' | '/' | '%') expr               # infixExpr
-    | left=expr op=('+' | '-') right=expr       # infixExpr
-    | expr ('<=' | '>=' | '<' | '>') expr       #compareExpr
-    | expr ('==' | '!=') expr                   #compareExpr
-    | expr ('&&' | ' and ') expr                #logicalExpr
-    | expr ('||' | ' or ')                      #logicalExpr
-    | literal                                   #literalExpr
-    | identifier                                #identifierExpr
+expr: functionCall                                         # funcExpr
+    | left=expr '[' index=expr ']' right=expr?             # arrExpr
+    | '(' middel=expr ')'                                         # parensExpr
+    | left=expr op='^' right=expr                          # infixExpr
+    | left=expr op=('*' | '/' | '%') right=expr            # infixExpr
+    | left=expr op=('+' | '-') right=expr                  # infixExpr
+    | left=expr op=('<=' | '>=' | '<' | '>') right=expr    #compareExpr
+    | left=expr op=('==' | '!=') right=expr                #compareExpr
+    | left=expr op=('&&' | ' and ') right=expr             #logicalExpr
+    | left=expr op=('||' | ' or ') right=expr              #logicalExpr
+    | literal                                              #literalExpr
+    | identifier                                           #identifierExpr
     ;
 
 functionCall: identifier '(' (params (Comma params)* )? ')';
@@ -152,10 +152,24 @@ bool: 'true' | 'false';
 
 codeBlock: dcl | statement | assignment | expr SemiColon;
 
-OP_ADD: '+';
-OP_SUB: '-';
+OP_POW: '^';
 OP_MUL: '*';
 OP_DIV: '/';
+OP_MOD: '%';
+OP_ADD: '+';
+OP_SUB: '-';
+
+OP_LTOE: '<=';
+OP_GTOE: '>=';
+OP_LT: '<';
+OP_GT: '>';
+OP_EQUALS: '==';
+OP_NEQUALS: '!=';
+
+OP_AND: ' and ';
+OP_AND2: '&&';
+OP_OR: ' or ';
+OP_OR2: '||';
 
 Number: ('0'..'9');
 

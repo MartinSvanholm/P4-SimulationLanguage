@@ -2,10 +2,13 @@ package Visitors;
 
 import ASTNodes.*;
 import ASTNodes.ExprNodes.*;
+import ASTNodes.ExprNodes.CompareNodes.*;
+import ASTNodes.ExprNodes.LogicalNodes.AndNode;
+import ASTNodes.ExprNodes.LogicalNodes.LogicalNode;
+import ASTNodes.ExprNodes.LogicalNodes.ORNode;
 import Parser.CFGParser;
 import Parser.CFGBaseVisitor;
 import Parser.CFGLexer;
-import com.sun.jdi.Value;
 
 public class BuildAstVisitor extends CFGBaseVisitor<Node> {
     @Override public Node visitProgram(CFGParser.ProgramContext ctx) {
@@ -130,7 +133,6 @@ public class BuildAstVisitor extends CFGBaseVisitor<Node> {
         switch (ctx.op.getType()) {
             case CFGLexer.OP_ADD:
                 node = new AdditionNode();
-                node.Value = "+";
                 break;
 
             case CFGLexer.OP_SUB:
@@ -144,9 +146,17 @@ public class BuildAstVisitor extends CFGBaseVisitor<Node> {
             case CFGLexer.OP_DIV:
                 node = new DivisionNode();
                 break;
+            case CFGLexer.OP_POW:
+                node = new PowNode();
+                break;
+            case CFGLexer.OP_MOD:
+                node = new ModNode();
+                break;
             default:
                 return null;
         }
+
+        node.Value = ctx.op.getText();
 
         for(var child : ctx.children) {
             if(child.getClass().getSimpleName().equals("TerminalNodeImpl"))
@@ -158,25 +168,101 @@ public class BuildAstVisitor extends CFGBaseVisitor<Node> {
         return node;
     }
 
-    @Override public Node visitFuncExpr(CFGParser.FuncExprContext ctx) { return visitChildren(ctx); }
+    @Override public Node visitFuncExpr(CFGParser.FuncExprContext ctx) {
+        return visitChildren(ctx);
+    }
 
     @Override public Node visitLiteralExpr(CFGParser.LiteralExprContext ctx) {
         return visitChildren(ctx);
     }
 
     @Override public Node visitLogicalExpr(CFGParser.LogicalExprContext ctx) {
-        return visitChildren(ctx);
+        LogicalNode node;
+
+        switch (ctx.op.getType()) {
+            case CFGLexer.OP_AND:
+            case CFGLexer.OP_AND2:
+                node = new AndNode();
+                break;
+            case CFGLexer.OP_OR:
+            case CFGLexer.OP_OR2:
+                node = new ORNode();
+                break;
+            default:
+                return null;
+        }
+
+        node.Value = ctx.op.getText();
+
+        for(var child : ctx.children) {
+            if(child.getClass().getSimpleName().equals("TerminalNodeImpl"))
+                continue;
+            //System.out.println(child.getClass().getSimpleName());
+            node.Nodes.add(visit(child));
+        }
+
+        return node;
     }
 
-    @Override public Node visitArrExpr(CFGParser.ArrExprContext ctx) { return visitChildren(ctx); }
+    @Override public Node visitArrExpr(CFGParser.ArrExprContext ctx) {
+        ArrayExprNode arrayExprNode = new ArrayExprNode();
 
-    @Override public Node visitParensExpr(CFGParser.ParensExprContext ctx) { return visitChildren(ctx); }
+        arrayExprNode.Nodes.add(visit(ctx.left));
 
-    @Override public Node visitPvrExpr(CFGParser.PvrExprContext ctx) { return visitChildren(ctx); }
+        if(ctx.right != null)
+            arrayExprNode.Nodes.add(visit(ctx.right));
+
+        arrayExprNode.Value = "[" + visit(ctx.index).Value + "]";
+
+        return arrayExprNode;
+    }
+
+    @Override public Node visitParensExpr(CFGParser.ParensExprContext ctx) {
+        return visit(ctx.middel);
+    }
 
     @Override public Node visitIdentifierExpr(CFGParser.IdentifierExprContext ctx) { return visitChildren(ctx); }
 
-    @Override public Node visitCompareExpr(CFGParser.CompareExprContext ctx) { return visitChildren(ctx); }
+    @Override public Node visitCompareExpr(CFGParser.CompareExprContext ctx) {
+        CompareNode node;
+
+        switch (ctx.op.getType()) {
+            case CFGLexer.OP_LTOE:
+                node = new LTOENode();
+                break;
+
+            case CFGLexer.OP_GTOE:
+                node = new GTOENode();
+                break;
+
+            case CFGLexer.OP_LT:
+                node = new LTNode();
+                break;
+
+            case CFGLexer.OP_GT:
+                node = new GTNode();
+                break;
+            case CFGLexer.OP_EQUALS:
+                node = new EqualsNode();
+                break;
+            case CFGLexer.OP_NEQUALS:
+                node = new NEqualsNode();
+                break;
+            default:
+                return null;
+        }
+
+        node.Value = ctx.op.getText();
+
+        for(var child : ctx.children) {
+            if(child.getClass().getSimpleName().equals("TerminalNodeImpl"))
+                continue;
+            //System.out.println(child.getClass().getSimpleName());
+            node.Nodes.add(visit(child));
+        }
+
+        return node;
+    }
 
     @Override public Node visitFunctionCall(CFGParser.FunctionCallContext ctx) { return visitChildren(ctx); }
 

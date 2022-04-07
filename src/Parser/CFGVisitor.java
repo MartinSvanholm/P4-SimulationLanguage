@@ -233,13 +233,6 @@ public interface CFGVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitParensExpr(CFGParser.ParensExprContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code pvrExpr}
-	 * labeled alternative in {@link CFGParser#expr}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitPvrExpr(CFGParser.PvrExprContext ctx);
-	/**
 	 * Visit a parse tree produced by the {@code identifierExpr}
 	 * labeled alternative in {@link CFGParser#expr}.
 	 * @param ctx the parse tree

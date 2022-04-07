@@ -380,18 +380,6 @@ public interface CFGListener extends ParseTreeListener {
 	 */
 	void exitParensExpr(CFGParser.ParensExprContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code pvrExpr}
-	 * labeled alternative in {@link CFGParser#expr}.
-	 * @param ctx the parse tree
-	 */
-	void enterPvrExpr(CFGParser.PvrExprContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code pvrExpr}
-	 * labeled alternative in {@link CFGParser#expr}.
-	 * @param ctx the parse tree
-	 */
-	void exitPvrExpr(CFGParser.PvrExprContext ctx);
-	/**
 	 * Enter a parse tree produced by the {@code identifierExpr}
 	 * labeled alternative in {@link CFGParser#expr}.
 	 * @param ctx the parse tree
