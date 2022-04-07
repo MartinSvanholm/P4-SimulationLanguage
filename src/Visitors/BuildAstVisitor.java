@@ -125,7 +125,19 @@ public class BuildAstVisitor extends CFGBaseVisitor<Node> {
 
     @Override public Node visitStmtBody(CFGParser.StmtBodyContext ctx) { return visitChildren(ctx); }
 
-    @Override public Node visitAssignment(CFGParser.AssignmentContext ctx) { return visitChildren(ctx); }
+    @Override public Node visitAssignment(CFGParser.AssignmentContext ctx) {
+        AssignmentNode node = new AssignmentNode();
+
+        for(var child : ctx.children) {
+            if(child.getClass().getSimpleName().equals("TerminalNodeImpl"))
+                continue;
+            node.Nodes.add(visit(child));
+        }
+
+        node.Value = "=";
+
+        return node;
+    }
 
     @Override public Node visitInfixExpr(CFGParser.InfixExprContext ctx) {
         InfixExpressionNode node;
@@ -280,7 +292,13 @@ public class BuildAstVisitor extends CFGBaseVisitor<Node> {
 
     @Override public Node visitComplexType(CFGParser.ComplexTypeContext ctx) { return visitChildren(ctx); }
 
-    @Override public Node visitIdentifier(CFGParser.IdentifierContext ctx) { return visitChildren(ctx); }
+    @Override public Node visitIdentifier(CFGParser.IdentifierContext ctx) {
+        IdentifierNode node = new IdentifierNode();
+
+        node.Value = ctx.getText();
+
+        return node;
+    }
 
     @Override public Node visitLiteral(CFGParser.LiteralContext ctx) {
         return visitChildren(ctx);
