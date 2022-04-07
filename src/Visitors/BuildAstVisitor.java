@@ -5,10 +5,13 @@ import ASTNodes.ExprNodes.*;
 import Parser.CFGParser;
 import Parser.CFGBaseVisitor;
 import Parser.CFGLexer;
+import com.sun.jdi.Value;
 
 public class BuildAstVisitor extends CFGBaseVisitor<Node> {
     @Override public Node visitProgram(CFGParser.ProgramContext ctx) {
         ProgramNode programNode = new ProgramNode();
+
+        programNode.Value = "Program";
 
         for(var child : ctx.children) {
             if(child.getClass().getSimpleName().equals("TerminalNodeImpl"))
@@ -21,6 +24,8 @@ public class BuildAstVisitor extends CFGBaseVisitor<Node> {
 
     @Override public Node visitEnvironmentSection(CFGParser.EnvironmentSectionContext ctx) {
         SectionNode sectionNode = new SectionNode();
+
+        sectionNode.Value = "Environment";
 
         for(var child : ctx.children) {
             if(child.getClass().getSimpleName().equals("TerminalNodeImpl"))
@@ -125,6 +130,7 @@ public class BuildAstVisitor extends CFGBaseVisitor<Node> {
         switch (ctx.op.getType()) {
             case CFGLexer.OP_ADD:
                 node = new AdditionNode();
+                node.Value = "+";
                 break;
 
             case CFGLexer.OP_SUB:
@@ -195,11 +201,11 @@ public class BuildAstVisitor extends CFGBaseVisitor<Node> {
     }
 
     @Override public Node visitNumberLiteral(CFGParser.NumberLiteralContext ctx) {
-        NumbernNode numbernNode = new NumbernNode();
+        NumberNode numberNode = new NumberNode();
 
-        numbernNode.Value = Float.parseFloat(ctx.getText());
+        numberNode.Value = ctx.getText();
 
-        return numbernNode;
+        return numberNode;
     }
 
     @Override public Node visitStringLiteral(CFGParser.StringLiteralContext ctx) {
