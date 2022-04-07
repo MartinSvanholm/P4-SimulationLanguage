@@ -1,6 +1,8 @@
 package Visitors;
 
 import ASTNodes.*;
+import ASTNodes.ControlStructures.IfElseNode;
+import ASTNodes.ControlStructures.WhileLoopNode;
 import ASTNodes.ExprNodes.*;
 import ASTNodes.ExprNodes.CompareNodes.*;
 import ASTNodes.ExprNodes.LogicalNodes.AndNode;
@@ -109,9 +111,20 @@ public class BuildAstVisitor extends CFGBaseVisitor<Node> {
 
     @Override public Node visitSelectiveCtrl(CFGParser.SelectiveCtrlContext ctx) { return visitChildren(ctx); }
 
-    @Override public Node visitIfElseStmt(CFGParser.IfElseStmtContext ctx) { return visitChildren(ctx); }
+    @Override public Node visitIfElseStmt(CFGParser.IfElseStmtContext ctx) {
+        IfElseNode ifelseNode = new IfElseNode();
 
-    @Override public Node visitElseIfStmt(CFGParser.ElseIfStmtContext ctx) { return visitChildren(ctx); }
+        ifelseNode.Value = "ifElseStmt";
+        ifelseNode.Nodes.add(visit(ctx.left));
+        if(ctx.right != null)
+            ifelseNode.Nodes.add(visit(ctx.right));
+
+        return ifelseNode;
+    }
+
+    @Override public Node visitElseIfStmt(CFGParser.ElseIfStmtContext ctx) {
+
+    }
 
     @Override public Node visitSwitchStmt(CFGParser.SwitchStmtContext ctx) { return visitChildren(ctx); }
 
@@ -119,7 +132,12 @@ public class BuildAstVisitor extends CFGBaseVisitor<Node> {
 
     @Override public Node visitIterativeCtrl(CFGParser.IterativeCtrlContext ctx) { return visitChildren(ctx); }
 
-    @Override public Node visitWhileLoop(CFGParser.WhileLoopContext ctx) { return visitChildren(ctx); }
+    @Override public Node visitWhileLoop(CFGParser.WhileLoopContext ctx) {
+        WhileLoopNode node = new WhileLoopNode();
+        node.Value = "while";
+
+        return node;
+    }
 
     @Override public Node visitForLoop(CFGParser.ForLoopContext ctx) { return visitChildren(ctx); }
 
@@ -307,6 +325,7 @@ public class BuildAstVisitor extends CFGBaseVisitor<Node> {
 
         String boolText = ctx.getText();
 
+        boolNode.Value = ctx.getText();
         if(boolText.equals("true"))
             boolNode.Value = true;
          else if(boolText.equals("false"))

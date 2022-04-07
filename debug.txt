@@ -1,3 +1,7 @@
 Simulation Environment {
     5[4];
+    4 == 4;
+    if(true == true) {
+
+    }
 }

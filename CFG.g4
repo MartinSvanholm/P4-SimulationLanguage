@@ -74,10 +74,10 @@ selectiveCtrl: ifElseStmt | switchStmt;
         this.direction = false;
     }
 */
-ifElseStmt: 'if' '(' expr ')' stmtBody elseIfStmt?;
+ifElseStmt: 'if' '(' left=expr ')' stmtBody right=elseIfStmt?;
 
-elseIfStmt: 'else' stmtBody
-          | 'else if' '(' expr ')' stmtBody elseIfStmt?;
+elseIfStmt: left='else' stmtBody
+          | 'else if' '(' right=expr ')' stmtBody index=elseIfStmt?;
 
 switchStmt: 'switch' '(' expr ')' switchBody;
 
