@@ -202,9 +202,29 @@ public class BuildAstVisitor extends CFGBaseVisitor<Node> {
         return numbernNode;
     }
 
-    @Override public Node visitStringLiteral(CFGParser.StringLiteralContext ctx) { return visitChildren(ctx); }
+    @Override public Node visitStringLiteral(CFGParser.StringLiteralContext ctx) {
+        StringNode stringNode = new StringNode();
 
-    @Override public Node visitBoolLiteral(CFGParser.BoolLiteralContext ctx) { return visitChildren(ctx); }
+        stringNode.Value = ctx.getText();
+
+        return stringNode;
+    }
+
+    @Override public Node visitBoolLiteral(CFGParser.BoolLiteralContext ctx) {
+        BoolNode boolNode = new BoolNode();
+
+        String boolText = ctx.getText();
+
+        if(boolText.equals("true"))
+            boolNode.Value = true;
+         else if(boolText.equals("false"))
+            boolNode.Value = false;
+         else
+             System.out.println("Bool node text is neither true or false?");
+
+
+        return boolNode;
+    }
 
     @Override public Node visitBool(CFGParser.BoolContext ctx) { return visitChildren(ctx); }
 
