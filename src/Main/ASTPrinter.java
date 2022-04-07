@@ -12,7 +12,7 @@ public class ASTPrinter {
             System.out.print("   ");
         }
 
-        System.out.println(node);
+        System.out.println(node.Value);
         indent++;
         for(Node child : node.Nodes) {
             PrintAST(child);

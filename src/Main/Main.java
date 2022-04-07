@@ -27,31 +27,33 @@ public class Main {
 
     public static void main(String[] args) {
 
+        Node ast = null;
+
         try {
             CharStream cs = null;
             cs = fromFileName(args[0]);
-
-            //System.out.println(cs);
 
             CFGLexer lexer = new CFGLexer(cs);
             CommonTokenStream token = new CommonTokenStream(lexer);
             CFGParser cfgParser = new CFGParser(token);
 
-            //System.out.println(cst.toStringTree());
-
             BuildAstVisitor visitor = new BuildAstVisitor();
 
-            Node ast = visitor.visitProgram(cfgParser.program());
+            ast = visitor.visitProgram(cfgParser.program());
 
-            ASTPrinter printer = new ASTPrinter();
+        } catch (NoSuchFileException exception) {
+            System.out.println(ANSI_RED + "File does not exist" + ANSI_RESET);
 
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        ASTPrinter printer = new ASTPrinter();
+        
+        if(ast != null)
             printer.PrintAST(ast);
 
-            /*System.out.println(ast);
-            for (var node : ast.Nodes) {
-                System.out.println(node);
-            }*/
-            /*
+                    /*
             SymbolTable symbolTable = new SymbolTable();
 
             SymbolTableVisitor visitor = new SymbolTableVisitor(symbolTable);
@@ -61,12 +63,5 @@ public class Main {
             Printer Printer = new Printer(symbolTable);
 
             Printer.PrintValues();*/
-
-        } catch (NoSuchFileException exception) {
-            System.out.println(ANSI_RED + "File does not exist" + ANSI_RESET);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 }
