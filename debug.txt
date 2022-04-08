@@ -1,9 +1,28 @@
+//Mandatory "Environment" section
+//This functions as the setup for the simulation
 Simulation Environment {
-    5*5;
+    //Initializing nodes and intersections
+    IONode startNode = Create<IONode>();
+    IONode endNode = Create<IONode>();
+    List<IONode> IONodes {startNode, endNode};
+    List<Node> intersectionConnections {startNode, endNode};
+    Ligthregulation intersection = Create<Ligthregulation>(intersectionConnections);
 
-    if(false == true) {
-        number tester = 313;
-    } else {
-        number x = 5;
+    //Initializing roads
+    Road Road1 {
+        speedLimit = 50;
+        length = 1000;
+        startNode = SimStartnode;
+        endNode = Trafficlight1;
     }
+
+    Road Road2 {
+        speedLimit = 50;
+        length = 1000;
+        startNode = Trafficlight1;
+        endNode = SimEndnode;
+    }
+
+    //Putting the roads in a list
+    List<Road> roadList {Road1, Road2};
 }

@@ -33,8 +33,8 @@ initCondition: 'InitCondition<' type '>' '{' codeBlock* '}';
     Void function: function TestFunction() { }
     With return type: function bool IsClearToDrive() { }
 */
-functionDcl: 'function' identifier dclParams stmtBody
-           | 'function' primType identifier dclParams funcReturnBody;
+functionDcl: 'function' identifier '(' (dclParams (Comma dclParams)*)? ')' stmtBody
+           | 'function' type identifier '(' (dclParams (Comma dclParams)*)? ')' funcReturnBody;
 
 funcReturnBody: '{' codeBlock* 'return' expr SemiColon '}';
 

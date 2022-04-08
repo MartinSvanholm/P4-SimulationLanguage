@@ -1,6 +1,7 @@
 package Visitors;
 
 import ASTNodes.*;
+import ASTNodes.DclNodes.FunctionDclNode;
 import ASTNodes.DclNodes.ListDclNode;
 import ASTNodes.DclNodes.ObjDclNode;
 import ASTNodes.ControlStructures.ElseIfNode;
@@ -102,7 +103,26 @@ public class BuildAstVisitor extends CFGBaseVisitor<Node> {
 
     @Override public Node visitInitCondition(CFGParser.InitConditionContext ctx) { return visitChildren(ctx); }
 
-    @Override public Node visitFunctionDcl(CFGParser.FunctionDclContext ctx) { return visitChildren(ctx); }
+    @Override public Node visitFunctionDcl(CFGParser.FunctionDclContext ctx) {
+        FunctionDclNode node = new FunctionDclNode();
+        node.Value = "Function";
+
+        if(ctx.type() == null) {
+            TypeNode typeNode = new TypeNode();
+            typeNode.Value="void";
+            node.Nodes.add(typeNode);
+
+            node.Nodes.add(visit(ctx.identifier()));
+
+            for(var paramChild : ctx.dclParams()) {
+                node.Nodes.add(visit(paramChild));
+            }
+
+            node.Nodes.add(visit(ctx.stmtBody()));
+        }
+
+        return node;
+    }
 
     @Override public Node visitFuncReturnBody(CFGParser.FuncReturnBodyContext ctx) { return visitChildren(ctx); }
 
@@ -156,6 +176,15 @@ public class BuildAstVisitor extends CFGBaseVisitor<Node> {
 
         for(var paramChild : ctx.dclParams()) {
             node.Nodes.add(visit(paramChild));
+        }
+
+        ConstructorBodyNode constructorBodyNode = new ConstructorBodyNode();
+        constructorBodyNode.Value="Body";
+
+        node.Nodes.add(constructorBodyNode);
+
+        for(var child : ctx.codeBlock()) {
+            node.Nodes.get(1).Nodes.add(visit(child));
         }
 
         return node;
@@ -265,8 +294,6 @@ public class BuildAstVisitor extends CFGBaseVisitor<Node> {
                 continue;
             bodyNode.Nodes.add(visit(child));
         }
-
-        System.out.println(bodyNode.Nodes.get(0));
 
         return bodyNode;
     }
