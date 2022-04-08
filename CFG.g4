@@ -93,7 +93,7 @@ switchStmt: 'switch' '(' expr ')' switchBody;
             x = 0;
     }
 */
-switchBody: '{' ('case' (numberLiteral | type) ':' codeBlock* )+ ('default:' expr*)? '}';
+switchBody: '{' ('case' (numberLiteral | type) ':' codeBlock* )+ ('default:' codeBlock*)? '}';
 
 iterativeCtrl: whileLoop | forLoop;
 

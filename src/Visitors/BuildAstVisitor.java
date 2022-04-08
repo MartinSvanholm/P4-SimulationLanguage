@@ -237,9 +237,31 @@ public class BuildAstVisitor extends CFGBaseVisitor<Node> {
         return visitChildren(ctx);
     }
 
-    @Override public Node visitSwitchStmt(CFGParser.SwitchStmtContext ctx) { return visitChildren(ctx); }
+    @Override public Node visitSwitchStmt(CFGParser.SwitchStmtContext ctx) {
+        StatementNode switchNode = new StatementNode();
 
-    @Override public Node visitSwitchBody(CFGParser.SwitchBodyContext ctx) { return visitChildren(ctx); }
+        switchNode.Value = "switch";
+
+        switchNode.Nodes.add(visit(ctx.expr()));
+
+        switchNode.Nodes.add(visit(ctx.switchBody()));
+
+        return switchNode;
+    }
+
+    @Override public Node visitSwitchBody(CFGParser.SwitchBodyContext ctx) {
+        BodyNode bodyNode = new BodyNode();
+
+        bodyNode.Value = "switchBody";
+
+        for(var child : ctx.children) {
+            if(child.getClass().getSimpleName().equals("TerminalNodeImpl"))
+                continue;
+            bodyNode.Nodes.add(visit(child));
+        }
+
+        return bodyNode;
+    }
 
     @Override public Node visitIterativeCtrl(CFGParser.IterativeCtrlContext ctx) { return visitChildren(ctx); }
 
@@ -265,8 +287,6 @@ public class BuildAstVisitor extends CFGBaseVisitor<Node> {
                 continue;
             bodyNode.Nodes.add(visit(child));
         }
-
-        System.out.println(bodyNode.Nodes.get(0));
 
         return bodyNode;
     }

@@ -1,4 +1,4 @@
-// Generated from C:/Users/marti/OneDrive/Dokumenter/GitHub/P4-SimulationLanguage\CFG.g4 by ANTLR 4.9.2
+// Generated from C:/Users/krist/Documents/GitHub/P4-SimulationLanguage\CFG.g4 by ANTLR 4.9.2
 package Parser;
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
@@ -2036,12 +2036,6 @@ public class CFGParser extends Parser {
 		public CodeBlockContext codeBlock(int i) {
 			return getRuleContext(CodeBlockContext.class,i);
 		}
-		public List<ExprContext> expr() {
-			return getRuleContexts(ExprContext.class);
-		}
-		public ExprContext expr(int i) {
-			return getRuleContext(ExprContext.class,i);
-		}
 		public SwitchBodyContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -2134,11 +2128,11 @@ public class CFGParser extends Parser {
 				setState(364);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-				while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__13) | (1L << T__33) | (1L << T__34) | (1L << T__35) | (1L << Number) | (1L << Letter))) != 0)) {
+				while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__7) | (1L << T__9) | (1L << T__10) | (1L << T__13) | (1L << T__15) | (1L << T__18) | (1L << T__22) | (1L << T__23) | (1L << T__27) | (1L << T__28) | (1L << T__29) | (1L << T__30) | (1L << T__31) | (1L << T__33) | (1L << T__34) | (1L << T__35) | (1L << Number) | (1L << Letter))) != 0)) {
 					{
 					{
 					setState(361);
-					expr(0);
+					codeBlock();
 					}
 					}
 					setState(366);
@@ -4039,7 +4033,7 @@ public class CFGParser extends Parser {
 		"\2\2\u0160\u0162\5X-\2\u0161\u0160\3\2\2\2\u0162\u0165\3\2\2\2\u0163\u0161"+
 		"\3\2\2\2\u0163\u0164\3\2\2\2\u0164\u0167\3\2\2\2\u0165\u0163\3\2\2\2\u0166"+
 		"\u015a\3\2\2\2\u0167\u0168\3\2\2\2\u0168\u0166\3\2\2\2\u0168\u0169\3\2"+
-		"\2\2\u0169\u0171\3\2\2\2\u016a\u016e\7\30\2\2\u016b\u016d\5> \2\u016c"+
+		"\2\2\u0169\u0171\3\2\2\2\u016a\u016e\7\30\2\2\u016b\u016d\5X-\2\u016c"+
 		"\u016b\3\2\2\2\u016d\u0170\3\2\2\2\u016e\u016c\3\2\2\2\u016e\u016f\3\2"+
 		"\2\2\u016f\u0172\3\2\2\2\u0170\u016e\3\2\2\2\u0171\u016a\3\2\2\2\u0171"+
 		"\u0172\3\2\2\2\u0172\u0173\3\2\2\2\u0173\u0174\7\5\2\2\u0174\63\3\2\2"+

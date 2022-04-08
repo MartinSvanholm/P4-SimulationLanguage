@@ -1,9 +1,12 @@
 Simulation Environment {
-    5*5;
+    switch(5 + 5) {
+        case 1:
+        case 5:
+        if(martin == gay) {
 
-    if(false == true) {
-        number tester = 313;
-    } else {
-        number x = 5;
+        }
+        default:
+        number test = 4;
+        test = 5;
     }
 }
