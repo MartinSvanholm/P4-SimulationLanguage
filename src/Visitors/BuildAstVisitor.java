@@ -145,6 +145,8 @@ public class BuildAstVisitor extends CFGBaseVisitor<Node> {
         if(ctx.index != null)
             elseifNode.Nodes.add(visit(ctx.index));
 
+        System.out.println(visit(ctx.body));
+
         if(ctx.right != null)
             elseifNode.Nodes.add(visit(ctx.right));
 
@@ -175,9 +177,12 @@ public class BuildAstVisitor extends CFGBaseVisitor<Node> {
         bodyNode.Value = "stmtBody";
 
         for(var child : ctx.children) {
-            System.out.println(child);
+            if(child.getClass().getSimpleName().equals("TerminalNodeImpl"))
+                continue;
             bodyNode.Nodes.add(visit(child));
         }
+
+        System.out.println(bodyNode.Nodes.get(0));
 
         return bodyNode;
     }
@@ -370,15 +375,11 @@ public class BuildAstVisitor extends CFGBaseVisitor<Node> {
     @Override public Node visitBool(CFGParser.BoolContext ctx) { return visitChildren(ctx); }
 
     @Override public Node visitCodeBlock(CFGParser.CodeBlockContext ctx) {
-        if(ctx.dcl() != null)
-            return visit(ctx.dcl());
-        else if(ctx.statement() != null)
-            return visit(ctx.statement());
-        else if(ctx.assignment() != null)
-            return visit(ctx.assignment());
-        else if(ctx.expr() != null)
-            return visit(ctx.expr());
-        else
-            return null;
+        for(var child : ctx.children) {
+            if(child.getClass().getSimpleName().equals("TerminalNodeImpl"))
+                continue;
+            System.out.println(visit(child));
+        }
+        return null;
     }
 }

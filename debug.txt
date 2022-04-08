@@ -1,24 +1,7 @@
 Simulation Environment {
     if(false == true) {
         number tester = 313;
-    }
-    else if(false == false) {
-
-    }
-    else if(false == false) {
-        number blabla = 123;
-    }
-    else if(true == false) {
-
-    }
-    else if(5 == 5) {
-
-    }
-    else{
-        number test = 3;
-    }
-
-    while(true) {
-
+    } else if (true == true) {
+        number x = 123;
     }
 }
