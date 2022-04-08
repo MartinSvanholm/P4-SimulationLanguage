@@ -1765,12 +1765,13 @@ public class CFGParser extends Parser {
 
 	public static class IfElseStmtContext extends ParserRuleContext {
 		public ExprContext left;
+		public StmtBodyContext index;
 		public ElseIfStmtContext right;
-		public StmtBodyContext stmtBody() {
-			return getRuleContext(StmtBodyContext.class,0);
-		}
 		public ExprContext expr() {
 			return getRuleContext(ExprContext.class,0);
+		}
+		public StmtBodyContext stmtBody() {
+			return getRuleContext(StmtBodyContext.class,0);
 		}
 		public ElseIfStmtContext elseIfStmt() {
 			return getRuleContext(ElseIfStmtContext.class,0);
@@ -1810,7 +1811,7 @@ public class CFGParser extends Parser {
 			setState(311);
 			match(T__14);
 			setState(312);
-			stmtBody();
+			((IfElseStmtContext)_localctx).index = stmtBody();
 			setState(314);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
@@ -1837,15 +1838,16 @@ public class CFGParser extends Parser {
 	public static class ElseIfStmtContext extends ParserRuleContext {
 		public ElseStmtContext left;
 		public ExprContext index;
+		public StmtBodyContext body;
 		public ElseIfStmtContext right;
 		public ElseStmtContext elseStmt() {
 			return getRuleContext(ElseStmtContext.class,0);
 		}
-		public StmtBodyContext stmtBody() {
-			return getRuleContext(StmtBodyContext.class,0);
-		}
 		public ExprContext expr() {
 			return getRuleContext(ExprContext.class,0);
+		}
+		public StmtBodyContext stmtBody() {
+			return getRuleContext(StmtBodyContext.class,0);
 		}
 		public ElseIfStmtContext elseIfStmt() {
 			return getRuleContext(ElseIfStmtContext.class,0);
@@ -1896,7 +1898,7 @@ public class CFGParser extends Parser {
 				setState(320);
 				match(T__14);
 				setState(321);
-				stmtBody();
+				((ElseIfStmtContext)_localctx).body = stmtBody();
 				setState(323);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
@@ -2234,11 +2236,12 @@ public class CFGParser extends Parser {
 	}
 
 	public static class WhileLoopContext extends ParserRuleContext {
-		public ExprContext expr() {
-			return getRuleContext(ExprContext.class,0);
-		}
+		public ExprContext left;
 		public StmtBodyContext stmtBody() {
 			return getRuleContext(StmtBodyContext.class,0);
+		}
+		public ExprContext expr() {
+			return getRuleContext(ExprContext.class,0);
 		}
 		public WhileLoopContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -2270,7 +2273,7 @@ public class CFGParser extends Parser {
 			setState(369);
 			match(T__13);
 			setState(370);
-			expr(0);
+			((WhileLoopContext)_localctx).left = expr(0);
 			setState(371);
 			match(T__14);
 			setState(372);

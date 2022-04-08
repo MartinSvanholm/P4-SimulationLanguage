@@ -117,6 +117,7 @@ public class BuildAstVisitor extends CFGBaseVisitor<Node> {
 
         ifelseNode.Value = "ifElseStmt";
         ifelseNode.Nodes.add(visit(ctx.left));
+
         if(ctx.right != null)
             ifelseNode.Nodes.add(visit(ctx.right));
 
@@ -126,6 +127,15 @@ public class BuildAstVisitor extends CFGBaseVisitor<Node> {
     @Override public Node visitElseIfStmt(CFGParser.ElseIfStmtContext ctx) {
         ElseIfNode elseifNode = new ElseIfNode();
 
+        /*
+        try {
+            elseifNode.Nodes.add(visit(ctx.body));
+        }
+        catch(Exception e) {
+            System.out.println(e);
+        }
+
+         */
         if(ctx.left != null) {
             elseifNode.Value = "elseStmt";
             return elseifNode;
@@ -151,12 +161,26 @@ public class BuildAstVisitor extends CFGBaseVisitor<Node> {
         WhileLoopNode node = new WhileLoopNode();
         node.Value = "while";
 
+        node.Nodes.add(visit(ctx.left));
+
+
         return node;
     }
 
     @Override public Node visitForLoop(CFGParser.ForLoopContext ctx) { return visitChildren(ctx); }
 
-    @Override public Node visitStmtBody(CFGParser.StmtBodyContext ctx) { return visitChildren(ctx); }
+    @Override public Node visitStmtBody(CFGParser.StmtBodyContext ctx) {
+        BodyNode bodyNode = new BodyNode();
+
+        bodyNode.Value = "stmtBody";
+
+        for(var child : ctx.children) {
+            System.out.println(child);
+            bodyNode.Nodes.add(visit(child));
+        }
+
+        return bodyNode;
+    }
 
     @Override public Node visitAssignment(CFGParser.AssignmentContext ctx) { return visitChildren(ctx); }
 
@@ -345,5 +369,16 @@ public class BuildAstVisitor extends CFGBaseVisitor<Node> {
 
     @Override public Node visitBool(CFGParser.BoolContext ctx) { return visitChildren(ctx); }
 
-    @Override public Node visitCodeBlock(CFGParser.CodeBlockContext ctx) { return visitChildren(ctx); }
+    @Override public Node visitCodeBlock(CFGParser.CodeBlockContext ctx) {
+        if(ctx.dcl() != null)
+            return visit(ctx.dcl());
+        else if(ctx.statement() != null)
+            return visit(ctx.statement());
+        else if(ctx.assignment() != null)
+            return visit(ctx.assignment());
+        else if(ctx.expr() != null)
+            return visit(ctx.expr());
+        else
+            return null;
+    }
 }
