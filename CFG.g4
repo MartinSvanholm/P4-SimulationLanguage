@@ -74,10 +74,12 @@ selectiveCtrl: ifElseStmt | switchStmt;
         this.direction = false;
     }
 */
-ifElseStmt: 'if' '(' expr ')' stmtBody elseIfStmt?;
+ifElseStmt: 'if' '(' left=expr ')' index=stmtBody right=elseIfStmt?;
 
-elseIfStmt: 'else' stmtBody
-          | 'else if' '(' expr ')' stmtBody elseIfStmt?;
+elseIfStmt: left=elseStmt
+          | 'else if' '(' index=expr ')' body=stmtBody right=elseIfStmt?;
+
+elseStmt: 'else' stmtBody;
 
 switchStmt: 'switch' '(' expr ')' switchBody;
 
@@ -96,7 +98,7 @@ switchBody: '{' ('case' (numberLiteral | type) ':' codeBlock* )+ ('default:' exp
 iterativeCtrl: whileLoop | forLoop;
 
 // while(Sentinal) { }
-whileLoop: 'while' '('expr')' stmtBody;
+whileLoop: 'while' '('left=expr')' stmtBody;
 
 forLoop: 'for' identifier 'in range' '(' (numberLiteral | identifier) ')' stmtBody;
 

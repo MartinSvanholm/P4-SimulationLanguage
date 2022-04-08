@@ -1,22 +1,9 @@
 Simulation Environment {
-    List<number> arr {0, 1, 2, 3};
+    5*5;
 
-    Car car {
-
-        constructor Create<Car>(number i) {
-
-        }
+    if(false == true) {
+        number tester = 313;
+    } else if (true == true) {
+        5+5;
     }
-}
-
-Simulation Behavior {
-
-}
-
-Simulation Update {
-
-}
-
-Simulation Output {
-
 }

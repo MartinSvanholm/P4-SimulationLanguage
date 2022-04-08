@@ -16,8 +16,8 @@ null
 '('
 ')'
 'if'
-'else'
 'else if'
+'else'
 'switch'
 'case'
 ':'
@@ -147,6 +147,7 @@ statement
 selectiveCtrl
 ifElseStmt
 elseIfStmt
+elseStmt
 switchStmt
 switchBody
 iterativeCtrl
