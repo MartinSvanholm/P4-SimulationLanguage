@@ -1,7 +1,9 @@
 Simulation Environment {
+    5*5;
+
     if(false == true) {
         number tester = 313;
     } else if (true == true) {
-        number x = 123;
+        5+5;
     }
 }

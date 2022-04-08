@@ -126,16 +126,7 @@ public class BuildAstVisitor extends CFGBaseVisitor<Node> {
 
     @Override public Node visitElseIfStmt(CFGParser.ElseIfStmtContext ctx) {
         ElseIfNode elseifNode = new ElseIfNode();
-
-        /*
-        try {
-            elseifNode.Nodes.add(visit(ctx.body));
-        }
-        catch(Exception e) {
-            System.out.println(e);
-        }
-
-         */
+        
         if(ctx.left != null) {
             elseifNode.Value = "elseStmt";
             return elseifNode;
@@ -145,7 +136,7 @@ public class BuildAstVisitor extends CFGBaseVisitor<Node> {
         if(ctx.index != null)
             elseifNode.Nodes.add(visit(ctx.index));
 
-        System.out.println(visit(ctx.body));
+        elseifNode.Nodes.add(visit(ctx.body));
 
         if(ctx.right != null)
             elseifNode.Nodes.add(visit(ctx.right));
@@ -375,11 +366,14 @@ public class BuildAstVisitor extends CFGBaseVisitor<Node> {
     @Override public Node visitBool(CFGParser.BoolContext ctx) { return visitChildren(ctx); }
 
     @Override public Node visitCodeBlock(CFGParser.CodeBlockContext ctx) {
-        for(var child : ctx.children) {
-            if(child.getClass().getSimpleName().equals("TerminalNodeImpl"))
-                continue;
-            System.out.println(visit(child));
-        }
-        return null;
+
+        if(ctx.dcl() != null)
+            return visit(ctx.dcl());
+        else if(ctx.statement() != null)
+            return visit(ctx.statement());
+        else if(ctx.assignment() != null)
+            return visit(ctx.assignment());
+        else
+            return visit(ctx.expr());
     }
 }
