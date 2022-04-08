@@ -143,6 +143,12 @@ public interface CFGVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitElseIfStmt(CFGParser.ElseIfStmtContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link CFGParser#elseStmt}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitElseStmt(CFGParser.ElseStmtContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link CFGParser#switchStmt}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

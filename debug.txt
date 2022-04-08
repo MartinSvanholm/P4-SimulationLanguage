@@ -3,7 +3,7 @@ Simulation Environment {
 
     if(false == true) {
         number tester = 313;
-    } else if (true == true) {
-        5+5;
+    } else {
+        number x = 5;
     }
 }

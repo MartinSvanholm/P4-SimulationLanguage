@@ -171,6 +171,13 @@ public class CFGBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements CF
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
+	@Override public T visitElseStmt(CFGParser.ElseStmtContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
 	@Override public T visitSwitchStmt(CFGParser.SwitchStmtContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}

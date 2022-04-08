@@ -202,6 +202,8 @@ public class BuildAstVisitor extends CFGBaseVisitor<Node> {
         ifelseNode.Value = "ifElseStmt";
         ifelseNode.Nodes.add(visit(ctx.left));
 
+        ifelseNode.Nodes.add(visit(ctx.index));
+
         if(ctx.right != null)
             ifelseNode.Nodes.add(visit(ctx.right));
 
@@ -213,6 +215,9 @@ public class BuildAstVisitor extends CFGBaseVisitor<Node> {
         
         if(ctx.left != null) {
             elseifNode.Value = "elseStmt";
+
+            elseifNode.Nodes.add(visit(ctx.elseStmt()));
+
             return elseifNode;
         }
 
@@ -226,6 +231,10 @@ public class BuildAstVisitor extends CFGBaseVisitor<Node> {
             elseifNode.Nodes.add(visit(ctx.right));
 
         return elseifNode;
+    }
+
+    @Override public Node visitElseStmt(CFGParser.ElseStmtContext ctx) {
+        return visitChildren(ctx);
     }
 
     @Override public Node visitSwitchStmt(CFGParser.SwitchStmtContext ctx) { return visitChildren(ctx); }
