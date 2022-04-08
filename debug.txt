@@ -1,12 +1,5 @@
 Simulation Environment {
-    switch(5 + 5) {
-        case 1:
-        case 5:
-        if(martin == gay) {
-
-        }
-        default:
-        number test = 4;
-        test = 5;
+    for lol in range(5) {
+        number test = 324;
     }
 }

@@ -2276,14 +2276,16 @@ public class CFGParser extends Parser {
 	}
 
 	public static class ForLoopContext extends ParserRuleContext {
+		public IdentifierContext loopNumber;
+		public IdentifierContext rangeNumber;
+		public StmtBodyContext stmtBody() {
+			return getRuleContext(StmtBodyContext.class,0);
+		}
 		public List<IdentifierContext> identifier() {
 			return getRuleContexts(IdentifierContext.class);
 		}
 		public IdentifierContext identifier(int i) {
 			return getRuleContext(IdentifierContext.class,i);
-		}
-		public StmtBodyContext stmtBody() {
-			return getRuleContext(StmtBodyContext.class,0);
 		}
 		public NumberLiteralContext numberLiteral() {
 			return getRuleContext(NumberLiteralContext.class,0);
@@ -2316,7 +2318,7 @@ public class CFGParser extends Parser {
 			setState(381);
 			match(T__23);
 			setState(382);
-			identifier();
+			((ForLoopContext)_localctx).loopNumber = identifier();
 			setState(383);
 			match(T__24);
 			setState(384);
@@ -2333,7 +2335,7 @@ public class CFGParser extends Parser {
 			case Letter:
 				{
 				setState(386);
-				identifier();
+				((ForLoopContext)_localctx).rangeNumber = identifier();
 				}
 				break;
 			default:
