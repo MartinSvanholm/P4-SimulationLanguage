@@ -1,5 +1,5 @@
 Simulation Environment {
-    string x = "hej";
+    PrintTest("dfjkdfj", g);
 
-    x = "Jeppe";
+    string test = "hej";
 }

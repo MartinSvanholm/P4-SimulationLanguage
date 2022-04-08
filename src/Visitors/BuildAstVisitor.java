@@ -183,12 +183,8 @@ public class BuildAstVisitor extends CFGBaseVisitor<Node> {
 
         node.Value = ctx.op.getText();
 
-        for(var child : ctx.children) {
-            if(child.getClass().getSimpleName().equals("TerminalNodeImpl"))
-                continue;
-            //System.out.println(child.getClass().getSimpleName());
-            node.Nodes.add(visit(child));
-        }
+        node.Nodes.add(visit(ctx.left));
+        node.Nodes.add(visit(ctx.right));
 
         return node;
     }
@@ -289,11 +285,42 @@ public class BuildAstVisitor extends CFGBaseVisitor<Node> {
         return node;
     }
 
-    @Override public Node visitFunctionCall(CFGParser.FunctionCallContext ctx) { return visitChildren(ctx); }
+    @Override public Node visitFunctionCall(CFGParser.FunctionCallContext ctx) {
+        FunctionCallNode node = new FunctionCallNode();
 
-    @Override public Node visitParams(CFGParser.ParamsContext ctx) { return visitChildren(ctx); }
+        node.Nodes.add(visit(ctx.identifier()));
 
-    @Override public Node visitMultipleParams(CFGParser.MultipleParamsContext ctx) { return visitChildren(ctx); }
+        for(var paramChild : ctx.params()) {
+            node.Nodes.add(visit(paramChild));
+        }
+
+        node.Value = "functionCall";
+
+        return node;
+    }
+
+    @Override public Node visitParams(CFGParser.ParamsContext ctx) {
+        ParamNode node = new ParamNode();
+        node.Nodes.add(visitChildren(ctx));
+        node.Value = "Parameter";
+        return node;
+    }
+
+    @Override public Node visitMultipleParams(CFGParser.MultipleParamsContext ctx) {
+        if(ctx.constructorCall() != null) {
+            return visit(ctx);
+        }
+
+        return null;
+    }
+
+    @Override public Node visitParamList(CFGParser.ParamListContext ctx) {
+
+        if(ctx.singleParam != null) {
+            return visit(ctx.singleParam);
+        } else
+            return visit(ctx.paramList());
+    }
 
     @Override public Node visitDclParams(CFGParser.DclParamsContext ctx) { return visitChildren(ctx); }
 
@@ -344,7 +371,7 @@ public class BuildAstVisitor extends CFGBaseVisitor<Node> {
     @Override public Node visitStringLiteral(CFGParser.StringLiteralContext ctx) {
         StringNode stringNode = new StringNode();
 
-        stringNode.Value = ctx.getChild(1).getText();
+        stringNode.Value = "\"" + ctx.getChild(1).getText() + "\"";
 
         return stringNode;
     }

@@ -118,11 +118,14 @@ expr: functionCall                                         # funcExpr
     | identifier                                           #identifierExpr
     ;
 
-functionCall: identifier '(' (params (Comma params)* )? ')';
+functionCall: identifier '(' (params (Comma params)*)? ')';
 
-params: expr | constructorCall;
+params: (expr | constructorCall);
 
 multipleParams: (Comma (constructorCall | expr))*;
+
+paramList: singleParam=params
+         | params Comma paramList;
 
 dclParams: '(' (type identifier multipleDclParams)? ')';
 

@@ -8,6 +8,13 @@ import Visitors.*;
 import java.io.IOException;
 import java.nio.file.NoSuchFileException;
 
+import hu.webarticum.treeprinter.SimpleTreeNode;
+import hu.webarticum.treeprinter.UnicodeMode;
+import hu.webarticum.treeprinter.decorator.BorderTreeNodeDecorator;
+import hu.webarticum.treeprinter.decorator.PadTreeNodeDecorator;
+import hu.webarticum.treeprinter.decorator.ShadowTreeNodeDecorator;
+import hu.webarticum.treeprinter.printer.listing.ListingTreePrinter;
+import hu.webarticum.treeprinter.printer.traditional.TraditionalTreePrinter;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 
@@ -41,8 +48,16 @@ public class Main {
 
             ASTPrinter printer = new ASTPrinter();
 
-            if(ast != null)
-                printer.PrintAST(ast);
+            //if(ast != null)
+            //    printer.PrintAST(ast);
+
+
+            SimpleTreeNode rootNode = printer.ConvertTree(ast);
+
+            UnicodeMode.setUnicodeAsDefault(true);
+
+            TraditionalTreePrinter treePrinter = new TraditionalTreePrinter();
+            treePrinter.print(new PadTreeNodeDecorator(rootNode));
 
         } catch (NoSuchFileException exception) {
             System.out.println(ANSI_RED + "File does not exist" + ANSI_RESET);

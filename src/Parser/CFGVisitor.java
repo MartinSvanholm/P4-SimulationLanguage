@@ -1,4 +1,4 @@
-// Generated from C:/Users/Martin Svanholm/Documents/GitHub/P4-SimulationLanguage\CFG.g4 by ANTLR 4.9.2
+// Generated from C:/Users/marti/OneDrive/Dokumenter/GitHub/P4-SimulationLanguage\CFG.g4 by ANTLR 4.9.2
 package Parser;
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 
@@ -258,6 +258,12 @@ public interface CFGVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitMultipleParams(CFGParser.MultipleParamsContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link CFGParser#paramList}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitParamList(CFGParser.ParamListContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link CFGParser#dclParams}.
 	 * @param ctx the parse tree
