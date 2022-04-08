@@ -48,16 +48,12 @@ public class Main {
 
             ASTPrinter printer = new ASTPrinter();
 
-            //if(ast != null)
-            //    printer.PrintAST(ast);
-
-
             SimpleTreeNode rootNode = printer.ConvertTree(ast);
 
-            UnicodeMode.setUnicodeAsDefault(true);
+            UnicodeMode.setUnicodeAsDefault(false);
 
             TraditionalTreePrinter treePrinter = new TraditionalTreePrinter();
-            treePrinter.print(new PadTreeNodeDecorator(rootNode));
+            treePrinter.print(rootNode);
 
         } catch (NoSuchFileException exception) {
             System.out.println(ANSI_RED + "File does not exist" + ANSI_RESET);

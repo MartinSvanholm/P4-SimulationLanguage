@@ -39,7 +39,7 @@ functionDcl: 'function' identifier dclParams stmtBody
 funcReturnBody: '{' codeBlock* 'return' expr SemiColon '}';
 
 //  List<Road> roadList {Road1, Road2};
-listDcl: 'List<' type '>' identifier ('{' params multipleParams '}')? SemiColon;
+listDcl: 'List<' type '>' identifier ('{' params (Comma params)* '}')? SemiColon;
 
 classDcl: type identifier classBody;
 
@@ -48,14 +48,14 @@ classBody: '{' classPropDcl* '}';
 classPropDcl: contructorDcl
             | functionDcl
             | listDcl
-            //| primVarDcl
+            | objDcl
             | statement
             | assignment
             | expr SemiColon;
 
-contructorDcl: 'constructor' 'Create<' type '>' dclParams '{' codeBlock* '}';
+contructorDcl: 'constructor' 'Create<' type '>' '(' (dclParams (Comma dclParams)*)? ')' '{' codeBlock* '}';
 
-constructorCall: 'Create<' type '>' '(' (params multipleParams)? ')';
+constructorCall: 'Create<' type '>' '(' (params (Comma params)*)? ')';
 
 //primVarDcl: primType identifier (Equals expr)? SemiColon;
 
@@ -122,14 +122,7 @@ functionCall: identifier '(' (params (Comma params)*)? ')';
 
 params: (expr | constructorCall);
 
-multipleParams: (Comma (constructorCall | expr))*;
-
-paramList: singleParam=params
-         | params Comma paramList;
-
-dclParams: '(' (type identifier multipleDclParams)? ')';
-
-multipleDclParams: (Comma type identifier)*;
+dclParams: (type identifier);
 
 type: primType | complexType | identifier;
 

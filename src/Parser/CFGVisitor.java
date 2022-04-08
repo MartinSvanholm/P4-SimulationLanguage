@@ -253,29 +253,11 @@ public interface CFGVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitParams(CFGParser.ParamsContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link CFGParser#multipleParams}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitMultipleParams(CFGParser.MultipleParamsContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link CFGParser#paramList}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitParamList(CFGParser.ParamListContext ctx);
-	/**
 	 * Visit a parse tree produced by {@link CFGParser#dclParams}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitDclParams(CFGParser.DclParamsContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link CFGParser#multipleDclParams}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitMultipleDclParams(CFGParser.MultipleDclParamsContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link CFGParser#type}.
 	 * @param ctx the parse tree

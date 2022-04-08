@@ -1,6 +1,7 @@
 package Visitors;
 
 import ASTNodes.*;
+import ASTNodes.DclNodes.ListDclNode;
 import ASTNodes.DclNodes.ObjDclNode;
 import ASTNodes.ExprNodes.*;
 import ASTNodes.ExprNodes.CompareNodes.*;
@@ -47,7 +48,11 @@ public class BuildAstVisitor extends CFGBaseVisitor<Node> {
     @Override public Node visitBehaviorSection(CFGParser.BehaviorSectionContext ctx) {
         SectionNode sectionNode = new SectionNode();
 
+        sectionNode.Value = "Behavior";
+
         for(var child : ctx.children) {
+            if(child.getClass().getSimpleName().equals("TerminalNodeImpl"))
+                continue;
             sectionNode.Nodes.add(visit(child));
         }
 
@@ -57,7 +62,11 @@ public class BuildAstVisitor extends CFGBaseVisitor<Node> {
     @Override public Node visitUpdateSection(CFGParser.UpdateSectionContext ctx) {
         SectionNode sectionNode = new SectionNode();
 
+        sectionNode.Value = "Update";
+
         for(var child : ctx.children) {
+            if(child.getClass().getSimpleName().equals("TerminalNodeImpl"))
+                continue;
             sectionNode.Nodes.add(visit(child));
         }
 
@@ -67,7 +76,11 @@ public class BuildAstVisitor extends CFGBaseVisitor<Node> {
     @Override public Node visitOutputSection(CFGParser.OutputSectionContext ctx) {
         SectionNode sectionNode = new SectionNode();
 
+        sectionNode.Value = "Output";
+
         for(var child : ctx.children) {
+            if(child.getClass().getSimpleName().equals("TerminalNodeImpl"))
+                continue;
             sectionNode.Nodes.add(visit(child));
         }
 
@@ -90,17 +103,75 @@ public class BuildAstVisitor extends CFGBaseVisitor<Node> {
 
     @Override public Node visitFuncReturnBody(CFGParser.FuncReturnBodyContext ctx) { return visitChildren(ctx); }
 
-    @Override public Node visitListDcl(CFGParser.ListDclContext ctx) { return visitChildren(ctx); }
+    @Override public Node visitListDcl(CFGParser.ListDclContext ctx) {
+        ListDclNode node = new ListDclNode();
 
-    @Override public Node visitClassDcl(CFGParser.ClassDclContext ctx) { return visitChildren(ctx); }
+        node.Nodes.add(visit(ctx.type()));
+        node.Nodes.add(visit(ctx.identifier()));
+        node.Value = "List";
 
-    @Override public Node visitClassBody(CFGParser.ClassBodyContext ctx) { return visitChildren(ctx); }
+        for(var paramChild : ctx.params()) {
+            node.Nodes.add(visit(paramChild));
+        }
+
+        return node;
+    }
+
+    @Override public Node visitClassDcl(CFGParser.ClassDclContext ctx) {
+        ClassNode node = new ClassNode();
+
+        node.Nodes.add(visit(ctx.type()));
+        node.Nodes.add(visit(ctx.identifier()));
+        node.Nodes.add(visit(ctx.classBody()));
+
+        node.Value = "Class";
+
+        return node;
+    }
+
+    @Override public Node visitClassBody(CFGParser.ClassBodyContext ctx) {
+        ClassBodyNode node = new ClassBodyNode();
+        node.Value = "ClassBody";
+
+        for(var classProp : ctx.classPropDcl()) {
+            if(classProp.getClass().getSimpleName().equals("TerminalNodeImpl"))
+                continue;;
+
+            node.Nodes.add(visit(classProp));
+        }
+
+        return node;
+    }
 
     @Override public Node visitClassPropDcl(CFGParser.ClassPropDclContext ctx) { return visitChildren(ctx); }
 
-    @Override public Node visitContructorDcl(CFGParser.ContructorDclContext ctx) { return visitChildren(ctx); }
+    @Override public Node visitContructorDcl(CFGParser.ContructorDclContext ctx) {
+        ConstructorCallNode node = new ConstructorCallNode();
+        node.Value = "Constructor";
 
-    @Override public Node visitConstructorCall(CFGParser.ConstructorCallContext ctx) { return visitChildren(ctx); }
+        node.Nodes.add(visit(ctx.type()));
+
+        for(var paramChild : ctx.dclParams()) {
+            node.Nodes.add(visit(paramChild));
+        }
+
+        return node;
+    }
+
+    @Override public Node visitConstructorCall(CFGParser.ConstructorCallContext ctx) {
+
+        ConstructorCallNode node = new ConstructorCallNode();
+
+        node.Nodes.add(visit(ctx.type()));
+
+        for(var paramChild : ctx.params()) {
+            node.Nodes.add(visit(paramChild));
+        }
+
+        node.Value = "Constructor Call";
+
+        return node;
+    }
 
     @Override public Node visitObjDcl(CFGParser.ObjDclContext ctx) {
         ObjDclNode node = new ObjDclNode();
@@ -215,12 +286,8 @@ public class BuildAstVisitor extends CFGBaseVisitor<Node> {
 
         node.Value = ctx.op.getText();
 
-        for(var child : ctx.children) {
-            if(child.getClass().getSimpleName().equals("TerminalNodeImpl"))
-                continue;
-            //System.out.println(child.getClass().getSimpleName());
-            node.Nodes.add(visit(child));
-        }
+        node.Nodes.add(visit(ctx.left));
+        node.Nodes.add(visit(ctx.left));
 
         return node;
     }
@@ -275,12 +342,8 @@ public class BuildAstVisitor extends CFGBaseVisitor<Node> {
 
         node.Value = ctx.op.getText();
 
-        for(var child : ctx.children) {
-            if(child.getClass().getSimpleName().equals("TerminalNodeImpl"))
-                continue;
-            //System.out.println(child.getClass().getSimpleName());
-            node.Nodes.add(visit(child));
-        }
+        node.Nodes.add(visit(ctx.left));
+        node.Nodes.add(visit(ctx.right));
 
         return node;
     }
@@ -306,25 +369,16 @@ public class BuildAstVisitor extends CFGBaseVisitor<Node> {
         return node;
     }
 
-    @Override public Node visitMultipleParams(CFGParser.MultipleParamsContext ctx) {
-        if(ctx.constructorCall() != null) {
-            return visit(ctx);
-        }
+    @Override public Node visitDclParams(CFGParser.DclParamsContext ctx) {
+        ParamNode node = new ParamNode();
 
-        return null;
+        node.Value = "Parameter";
+
+        node.Nodes.add(visit(ctx.type()));
+        node.Nodes.add(visit(ctx.identifier()));
+
+        return node;
     }
-
-    @Override public Node visitParamList(CFGParser.ParamListContext ctx) {
-
-        if(ctx.singleParam != null) {
-            return visit(ctx.singleParam);
-        } else
-            return visit(ctx.paramList());
-    }
-
-    @Override public Node visitDclParams(CFGParser.DclParamsContext ctx) { return visitChildren(ctx); }
-
-    @Override public Node visitMultipleDclParams(CFGParser.MultipleDclParamsContext ctx) { return visitChildren(ctx); }
 
     @Override public Node visitType(CFGParser.TypeContext ctx) { return visitChildren(ctx); }
 

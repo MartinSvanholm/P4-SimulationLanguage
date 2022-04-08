@@ -1,5 +1,22 @@
 Simulation Environment {
-    PrintTest("dfjkdfj", g);
+    List<number> arr {0, 1, 2, 3};
 
-    string test = "hej";
+    Car car {
+
+        constructor Create<Car>(number i) {
+
+        }
+    }
+}
+
+Simulation Behavior {
+
+}
+
+Simulation Update {
+
+}
+
+Simulation Output {
+
 }
