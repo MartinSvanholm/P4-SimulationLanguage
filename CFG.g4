@@ -76,8 +76,10 @@ selectiveCtrl: ifElseStmt | switchStmt;
 */
 ifElseStmt: 'if' '(' left=expr ')' stmtBody right=elseIfStmt?;
 
-elseIfStmt: left='else' stmtBody
-          | 'else if' '(' right=expr ')' stmtBody index=elseIfStmt?;
+elseIfStmt: left=elseStmt
+          | 'else if' '(' index=expr ')' stmtBody right=elseIfStmt?;
+
+elseStmt: 'else' stmtBody;
 
 switchStmt: 'switch' '(' expr ')' switchBody;
 

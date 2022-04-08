@@ -1,6 +1,7 @@
 package Visitors;
 
 import ASTNodes.*;
+import ASTNodes.ControlStructures.ElseIfNode;
 import ASTNodes.ControlStructures.IfElseNode;
 import ASTNodes.ControlStructures.WhileLoopNode;
 import ASTNodes.ExprNodes.*;
@@ -123,7 +124,21 @@ public class BuildAstVisitor extends CFGBaseVisitor<Node> {
     }
 
     @Override public Node visitElseIfStmt(CFGParser.ElseIfStmtContext ctx) {
+        ElseIfNode elseifNode = new ElseIfNode();
 
+        if(ctx.left != null) {
+            elseifNode.Value = "elseStmt";
+            return elseifNode;
+        }
+
+        elseifNode.Value = "elseIfStmt";
+        if(ctx.index != null)
+            elseifNode.Nodes.add(visit(ctx.index));
+
+        if(ctx.right != null)
+            elseifNode.Nodes.add(visit(ctx.right));
+
+        return elseifNode;
     }
 
     @Override public Node visitSwitchStmt(CFGParser.SwitchStmtContext ctx) { return visitChildren(ctx); }
@@ -323,16 +338,7 @@ public class BuildAstVisitor extends CFGBaseVisitor<Node> {
     @Override public Node visitBoolLiteral(CFGParser.BoolLiteralContext ctx) {
         BoolNode boolNode = new BoolNode();
 
-        String boolText = ctx.getText();
-
         boolNode.Value = ctx.getText();
-        if(boolText.equals("true"))
-            boolNode.Value = true;
-         else if(boolText.equals("false"))
-            boolNode.Value = false;
-         else
-             System.out.println("Bool node text is neither true or false?");
-
 
         return boolNode;
     }

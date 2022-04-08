@@ -1,4 +1,4 @@
-// Generated from C:/Users/Martin Svanholm/Documents/GitHub/P4-SimulationLanguage\CFG.g4 by ANTLR 4.9.2
+// Generated from C:/Users/krist/Documents/GitHub/P4-SimulationLanguage\CFG.g4 by ANTLR 4.9.2
 package Parser;
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 
@@ -148,6 +148,12 @@ public interface CFGVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitElseIfStmt(CFGParser.ElseIfStmtContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link CFGParser#elseStmt}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitElseStmt(CFGParser.ElseStmtContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link CFGParser#switchStmt}.
 	 * @param ctx the parse tree
