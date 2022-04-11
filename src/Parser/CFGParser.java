@@ -1,4 +1,4 @@
-// Generated from C:/Users/marti/OneDrive/Dokumenter/GitHub/P4-SimulationLanguage\CFG.g4 by ANTLR 4.9.2
+// Generated from C:/Users/krist/Documents/GitHub/P4-SimulationLanguage\CFG.g4 by ANTLR 4.9.2
 package Parser;
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
@@ -2100,12 +2100,6 @@ public class CFGParser extends Parser {
 		public CodeBlockContext codeBlock(int i) {
 			return getRuleContext(CodeBlockContext.class,i);
 		}
-		public List<ExprContext> expr() {
-			return getRuleContexts(ExprContext.class);
-		}
-		public ExprContext expr(int i) {
-			return getRuleContext(ExprContext.class,i);
-		}
 		public SwitchBodyContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -2198,11 +2192,11 @@ public class CFGParser extends Parser {
 				setState(386);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-				while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__10) | (1L << T__33) | (1L << T__34) | (1L << T__35) | (1L << Number) | (1L << Letter))) != 0)) {
+				while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__7) | (1L << T__9) | (1L << T__10) | (1L << T__13) | (1L << T__15) | (1L << T__18) | (1L << T__22) | (1L << T__23) | (1L << T__27) | (1L << T__28) | (1L << T__29) | (1L << T__30) | (1L << T__31) | (1L << T__33) | (1L << T__34) | (1L << T__35) | (1L << Number) | (1L << Letter))) != 0)) {
 					{
 					{
-					setState(383);
-					expr(0);
+					setState(361);
+					codeBlock();
 					}
 					}
 					setState(388);
@@ -2346,14 +2340,16 @@ public class CFGParser extends Parser {
 	}
 
 	public static class ForLoopContext extends ParserRuleContext {
+		public IdentifierContext loopNumber;
+		public IdentifierContext rangeNumber;
+		public StmtBodyContext stmtBody() {
+			return getRuleContext(StmtBodyContext.class,0);
+		}
 		public List<IdentifierContext> identifier() {
 			return getRuleContexts(IdentifierContext.class);
 		}
 		public IdentifierContext identifier(int i) {
 			return getRuleContext(IdentifierContext.class,i);
-		}
-		public StmtBodyContext stmtBody() {
-			return getRuleContext(StmtBodyContext.class,0);
 		}
 		public NumberLiteralContext numberLiteral() {
 			return getRuleContext(NumberLiteralContext.class,0);
@@ -2385,9 +2381,9 @@ public class CFGParser extends Parser {
 			{
 			setState(403);
 			match(T__23);
-			setState(404);
-			identifier();
-			setState(405);
+			setState(382);
+			((ForLoopContext)_localctx).loopNumber = identifier();
+			setState(383);
 			match(T__24);
 			setState(406);
 			match(T__10);
@@ -2402,8 +2398,8 @@ public class CFGParser extends Parser {
 				break;
 			case Letter:
 				{
-				setState(408);
-				identifier();
+				setState(386);
+				((ForLoopContext)_localctx).rangeNumber = identifier();
 				}
 				break;
 			default:

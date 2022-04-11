@@ -93,14 +93,14 @@ switchStmt: 'switch' '(' expr ')' switchBody;
             x = 0;
     }
 */
-switchBody: '{' ('case' (numberLiteral | type) ':' codeBlock* )+ ('default:' expr*)? '}';
+switchBody: '{' ('case' (numberLiteral | type) ':' codeBlock* )+ ('default:' codeBlock*)? '}';
 
 iterativeCtrl: whileLoop | forLoop;
 
 // while(Sentinal) { }
 whileLoop: 'while' '('left=expr')' stmtBody;
 
-forLoop: 'for' identifier 'in range' '(' (numberLiteral | identifier) ')' stmtBody;
+forLoop: 'for' loopNumber=identifier  'in range' '(' (numberLiteral | rangeNumber=identifier) ')' stmtBody;
 
 stmtBody: '{' codeBlock* '}';
 

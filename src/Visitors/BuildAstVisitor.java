@@ -1,6 +1,7 @@
 package Visitors;
 
 import ASTNodes.*;
+import ASTNodes.ControlStructures.ForLoopNode;
 import ASTNodes.DclNodes.FunctionDclNode;
 import ASTNodes.DclNodes.ListDclNode;
 import ASTNodes.DclNodes.ObjDclNode;
@@ -266,9 +267,31 @@ public class BuildAstVisitor extends CFGBaseVisitor<Node> {
         return visitChildren(ctx);
     }
 
-    @Override public Node visitSwitchStmt(CFGParser.SwitchStmtContext ctx) { return visitChildren(ctx); }
+    @Override public Node visitSwitchStmt(CFGParser.SwitchStmtContext ctx) {
+        StatementNode switchNode = new StatementNode();
 
-    @Override public Node visitSwitchBody(CFGParser.SwitchBodyContext ctx) { return visitChildren(ctx); }
+        switchNode.Value = "switch";
+
+        switchNode.Nodes.add(visit(ctx.expr()));
+
+        switchNode.Nodes.add(visit(ctx.switchBody()));
+
+        return switchNode;
+    }
+
+    @Override public Node visitSwitchBody(CFGParser.SwitchBodyContext ctx) {
+        BodyNode bodyNode = new BodyNode();
+
+        bodyNode.Value = "switchBody";
+
+        for(var child : ctx.children) {
+            if(child.getClass().getSimpleName().equals("TerminalNodeImpl"))
+                continue;
+            bodyNode.Nodes.add(visit(child));
+        }
+
+        return bodyNode;
+    }
 
     @Override public Node visitIterativeCtrl(CFGParser.IterativeCtrlContext ctx) { return visitChildren(ctx); }
 
@@ -278,11 +301,25 @@ public class BuildAstVisitor extends CFGBaseVisitor<Node> {
 
         node.Nodes.add(visit(ctx.left));
 
-
         return node;
     }
 
-    @Override public Node visitForLoop(CFGParser.ForLoopContext ctx) { return visitChildren(ctx); }
+    @Override public Node visitForLoop(CFGParser.ForLoopContext ctx) {
+        ForLoopNode forLoop = new ForLoopNode();
+
+        forLoop.Value = "for";
+
+        forLoop.Nodes.add(visit(ctx.loopNumber));
+
+        if(ctx.numberLiteral() != null)
+            forLoop.Nodes.add(visit(ctx.numberLiteral()));
+        else if(ctx.identifier() != null)
+            forLoop.Nodes.add(visit(ctx.rangeNumber));
+
+        forLoop.Nodes.add(visit(ctx.stmtBody()));
+
+        return forLoop;
+    }
 
     @Override public Node visitStmtBody(CFGParser.StmtBodyContext ctx) {
         BodyNode bodyNode = new BodyNode();
