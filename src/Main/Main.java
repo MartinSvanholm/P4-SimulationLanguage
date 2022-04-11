@@ -1,13 +1,14 @@
 package Main;
 
 import ASTNodes.Node;
-import ASTNodes.ProgramNode;
+import Main.TestElement.Element;
 import Parser.*;
 import Visitors.*;
 
 import java.io.IOException;
 import java.nio.file.NoSuchFileException;
 
+import Visitors.TestVisitor.*;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 
@@ -27,7 +28,14 @@ public class Main {
 
     public static void main(String[] args) {
 
-        try {
+
+
+        TestInspector test = new Inspection();
+
+        System.out.println(test.visit(new Element(4)));
+
+
+        /*try {
             CharStream cs = null;
             cs = fromFileName(args[0]);
 
@@ -62,11 +70,11 @@ public class Main {
 
             Printer.PrintValues();*/
 
-        } catch (NoSuchFileException exception) {
+        /*} catch (NoSuchFileException exception) {
             System.out.println(ANSI_RED + "File does not exist" + ANSI_RESET);
 
         } catch (IOException e) {
             e.printStackTrace();
-        }
+        }*/
     }
 }
