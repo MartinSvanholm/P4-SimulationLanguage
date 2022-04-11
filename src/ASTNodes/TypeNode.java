@@ -1,4 +1,4 @@
 package ASTNodes;
 
-public class TypeNode extends Node{
+public class TypeNode extends Node {
 }

@@ -16,6 +16,7 @@ import ASTNodes.ExprNodes.LogicalNodes.ORNode;
 import Parser.CFGParser;
 import Parser.CFGBaseVisitor;
 import Parser.CFGLexer;
+import ASTNodes.Node;
 
 public class BuildAstVisitor extends CFGBaseVisitor<Node> {
     @Override public Node visitProgram(CFGParser.ProgramContext ctx) {

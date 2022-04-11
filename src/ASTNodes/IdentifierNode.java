@@ -1,4 +1,4 @@
 package ASTNodes;
 
-public class IdentifierNode extends Node{
+public class IdentifierNode extends Node {
 }

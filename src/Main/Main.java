@@ -1,7 +1,6 @@
 package Main;
 
 import ASTNodes.Node;
-import ASTNodes.ProgramNode;
 import Parser.*;
 import Visitors.*;
 
@@ -10,10 +9,6 @@ import java.nio.file.NoSuchFileException;
 
 import hu.webarticum.treeprinter.SimpleTreeNode;
 import hu.webarticum.treeprinter.UnicodeMode;
-import hu.webarticum.treeprinter.decorator.BorderTreeNodeDecorator;
-import hu.webarticum.treeprinter.decorator.PadTreeNodeDecorator;
-import hu.webarticum.treeprinter.decorator.ShadowTreeNodeDecorator;
-import hu.webarticum.treeprinter.printer.listing.ListingTreePrinter;
 import hu.webarticum.treeprinter.printer.traditional.TraditionalTreePrinter;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
