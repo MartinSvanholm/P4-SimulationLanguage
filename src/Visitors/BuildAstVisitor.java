@@ -9,7 +9,6 @@ import ASTNodes.ValueNodes.NumberNode;
 import ASTNodes.ValueNodes.OpNode;
 import ASTNodes.ValueNodes.StringNode;
 import Parser.*;
-import hu.webarticum.treeprinter.SimpleTreeNode;
 
 public class BuildAstVisitor extends CFGBaseVisitor<Node> {
 
@@ -27,7 +26,7 @@ public class BuildAstVisitor extends CFGBaseVisitor<Node> {
     @Override public Node visitEnvironmentSection(CFGParser.EnvironmentSectionContext ctx) {
         SectionNode node = new SectionNode();
 
-        node.Value = "Environment";
+        node.Name = "Environment";
 
         for(var child : ctx.children) {
             if(child.getClass().getSimpleName().equals("TerminalNodeImpl"))
@@ -85,17 +84,12 @@ public class BuildAstVisitor extends CFGBaseVisitor<Node> {
     }
 
     @Override public Node visitDcl(CFGParser.DclContext ctx) {
-        return visitChildren(ctx);
-    }
-
-    @Override public Node visitEndCondition(CFGParser.EndConditionContext ctx) { return visitChildren(ctx); }
-
-    @Override public Node visitInitCondition(CFGParser.InitConditionContext ctx) { return visitChildren(ctx); }
+        return visitChildren(ctx);}
 
     @Override public Node visitFunctionDcl(CFGParser.FunctionDclContext ctx) {
         FunctionDclNode node = new FunctionDclNode();
 
-        node.Type = (TypeNode) visit(ctx.type());
+        node.Type = visit(ctx.type());
         node.Identifier = (IdentifierNode) visit(ctx.identifier());
 
         for(var paramChild : ctx.dclParams()) {
@@ -107,7 +101,19 @@ public class BuildAstVisitor extends CFGBaseVisitor<Node> {
         return node;
     }
 
-    @Override public Node visitFuncReturnBody(CFGParser.FuncReturnBodyContext ctx) { return visitChildren(ctx); }
+    @Override public Node visitProcedureDcl(CFGParser.ProcedureDclContext ctx) {
+        FunctionDclNode node = new FunctionDclNode();
+
+        node.Identifier = (IdentifierNode) visit(ctx.identifier());
+
+        for(var paramChild : ctx.dclParams()) {
+            node.Parameters.add((ParamNode) visit(paramChild));
+        }
+
+        node.Body = (BodyNode) visit(ctx.codeBlock());
+
+        return node;
+    }
 
     @Override public Node visitListDcl(CFGParser.ListDclContext ctx) {
         ListDclNode node = new ListDclNode();
@@ -172,7 +178,17 @@ public class BuildAstVisitor extends CFGBaseVisitor<Node> {
         return node;
     }
 
-    @Override public Node visitStatement(CFGParser.StatementContext ctx) { return visitChildren(ctx); }
+    @Override public Node visitStatement(CFGParser.StatementContext ctx) {
+        if(ctx.expr() != null) {
+            ReturnNode node = new ReturnNode();
+
+            node.expressionNode = (ExpressionNode) visit(ctx.expr());
+
+            return node;
+        }
+
+        return visitChildren(ctx);
+    }
 
     @Override public Node visitSelectiveCtrl(CFGParser.SelectiveCtrlContext ctx) { return visitChildren(ctx); }
 
@@ -476,6 +492,23 @@ public class BuildAstVisitor extends CFGBaseVisitor<Node> {
                 continue;
             node.Lines.add(visit(child));
         }
+
+        return node;
+    }
+
+    @Override public Node visitEndCondition(CFGParser.EndConditionContext ctx){
+        EndConditionNode node = new EndConditionNode();
+
+        node.Body = (BodyNode) visit(ctx.codeBlock());
+
+        return node;
+    }
+
+    @Override public Node visitInitCondition(CFGParser.InitConditionContext ctx) {
+        InitConditionNode node = new InitConditionNode();
+
+        node.Body = (BodyNode) visit(ctx.codeBlock());
+        node.type = String.valueOf(visit(ctx.type()));
 
         return node;
     }

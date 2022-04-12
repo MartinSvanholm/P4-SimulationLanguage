@@ -1,9 +1,10 @@
-package ASTNodes.ControlStructures;
+package ASTNodes;
 
-import ASTNodes.Node;
 import ASTVisitors.IBaseVisitor;
 
-public class ControlNode extends Node {
+public class InitConditionNode extends Node{
+    public BodyNode Body;
+    public String type;
 
     @Override
     public <T> T accept(IBaseVisitor<? extends T> visitor) {

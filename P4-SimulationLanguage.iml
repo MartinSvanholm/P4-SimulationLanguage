@@ -16,6 +16,6 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="library" exported="" name="hu.webarticum.tree.printer" level="application" />
+    <orderEntry type="library" exported="" name="hu.webarticum.tree.printer" level="project" />
   </component>
 </module>

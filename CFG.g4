@@ -20,6 +20,7 @@ line: initCondition
     ;
 
 dcl: functionDcl
+   | procedureDcl
    | listDcl
    | classDcl
    | objDcl;
@@ -27,16 +28,15 @@ dcl: functionDcl
 
 endCondition: 'EndCondition' codeBlock;
 
-initCondition: 'InitCondition<' type '>' codeBlock*;
+initCondition: 'InitCondition<' type '>' codeBlock;
 
 /* FUNCTION CALL
     Void function: function TestFunction() { }
     With return type: function bool IsClearToDrive() { }
 */
-functionDcl: 'function' identifier '(' (dclParams (Comma dclParams)*)? ')' codeBlock
-           | 'function' type identifier '(' (dclParams (Comma dclParams)*)? ')' funcReturnBody;
+functionDcl: 'function' type identifier '(' (dclParams (Comma dclParams)*)? ')' codeBlock;
 
-funcReturnBody: codeBlock 'return' expr SemiColon '}';
+procedureDcl: 'function' identifier '(' (dclParams (Comma dclParams)*)? ')' codeBlock;
 
 //  List<Road> roadList {Road1, Road2};
 listDcl: 'List<' type '>' identifier ('{' params (Comma params)* '}')? SemiColon;

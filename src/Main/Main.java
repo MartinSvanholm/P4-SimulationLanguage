@@ -1,6 +1,8 @@
 package Main;
 
 import ASTNodes.Node;
+import ASTNodes.ProgramNode;
+import ASTVisitors.ASTPrinterVisitor;
 import Parser.*;
 import Visitors.*;
 
@@ -41,12 +43,14 @@ public class Main {
 
             Node ast = visitor.visitProgram(cfgParser.program());
 
-            /*ASTPrinter printer = new ASTPrinter();
+            ASTPrinterVisitor astPrinterVisitor = new ASTPrinterVisitor();
+
+            SimpleTreeNode root = astPrinterVisitor.visitProgramNode((ProgramNode) ast);
 
             UnicodeMode.setUnicodeAsDefault(false);
 
             TraditionalTreePrinter treePrinter = new TraditionalTreePrinter();
-            treePrinter.print(ast.PrintNodes.get(0));*/
+            treePrinter.print(root);
 
         } catch (NoSuchFileException exception) {
             System.out.println(ANSI_RED + "File does not exist" + ANSI_RESET);
