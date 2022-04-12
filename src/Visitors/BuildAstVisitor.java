@@ -429,7 +429,7 @@ public class BuildAstVisitor extends CFGBaseVisitor<Node> {
     @Override public Node visitPrimType(CFGParser.PrimTypeContext ctx) {
         TypeNode node = new TypeNode();
 
-        node.Value = ctx.getText();
+        node.Name = ctx.getText();
 
         return node;
     }
@@ -438,9 +438,9 @@ public class BuildAstVisitor extends CFGBaseVisitor<Node> {
         TypeNode node = new TypeNode();
 
         if(ctx.listType != null) {
-            node.Value = "List<" + visit(ctx.type()).Value + ">";
+            node.Name = "List<" + visit(ctx.type()).Value + ">";
         } else {
-            node.Value = ctx.getText();
+            node.Name = ctx.getText();
         }
 
         return node;
@@ -449,7 +449,7 @@ public class BuildAstVisitor extends CFGBaseVisitor<Node> {
     @Override public Node visitIdentifier(CFGParser.IdentifierContext ctx) {
         IdentifierNode node = new IdentifierNode();
 
-        node.Value = ctx.getText();
+        node.Name = ctx.getText();
 
         return node;
     }
@@ -461,7 +461,7 @@ public class BuildAstVisitor extends CFGBaseVisitor<Node> {
     @Override public Node visitNumberLiteral(CFGParser.NumberLiteralContext ctx) {
         NumberNode numberNode = new NumberNode();
 
-        numberNode.Value = ctx.getText();
+        numberNode.Name = ctx.getText();
 
         return numberNode;
     }
@@ -469,7 +469,7 @@ public class BuildAstVisitor extends CFGBaseVisitor<Node> {
     @Override public Node visitStringLiteral(CFGParser.StringLiteralContext ctx) {
         StringNode stringNode = new StringNode();
 
-        stringNode.Value = "\"" + ctx.getChild(1).getText() + "\"";
+        stringNode.Name = "\"" + ctx.getChild(1).getText() + "\"";
 
         return stringNode;
     }
@@ -477,7 +477,7 @@ public class BuildAstVisitor extends CFGBaseVisitor<Node> {
     @Override public Node visitBoolLiteral(CFGParser.BoolLiteralContext ctx) {
         BoolNode boolNode = new BoolNode();
 
-        boolNode.Value = ctx.getText();
+        boolNode.Name = ctx.getText();
 
         return boolNode;
     }

@@ -5,6 +5,8 @@ import ASTVisitors.IBaseVisitor;
 import ASTVisitors.IYATSIVisitor;
 
 public class ObjDclNode extends DclNode{
+    public String Name = "dcl";
+
     public Node ObjValue;
 
     @Override

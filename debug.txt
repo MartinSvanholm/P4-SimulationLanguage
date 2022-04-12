@@ -22,7 +22,4 @@ Simulation Environment {
         startNode = Trafficlight1;
         endNode = SimEndnode;
     }
-
-    //Putting the roads in a list
-    List<Road> roadList {Road1, Road2};
 }
