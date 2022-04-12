@@ -33,112 +33,255 @@ public class ASTPrinterVisitor extends BaseVisitor<SimpleTreeNode>{
 
     @Override
     public SimpleTreeNode visitFunctionNode(FunctionDclNode functionDclNode) {
-        return null;
+        SimpleTreeNode treeNode = new SimpleTreeNode(functionDclNode.Name);
+
+        treeNode.addChild(visit(functionDclNode.Type));
+        treeNode.addChild(visit(functionDclNode.Identifier));
+
+        for(Node params : functionDclNode.Parameters) {
+            treeNode.addChild(visit(params));
+        }
+
+        treeNode.addChild(visit(functionDclNode.Body));
+
+
+        return treeNode;
     }
 
     @Override
     public SimpleTreeNode visitListNode(ListDclNode listDclNode) {
-        return null;
+        SimpleTreeNode treeNode = new SimpleTreeNode(listDclNode.Name);
+
+        treeNode.addChild(visit(listDclNode.Type));
+        treeNode.addChild(visit(listDclNode.Identifier));
+
+        for(Node params : listDclNode.Parameters) {
+            treeNode.addChild(visit(params));
+        }
+
+        return treeNode;
     }
 
     @Override
     public SimpleTreeNode visitClassNode(ClassNode classNode) {
-        return null;
+
+        SimpleTreeNode treeNode = new SimpleTreeNode(classNode.Name);
+
+        treeNode.addChild(visit(classNode.Type));
+        treeNode.addChild(visit(classNode.Identifier));
+        treeNode.addChild(visit(classNode.Body));
+
+        return treeNode;
     }
 
     @Override
     public SimpleTreeNode visitConstructorNode(ConstructorDclNode constructorDclNode) {
+        SimpleTreeNode treeNode = new SimpleTreeNode(constructorDclNode.Name);
+
+        treeNode.addChild(visit(constructorDclNode.Type));
+        treeNode.addChild(visit(constructorDclNode.Identifier));
+
+        for(Node params : constructorDclNode.Parameters) {
+            treeNode.addChild(visit(params));
+        }
+
+        treeNode.addChild(visit(constructorDclNode.Body));
+
         return null;
     }
 
     @Override
     public SimpleTreeNode visitObjDcl(ObjDclNode objDclNode) {
-        return null;
+        SimpleTreeNode treeNode = new SimpleTreeNode(objDclNode.Name);
+
+        treeNode.addChild(visit(objDclNode.Type));
+        treeNode.addChild(visit(objDclNode.Identifier));
+        treeNode.addChild(visit(objDclNode.ObjValue));
+
+        return treeNode;
     }
 
     @Override
     public SimpleTreeNode visitIfElseNode(IfElseNode ifElseNode) {
-        return null;
+        SimpleTreeNode treeNode = new SimpleTreeNode(ifElseNode.Name);
+
+        treeNode.addChild(visit(ifElseNode.condition));
+        treeNode.addChild(visit(ifElseNode.Body));
+
+        return treeNode;
     }
 
     @Override
     public SimpleTreeNode visitElseIfNode(ElseIfNode elseIfNode) {
-        return null;
+        SimpleTreeNode treeNode = new SimpleTreeNode(elseIfNode.Name);
+
+        treeNode.addChild(visit(elseIfNode.condition));
+        treeNode.addChild(visit(elseIfNode.Body));
+
+        return treeNode;
     }
 
     @Override
     public SimpleTreeNode visitSwitchNode(SwitchNode switchNode) {
-        return null;
+        SimpleTreeNode treeNode = new SimpleTreeNode(switchNode.Name);
+
+        treeNode.addChild(visit(switchNode.switchValue));
+        treeNode.addChild(visit(switchNode.Body));
+
+        return treeNode;
     }
 
     @Override
     public SimpleTreeNode visitSwitchBodyNode(SwitchBody switchBody) {
-        return null;
+        SimpleTreeNode treeNode = new SimpleTreeNode(switchBody.Name);
+
+        for(Node cases : switchBody.cases) {
+            treeNode.addChild(visit(cases));
+        }
+
+        return treeNode;
     }
 
     @Override
     public SimpleTreeNode visitCaseNode(CaseNode caseNode) {
-        return null;
+        SimpleTreeNode treeNode = new SimpleTreeNode(caseNode.Name);
+
+        treeNode.addChild(visit(caseNode.switchValue));
+
+        return treeNode;
     }
 
     @Override
     public SimpleTreeNode visitForLoopNode(ForLoopNode forLoopNode) {
-        return null;
+        SimpleTreeNode treeNode = new SimpleTreeNode(forLoopNode.Name);
+
+        treeNode.addChild(visit(forLoopNode.identifier));
+        treeNode.addChild(visit(forLoopNode.rangeInt));
+        treeNode.addChild(visit(forLoopNode.rangeIdentifier));
+        treeNode.addChild(visit(forLoopNode.Body));
+
+        return treeNode;
     }
 
     @Override
     public SimpleTreeNode visitWhileLoopNode(WhileLoopNode whileLoopNode) {
-        return null;
+        SimpleTreeNode treeNode = new SimpleTreeNode(whileLoopNode.Name);
+
+        treeNode.addChild(visit(whileLoopNode.condition));
+        treeNode.addChild(visit(whileLoopNode.Body));
+
+        return treeNode;
     }
 
     @Override
     public SimpleTreeNode visitAssignmentNode(AssignmentNode assignmentNode) {
-        return null;
+        SimpleTreeNode treeNode = new SimpleTreeNode(assignmentNode.Name);
+
+        treeNode.addChild(visit(assignmentNode.Identifier));
+        treeNode.addChild(visit(assignmentNode.Equals));
+        treeNode.addChild(visit(assignmentNode.ValueNode));
+
+        return treeNode;
     }
 
     @Override
     public SimpleTreeNode visitArrayExprNode(ArrayExprNode arrayExprNode) {
-        return null;
+        SimpleTreeNode treeNode = new SimpleTreeNode(arrayExprNode.Name);
+
+        treeNode.addChild(visit(arrayExprNode.Left));
+        treeNode.addChild(visit(arrayExprNode.Index));
+        treeNode.addChild(visit(arrayExprNode.Right));
+
+        return treeNode;
     }
 
     @Override
     public SimpleTreeNode visitCompareNode(CompareNode compareNode) {
-        return null;
+        SimpleTreeNode treeNode = new SimpleTreeNode(compareNode.Name);
+
+        treeNode.addChild(visit(compareNode.Left));
+        treeNode.addChild(visit(compareNode.Operator));
+        treeNode.addChild(visit(compareNode.Right));
+
+        return treeNode;
     }
 
     @Override
     public SimpleTreeNode visitFunctionCallNode(FunctionCallNode functionCallNode) {
-        return null;
+        SimpleTreeNode treeNode = new SimpleTreeNode(functionCallNode.Name);
+
+        treeNode.addChild(visit(functionCallNode.Identifier));
+        for(Node params : functionCallNode.Parameters) {
+            treeNode.addChild(visit(params));
+        }
+
+        return treeNode;
     }
 
     @Override
     public SimpleTreeNode visitConstructorCallNode(ConstructorCallNode constructorCallNode) {
-        return null;
+        SimpleTreeNode treeNode = new SimpleTreeNode(constructorCallNode.Name);
+
+        treeNode.addChild(visit(constructorCallNode.Type));
+        for(Node params : constructorCallNode.Parameters) {
+            treeNode.addChild(visit(params));
+        }
+
+        return treeNode;
     }
 
     @Override
     public SimpleTreeNode visitInfixExpressionNode(InfixExpressionNode infixExpressionNode) {
-        return null;
+        SimpleTreeNode treeNode = new SimpleTreeNode(infixExpressionNode.Name);
+
+        treeNode.addChild(visit(infixExpressionNode.Left));
+        treeNode.addChild(visit(infixExpressionNode.Operator));
+        treeNode.addChild(visit(infixExpressionNode.Right));
+
+        return treeNode;
     }
 
     @Override
     public SimpleTreeNode visitLogicalNode(LogicalNode logicalNode) {
-        return null;
+        SimpleTreeNode treeNode = new SimpleTreeNode(logicalNode.Name);
+
+        treeNode.addChild(visit(logicalNode.Left));
+        treeNode.addChild(visit(logicalNode.Operator));
+        treeNode.addChild(visit(logicalNode.Right));
+
+        return treeNode;
     }
 
     @Override
     public SimpleTreeNode visitMathExpressionNode(MathExpressionNode mathExpressionNode) {
-        return null;
+        SimpleTreeNode treeNode = new SimpleTreeNode(mathExpressionNode.Name);
+
+        treeNode.addChild(visit(mathExpressionNode.Left));
+        treeNode.addChild(visit(mathExpressionNode.Operator));
+        treeNode.addChild(visit(mathExpressionNode.Right));
+
+        return treeNode;
     }
 
     @Override
     public SimpleTreeNode visitParamNode(ParamNode paramNode) {
-        return null;
+        SimpleTreeNode treeNode = new SimpleTreeNode(paramNode.Name);
+
+        treeNode.addChild(visit(paramNode.Type));
+        treeNode.addChild(visit(paramNode.Identifier));
+
+        return treeNode;
     }
 
     @Override
     public SimpleTreeNode visitBodyNode(BodyNode bodyNode) {
-        return null;
+        SimpleTreeNode treeNode = new SimpleTreeNode(bodyNode.Name);
+
+        for(Node line : bodyNode.Lines) {
+            treeNode.addChild(visit(line));
+        }
+
+        return treeNode;
     }
 
     @Override
@@ -148,32 +291,33 @@ public class ASTPrinterVisitor extends BaseVisitor<SimpleTreeNode>{
 
     @Override
     public SimpleTreeNode visitIdentifierNode(IdentifierNode identifierNode) {
-        return null;
+        return new SimpleTreeNode(identifierNode.Name);
+
     }
 
     @Override
     public SimpleTreeNode visitTypeNode(TypeNode typeNode) {
-        return null;
+        return new SimpleTreeNode(typeNode.Name);
     }
 
     @Override
     public SimpleTreeNode visitNumberNode(NumberNode numberNode) {
-        return null;
+        return new SimpleTreeNode(numberNode.Name);
     }
 
     @Override
     public SimpleTreeNode visitStringNode(StringNode stringNode) {
-        return null;
+        return new SimpleTreeNode(stringNode.Name);
     }
 
     @Override
     public SimpleTreeNode visitBoolNode(BoolNode boolNode) {
-        return null;
+        return new SimpleTreeNode(boolNode.Name);
     }
 
     @Override
     public SimpleTreeNode visitOpNode(OpNode opNode) {
-        return null;
+        return new SimpleTreeNode(opNode.Name);
     }
 
 }

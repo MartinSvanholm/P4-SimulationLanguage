@@ -7,15 +7,15 @@
     </content>
     <orderEntry type="jdk" jdkName="18" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" exported="" name="hu.webarticum.tree.printer" level="project" />
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/antlr-4.9.3-complete.jar!/" />
+          <root url="jar://$MODULE_DIR$/antlr-4.10-complete.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="library" exported="" name="hu.webarticum.tree.printer" level="project" />
   </component>
 </module>

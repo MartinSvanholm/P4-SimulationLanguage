@@ -7,9 +7,7 @@ import ASTVisitors.IYATSIVisitor;
 
 public class ElseIfNode extends ControlNode {
     public String Name = "else-if";
-
     public ExpressionNode condition;
-
     public BodyNode Body;
 
     @Override
