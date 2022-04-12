@@ -1,4 +1,4 @@
-// Generated from C:/Users/krist/Documents/GitHub/P4-SimulationLanguage\CFG.g4 by ANTLR 4.9.2
+// Generated from C:/Users/marti/OneDrive/Dokumenter/GitHub/P4-SimulationLanguage\CFG.g4 by ANTLR 4.9.2
 package Parser;
 
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -172,30 +172,6 @@ public class CFGBaseListener implements CFGListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterClassBody(CFGParser.ClassBodyContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitClassBody(CFGParser.ClassBodyContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterClassPropDcl(CFGParser.ClassPropDclContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitClassPropDcl(CFGParser.ClassPropDclContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterContructorDcl(CFGParser.ContructorDclContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -316,6 +292,18 @@ public class CFGBaseListener implements CFGListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterSwitchcase(CFGParser.SwitchcaseContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitSwitchcase(CFGParser.SwitchcaseContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterIterativeCtrl(CFGParser.IterativeCtrlContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -347,18 +335,6 @@ public class CFGBaseListener implements CFGListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitForLoop(CFGParser.ForLoopContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterStmtBody(CFGParser.StmtBodyContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitStmtBody(CFGParser.StmtBodyContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

@@ -25,35 +25,25 @@ dcl: functionDcl
    | objDcl;
    //| primVarDcl;
 
-endCondition: 'EndCondition' '{' codeBlock* 'return' expr SemiColon '}';
+endCondition: 'EndCondition' codeBlock;
 
-initCondition: 'InitCondition<' type '>' '{' codeBlock* '}';
+initCondition: 'InitCondition<' type '>' codeBlock*;
 
 /* FUNCTION CALL
     Void function: function TestFunction() { }
     With return type: function bool IsClearToDrive() { }
 */
-functionDcl: 'function' identifier '(' (dclParams (Comma dclParams)*)? ')' stmtBody
+functionDcl: 'function' identifier '(' (dclParams (Comma dclParams)*)? ')' codeBlock
            | 'function' type identifier '(' (dclParams (Comma dclParams)*)? ')' funcReturnBody;
 
-funcReturnBody: '{' codeBlock* 'return' expr SemiColon '}';
+funcReturnBody: codeBlock 'return' expr SemiColon '}';
 
 //  List<Road> roadList {Road1, Road2};
 listDcl: 'List<' type '>' identifier ('{' params (Comma params)* '}')? SemiColon;
 
-classDcl: type identifier classBody;
+classDcl: type identifier codeBlock;
 
-classBody: '{' classPropDcl* '}';
-
-classPropDcl: contructorDcl
-            | functionDcl
-            | listDcl
-            | objDcl
-            | statement
-            | assignment
-            | expr SemiColon;
-
-contructorDcl: 'constructor' 'Create<' type '>' '(' (dclParams (Comma dclParams)*)? ')' '{' codeBlock* '}';
+contructorDcl: 'constructor' 'Create<' type '>' '(' (dclParams (Comma dclParams)*)? ')' codeBlock;
 
 constructorCall: 'Create<' type '>' '(' (params (Comma params)*)? ')';
 
@@ -74,12 +64,12 @@ selectiveCtrl: ifElseStmt | switchStmt;
         this.direction = false;
     }
 */
-ifElseStmt: 'if' '(' left=expr ')' index=stmtBody right=elseIfStmt?;
+ifElseStmt: 'if' '(' left=expr ')' index=codeBlock right=elseIfStmt?;
 
 elseIfStmt: left=elseStmt
-          | 'else if' '(' index=expr ')' body=stmtBody right=elseIfStmt?;
+          | 'else if' '(' index=expr ')' body=codeBlock right=elseIfStmt?;
 
-elseStmt: 'else' stmtBody;
+elseStmt: 'else' codeBlock;
 
 switchStmt: 'switch' '(' expr ')' switchBody;
 
@@ -93,18 +83,18 @@ switchStmt: 'switch' '(' expr ')' switchBody;
             x = 0;
     }
 */
-switchBody: '{' ('case' (numberLiteral | type) ':' codeBlock* )+ ('default:' codeBlock*)? '}';
+switchBody: '{' ('case' switchcase ':' codeBlock* )+ ('default:' codeBlock*)? '}';
+
+switchcase: numberLiteral | type;
 
 iterativeCtrl: whileLoop | forLoop;
 
 // while(Sentinal) { }
-whileLoop: 'while' '('left=expr')' stmtBody;
+whileLoop: 'while' '('left=expr')' codeBlock;
 
-forLoop: 'for' loopNumber=identifier  'in range' '(' (numberLiteral | rangeNumber=identifier) ')' stmtBody;
+forLoop: 'for' loopNumber=identifier  'in range' '(' (numberLiteral | rangeNumber=identifier) ')' codeBlock;
 
-stmtBody: '{' codeBlock* '}';
-
-assignment: identifier Equals (identifier | expr) SemiColon;
+assignment: identifier Equals (value=identifier | expr) SemiColon;
 
 expr: functionCall                                         # funcExpr
     | left=expr '[' index=expr ']' right=expr?             # arrExpr
@@ -148,7 +138,7 @@ boolLiteral: bool;
 
 bool: 'true' | 'false';
 
-codeBlock: dcl | statement | assignment | expr SemiColon;
+codeBlock: '{' (dcl | statement | assignment | expr SemiColon | contructorDcl)* '}';
 
 OP_POW: '^';
 OP_MUL: '*';

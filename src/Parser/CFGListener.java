@@ -1,4 +1,4 @@
-// Generated from C:/Users/krist/Documents/GitHub/P4-SimulationLanguage\CFG.g4 by ANTLR 4.9.2
+// Generated from C:/Users/marti/OneDrive/Dokumenter/GitHub/P4-SimulationLanguage\CFG.g4 by ANTLR 4.9.2
 package Parser;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
@@ -138,26 +138,6 @@ public interface CFGListener extends ParseTreeListener {
 	 */
 	void exitClassDcl(CFGParser.ClassDclContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link CFGParser#classBody}.
-	 * @param ctx the parse tree
-	 */
-	void enterClassBody(CFGParser.ClassBodyContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link CFGParser#classBody}.
-	 * @param ctx the parse tree
-	 */
-	void exitClassBody(CFGParser.ClassBodyContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link CFGParser#classPropDcl}.
-	 * @param ctx the parse tree
-	 */
-	void enterClassPropDcl(CFGParser.ClassPropDclContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link CFGParser#classPropDcl}.
-	 * @param ctx the parse tree
-	 */
-	void exitClassPropDcl(CFGParser.ClassPropDclContext ctx);
-	/**
 	 * Enter a parse tree produced by {@link CFGParser#contructorDcl}.
 	 * @param ctx the parse tree
 	 */
@@ -258,6 +238,16 @@ public interface CFGListener extends ParseTreeListener {
 	 */
 	void exitSwitchBody(CFGParser.SwitchBodyContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link CFGParser#switchcase}.
+	 * @param ctx the parse tree
+	 */
+	void enterSwitchcase(CFGParser.SwitchcaseContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link CFGParser#switchcase}.
+	 * @param ctx the parse tree
+	 */
+	void exitSwitchcase(CFGParser.SwitchcaseContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link CFGParser#iterativeCtrl}.
 	 * @param ctx the parse tree
 	 */
@@ -287,16 +277,6 @@ public interface CFGListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitForLoop(CFGParser.ForLoopContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link CFGParser#stmtBody}.
-	 * @param ctx the parse tree
-	 */
-	void enterStmtBody(CFGParser.StmtBodyContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link CFGParser#stmtBody}.
-	 * @param ctx the parse tree
-	 */
-	void exitStmtBody(CFGParser.StmtBodyContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link CFGParser#assignment}.
 	 * @param ctx the parse tree

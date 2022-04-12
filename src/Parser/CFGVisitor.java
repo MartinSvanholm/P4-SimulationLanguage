@@ -1,4 +1,4 @@
-// Generated from C:/Users/krist/Documents/GitHub/P4-SimulationLanguage\CFG.g4 by ANTLR 4.9.2
+// Generated from C:/Users/marti/OneDrive/Dokumenter/GitHub/P4-SimulationLanguage\CFG.g4 by ANTLR 4.9.2
 package Parser;
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 
@@ -89,18 +89,6 @@ public interface CFGVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitClassDcl(CFGParser.ClassDclContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link CFGParser#classBody}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitClassBody(CFGParser.ClassBodyContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link CFGParser#classPropDcl}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitClassPropDcl(CFGParser.ClassPropDclContext ctx);
-	/**
 	 * Visit a parse tree produced by {@link CFGParser#contructorDcl}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -161,6 +149,12 @@ public interface CFGVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitSwitchBody(CFGParser.SwitchBodyContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link CFGParser#switchcase}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitSwitchcase(CFGParser.SwitchcaseContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link CFGParser#iterativeCtrl}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -178,12 +172,6 @@ public interface CFGVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitForLoop(CFGParser.ForLoopContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link CFGParser#stmtBody}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitStmtBody(CFGParser.StmtBodyContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link CFGParser#assignment}.
 	 * @param ctx the parse tree

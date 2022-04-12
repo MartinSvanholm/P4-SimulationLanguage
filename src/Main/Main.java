@@ -41,14 +41,12 @@ public class Main {
 
             Node ast = visitor.visitProgram(cfgParser.program());
 
-            ASTPrinter printer = new ASTPrinter();
-
-            SimpleTreeNode rootNode = printer.ConvertTree(ast);
+            /*ASTPrinter printer = new ASTPrinter();
 
             UnicodeMode.setUnicodeAsDefault(false);
 
             TraditionalTreePrinter treePrinter = new TraditionalTreePrinter();
-            treePrinter.print(rootNode);
+            treePrinter.print(ast.PrintNodes.get(0));*/
 
         } catch (NoSuchFileException exception) {
             System.out.println(ANSI_RED + "File does not exist" + ANSI_RESET);

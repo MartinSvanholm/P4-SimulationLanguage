@@ -1,11 +1,19 @@
 package ASTNodes;
 
+import ASTVisitors.IBaseVisitor;
+import ASTVisitors.IYATSIVisitor;
+import hu.webarticum.treeprinter.SimpleTreeNode;
+
 import java.util.ArrayList;
 
 public abstract class Node {
-    public ArrayList<Node> Nodes = new ArrayList<>();
-
-    public String Value;
+    public String Value = "Not found";
 
     public String Name = "";
+
+    public String GetNodeString() {
+        return Name;
+    }
+
+    public abstract <T> T accept(IBaseVisitor<? extends T> visitor);
 }

@@ -27,6 +27,6 @@ Simulation Environment {
     List<Road> roadList {Road1, Road2};
 
     if(5==5) {
-        
+        hej();
     }
 }

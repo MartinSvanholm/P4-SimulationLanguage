@@ -4,6 +4,7 @@ import ASTNodes.Node;
 import hu.webarticum.treeprinter.SimpleTreeNode;
 
 public class ASTPrinter {
+    /*
     int indent = 0;
 
     public void PrintAST(Node node) {
@@ -19,16 +20,17 @@ public class ASTPrinter {
             PrintAST(child);
         }
 
-        indent--;
-    }
+        indent--;*/
+    //}
 
-    public SimpleTreeNode ConvertTree(Node node) {
+    //public SimpleTreeNode ConvertTree(Node node) {
+    /*
         SimpleTreeNode treeNode = new SimpleTreeNode(node.Value);
 
         for(Node child : node.Nodes) {
             treeNode.addChild(ConvertTree(child));
         }
 
-        return treeNode;
-    }
+        return treeNode;*/
+   // }
 }
