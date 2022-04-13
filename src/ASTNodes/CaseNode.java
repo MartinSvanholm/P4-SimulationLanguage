@@ -5,7 +5,7 @@ import ASTVisitors.IBaseVisitor;
 import ASTVisitors.IYATSIVisitor;
 
 public class CaseNode extends Node {
-    public ExpressionNode switchValue;
+    public Node switchValue;
 
     @Override
     public <T> T accept(IBaseVisitor<? extends T> visitor) {

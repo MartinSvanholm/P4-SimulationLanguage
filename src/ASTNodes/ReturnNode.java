@@ -2,6 +2,7 @@ package ASTNodes;
 
 import ASTNodes.ExprNodes.ExpressionNode;
 import ASTVisitors.IBaseVisitor;
+import ASTVisitors.IYATSIVisitor;
 
 public class ReturnNode extends Node {
 
@@ -11,6 +12,8 @@ public class ReturnNode extends Node {
 
     @Override
     public <T> T accept(IBaseVisitor<? extends T> visitor) {
-        return null;
+        if(visitor instanceof IYATSIVisitor) {
+            return ((IYATSIVisitor<? extends T>) visitor).visitReturnNode(this);
+        } else return null;
     }
 }

@@ -11,6 +11,10 @@ public interface IYATSIVisitor<T> extends IBaseVisitor<T> {
 
     T visitSectionNode(SectionNode sectionNode);
 
+    T visitEndCondition(EndConditionNode endConditionNode);
+
+    T visitInitCondition(InitConditionNode initConditionNode);
+
     T visitFunctionNode(FunctionDclNode functionDclNode);
 
     T visitListNode(ListDclNode listDclNode);
@@ -50,6 +54,8 @@ public interface IYATSIVisitor<T> extends IBaseVisitor<T> {
     T visitLogicalNode(LogicalNode logicalNode);
 
     T visitMathExpressionNode(MathExpressionNode mathExpressionNode);
+
+    T visitReturnNode(ReturnNode returnNode);
 
     T visitParamNode(ParamNode paramNode);
 

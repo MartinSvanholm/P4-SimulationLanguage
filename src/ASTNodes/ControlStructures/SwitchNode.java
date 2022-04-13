@@ -2,6 +2,8 @@ package ASTNodes.ControlStructures;
 
 import ASTNodes.BodyNode;
 import ASTNodes.ExprNodes.ExpressionNode;
+import ASTNodes.Node;
+import ASTNodes.SwitchBody;
 import ASTVisitors.IBaseVisitor;
 import ASTVisitors.IYATSIVisitor;
 
@@ -9,9 +11,9 @@ import ASTVisitors.IYATSIVisitor;
 public class SwitchNode extends ControlNode {
     public String Name = "switch";
 
-    public ExpressionNode switchValue;
+    public Node switchValue;
 
-    public BodyNode Body;
+    public SwitchBody Body;
 
     @Override
     public <T> T accept(IBaseVisitor<? extends T> visitor) {

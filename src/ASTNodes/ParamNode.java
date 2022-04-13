@@ -6,7 +6,7 @@ import ASTVisitors.IYATSIVisitor;
 public class ParamNode extends Node {
     public String Name = "Parameter";
     public TypeNode Type;
-    public IdentifierNode Identifier;
+    public Node Identifier;
 
     @Override
     public <T> T accept(IBaseVisitor<? extends T> visitor) {

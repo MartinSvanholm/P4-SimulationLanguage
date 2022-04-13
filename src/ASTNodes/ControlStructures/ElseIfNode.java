@@ -9,6 +9,7 @@ public class ElseIfNode extends ControlNode {
     public String Name = "else-if";
     public ExpressionNode condition;
     public BodyNode Body;
+    public ElseIfNode ElseIf;
 
     @Override
     public <T> T accept(IBaseVisitor<? extends T> visitor) {

@@ -6,11 +6,11 @@ import ASTVisitors.IBaseVisitor;
 import ASTVisitors.IYATSIVisitor;
 
 public class InfixExpressionNode extends ExpressionNode {
-    public ExpressionNode Left;
+    public Node Left;
 
     public OpNode Operator;
 
-    public ExpressionNode Right;
+    public Node Right;
 
     @Override
     public <T> T accept(IBaseVisitor<? extends T> visitor) {

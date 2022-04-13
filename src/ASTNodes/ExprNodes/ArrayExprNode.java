@@ -1,16 +1,17 @@
 package ASTNodes.ExprNodes;
 
+import ASTNodes.Node;
 import ASTVisitors.IBaseVisitor;
 import ASTVisitors.IYATSIVisitor;
 
 public class ArrayExprNode extends ExpressionNode {
     public String Name = "Expr: arr";
 
-    public ExpressionNode Left;
+    public Node Left;
 
-    public ExpressionNode Index;
+    public Node Index;
 
-    public ExpressionNode Right;
+    public Node Right;
 
     @Override
     public <T> T accept(IBaseVisitor<? extends T> visitor) {

@@ -1,13 +1,18 @@
 package ASTNodes;
 
 import ASTVisitors.IBaseVisitor;
+import ASTVisitors.IYATSIVisitor;
 
 public class InitConditionNode extends Node{
+    public String Name = "initcondition";
+    public Node type;
     public BodyNode Body;
-    public String type;
+
 
     @Override
     public <T> T accept(IBaseVisitor<? extends T> visitor) {
-        return null;
+        if(visitor instanceof IYATSIVisitor) {
+            return ((IYATSIVisitor<? extends T>) visitor).visitInitCondition(this);
+        } else return null;
     }
 }

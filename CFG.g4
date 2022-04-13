@@ -49,7 +49,7 @@ constructorCall: 'Create<' type '>' '(' (params (Comma params)*)? ')';
 
 //primVarDcl: primType identifier (Equals expr)? SemiColon;
 
-objDcl: type identifier Equals (constructorCall | expr) SemiColon;
+objDcl: type identifier (Equals (constructorCall | expr))? SemiColon;
 
 statement: selectiveCtrl
          | iterativeCtrl
@@ -83,7 +83,7 @@ switchStmt: 'switch' '(' expr ')' switchBody;
             x = 0;
     }
 */
-switchBody: '{' ('case' switchcase ':' codeBlock* )+ ('default:' codeBlock*)? '}';
+switchBody: '{' ('case' switchcase codeBlock )+ ('default' codeBlock)? '}';
 
 switchcase: numberLiteral | type;
 
@@ -118,7 +118,7 @@ dclParams: (type identifier);
 
 type: primType | complexType | identifier;
 
-primType: ' number ' | 'string' | 'bool';
+primType: 'number ' | 'string ' | 'bool ';
 
 // Node node = Nodes[RandomInt(0, IONode.length)];
 complexType: 'Vehicle' | 'Node' | listType='List<' type '>';

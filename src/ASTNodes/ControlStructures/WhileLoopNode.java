@@ -2,13 +2,14 @@ package ASTNodes.ControlStructures;
 
 import ASTNodes.BodyNode;
 import ASTNodes.ExprNodes.ExpressionNode;
+import ASTNodes.Node;
 import ASTVisitors.IBaseVisitor;
 import ASTVisitors.IYATSIVisitor;
 
 public class WhileLoopNode extends ControlNode {
     public String Name = "while";
 
-    public ExpressionNode condition;
+    public Node condition;
 
     public BodyNode Body;
 

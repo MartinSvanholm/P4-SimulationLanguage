@@ -16,6 +16,9 @@ public class ASTPrinterVisitor extends BaseVisitor<SimpleTreeNode>{
         SimpleTreeNode treeNode = new SimpleTreeNode(programNode.Name);
 
         treeNode.addChild(visit(programNode.Environment));
+        treeNode.addChild(visit(programNode.Behavior));
+        treeNode.addChild(visit(programNode.Update));
+        treeNode.addChild(visit(programNode.Output));
 
         return treeNode;
     }
@@ -32,10 +35,37 @@ public class ASTPrinterVisitor extends BaseVisitor<SimpleTreeNode>{
     }
 
     @Override
+    public SimpleTreeNode visitEndCondition(EndConditionNode endConditionNode) {
+        SimpleTreeNode treeNode = new SimpleTreeNode(endConditionNode.Name);
+
+        treeNode.addChild(visit(endConditionNode.Body));
+
+        return treeNode;
+    }
+
+    @Override
+    public SimpleTreeNode visitInitCondition(InitConditionNode initConditionNode) {
+        SimpleTreeNode treeNode = new SimpleTreeNode(initConditionNode.Name);
+
+        treeNode.addChild(visit(initConditionNode.type));
+        treeNode.addChild(visit(initConditionNode.Body));
+
+        return treeNode;
+    }
+
+    @Override
     public SimpleTreeNode visitFunctionNode(FunctionDclNode functionDclNode) {
+
+        if(functionDclNode.Type != null)
+            functionDclNode.Name = "function";
+        else
+            functionDclNode.Name = "procedure";
+
         SimpleTreeNode treeNode = new SimpleTreeNode(functionDclNode.Name);
 
-        treeNode.addChild(visit(functionDclNode.Type));
+        if(functionDclNode.Type != null)
+            treeNode.addChild(visit(functionDclNode.Type));
+
         treeNode.addChild(visit(functionDclNode.Identifier));
 
         for(Node params : functionDclNode.Parameters) {
@@ -69,6 +99,7 @@ public class ASTPrinterVisitor extends BaseVisitor<SimpleTreeNode>{
 
         treeNode.addChild(visit(classNode.Type));
         treeNode.addChild(visit(classNode.Identifier));
+
         treeNode.addChild(visit(classNode.Body));
 
         return treeNode;
@@ -79,7 +110,6 @@ public class ASTPrinterVisitor extends BaseVisitor<SimpleTreeNode>{
         SimpleTreeNode treeNode = new SimpleTreeNode(constructorDclNode.Name);
 
         treeNode.addChild(visit(constructorDclNode.Type));
-        treeNode.addChild(visit(constructorDclNode.Identifier));
 
         for(Node params : constructorDclNode.Parameters) {
             treeNode.addChild(visit(params));
@@ -87,7 +117,7 @@ public class ASTPrinterVisitor extends BaseVisitor<SimpleTreeNode>{
 
         treeNode.addChild(visit(constructorDclNode.Body));
 
-        return null;
+        return treeNode;
     }
 
     @Override
@@ -96,7 +126,9 @@ public class ASTPrinterVisitor extends BaseVisitor<SimpleTreeNode>{
 
         treeNode.addChild(visit(objDclNode.Type));
         treeNode.addChild(visit(objDclNode.Identifier));
-        treeNode.addChild(visit(objDclNode.ObjValue));
+
+        if(objDclNode.ObjValue != null)
+            treeNode.addChild(visit(objDclNode.ObjValue));
 
         return treeNode;
     }
@@ -108,6 +140,9 @@ public class ASTPrinterVisitor extends BaseVisitor<SimpleTreeNode>{
         treeNode.addChild(visit(ifElseNode.condition));
         treeNode.addChild(visit(ifElseNode.Body));
 
+        if(ifElseNode.ElseIf != null)
+            treeNode.addChild(visit(ifElseNode.ElseIf));
+
         return treeNode;
     }
 
@@ -115,8 +150,13 @@ public class ASTPrinterVisitor extends BaseVisitor<SimpleTreeNode>{
     public SimpleTreeNode visitElseIfNode(ElseIfNode elseIfNode) {
         SimpleTreeNode treeNode = new SimpleTreeNode(elseIfNode.Name);
 
-        treeNode.addChild(visit(elseIfNode.condition));
+        if(elseIfNode.condition != null)
+            treeNode.addChild(visit(elseIfNode.condition));
+
         treeNode.addChild(visit(elseIfNode.Body));
+
+        if(elseIfNode.ElseIf != null)
+            treeNode.addChild(visit(elseIfNode.ElseIf));
 
         return treeNode;
     }
@@ -156,7 +196,9 @@ public class ASTPrinterVisitor extends BaseVisitor<SimpleTreeNode>{
         SimpleTreeNode treeNode = new SimpleTreeNode(forLoopNode.Name);
 
         treeNode.addChild(visit(forLoopNode.identifier));
-        treeNode.addChild(visit(forLoopNode.rangeInt));
+
+        if(forLoopNode.rangeInt != null)
+            treeNode.addChild(visit(forLoopNode.rangeInt));
         treeNode.addChild(visit(forLoopNode.rangeIdentifier));
         treeNode.addChild(visit(forLoopNode.Body));
 
@@ -190,7 +232,9 @@ public class ASTPrinterVisitor extends BaseVisitor<SimpleTreeNode>{
 
         treeNode.addChild(visit(arrayExprNode.Left));
         treeNode.addChild(visit(arrayExprNode.Index));
-        treeNode.addChild(visit(arrayExprNode.Right));
+
+        if(arrayExprNode.Right != null)
+         treeNode.addChild(visit(arrayExprNode.Right));
 
         return treeNode;
     }
@@ -264,6 +308,16 @@ public class ASTPrinterVisitor extends BaseVisitor<SimpleTreeNode>{
     }
 
     @Override
+    public SimpleTreeNode visitReturnNode(ReturnNode returnNode) {
+        SimpleTreeNode treeNode = new SimpleTreeNode(returnNode.Name);
+
+        treeNode.addChild(visit(returnNode.expressionNode));
+
+        return treeNode;
+    }
+
+
+    @Override
     public SimpleTreeNode visitParamNode(ParamNode paramNode) {
         SimpleTreeNode treeNode = new SimpleTreeNode(paramNode.Name);
 
@@ -277,6 +331,8 @@ public class ASTPrinterVisitor extends BaseVisitor<SimpleTreeNode>{
     @Override
     public SimpleTreeNode visitBodyNode(BodyNode bodyNode) {
         SimpleTreeNode treeNode = new SimpleTreeNode(bodyNode.Name);
+
+        int i = 0;
 
         for(Node line : bodyNode.Lines) {
             treeNode.addChild(visit(line));

@@ -21,6 +21,16 @@ public class BaseVisitor<T> extends AbstractBaseVisitor<T> implements IYATSIVisi
     }
 
     @Override
+    public T visitEndCondition(EndConditionNode endConditionNode) {
+        return null;
+    }
+
+    @Override
+    public T visitInitCondition(InitConditionNode initConditionNode) {
+        return null;
+    }
+
+    @Override
     public T visitFunctionNode(FunctionDclNode functionDclNode) {
         return null;
     }
@@ -117,6 +127,11 @@ public class BaseVisitor<T> extends AbstractBaseVisitor<T> implements IYATSIVisi
 
     @Override
     public T visitMathExpressionNode(MathExpressionNode mathExpressionNode) {
+        return null;
+    }
+
+    @Override
+    public T visitReturnNode(ReturnNode returnNode) {
         return null;
     }
 
