@@ -1,36 +1,26 @@
 package Main;
 
-import ASTNodes.Node;
+import ASTNodes.ProgramNode;
+import ASTVisitors.ASTPrinterVisitor;
 import hu.webarticum.treeprinter.SimpleTreeNode;
+import hu.webarticum.treeprinter.UnicodeMode;
+import hu.webarticum.treeprinter.printer.traditional.TraditionalTreePrinter;
 
 public class ASTPrinter {
-    /*
-    int indent = 0;
+    public ProgramNode AST;
 
-    public void PrintAST(Node node) {
-        System.out.print(indent + " ");
+    public ASTPrinter(ProgramNode programNode) {
+        AST = programNode;
+    }
 
-        for(int i = 0; i < indent; i++) {
-            System.out.print("   ");
-        }
+    public void PrintAST() {
+        ASTPrinterVisitor astPrinterVisitor = new ASTPrinterVisitor();
 
-        System.out.println(node.Value);
-        indent++;
-        for(Node child : node.Nodes) {
-            PrintAST(child);
-        }
+        SimpleTreeNode root = astPrinterVisitor.visitProgramNode(AST);
 
-        indent--;*/
-    //}
+        UnicodeMode.setUnicodeAsDefault(false);
 
-    //public SimpleTreeNode ConvertTree(Node node) {
-    /*
-        SimpleTreeNode treeNode = new SimpleTreeNode(node.Value);
-
-        for(Node child : node.Nodes) {
-            treeNode.addChild(ConvertTree(child));
-        }
-
-        return treeNode;*/
-   // }
+        TraditionalTreePrinter treePrinter = new TraditionalTreePrinter();
+        treePrinter.print(root);
+    }
 }

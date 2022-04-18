@@ -11,6 +11,8 @@ public abstract class Node {
 
     public String Name = "";
 
+    public int Line;
+
     public String GetNodeString() {
         return Name;
     }
