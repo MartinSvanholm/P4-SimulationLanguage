@@ -1,7 +1,7 @@
 //Mandatory "Environment" section
 //This functions as the setup for the simulation
 Simulation Environment {
-    number x = 5 + 5;
+    number x = "hej";
 }
 
 //Mandatory "behavior" section
