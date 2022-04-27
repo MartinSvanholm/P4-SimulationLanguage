@@ -1,6 +1,7 @@
 package Main;
 
 import ASTNodes.ProgramNode;
+import SymbolTable.*;
 
 public class Main {
 
@@ -23,6 +24,9 @@ public class Main {
             ASTPrinter astPrinter = new ASTPrinter((ProgramNode) astBuilder.AST);
             astPrinter.PrintAST();
         }
+
+        GlobalSymbolTable globalSymbolTable = new GlobalSymbolTable("Global Symbol Table", 0, errorHandler);
+        globalSymbolTable.BuildSymbolTable(astBuilder.AST);
 
         errorHandler.PrintErrors();
     }

@@ -3,6 +3,8 @@ package ASTNodes;
 import ASTVisitors.IBaseVisitor;
 import ASTVisitors.IYATSIVisitor;
 
+import java.util.ArrayList;
+
 public class ParamNode extends Node {
     public String Name = "Parameter";
     public TypeNode Type;
@@ -13,5 +15,13 @@ public class ParamNode extends Node {
         if(visitor instanceof IYATSIVisitor) {
             return ((IYATSIVisitor<? extends T>) visitor).visitParamNode(this);
         } else return null;
+    }
+
+    @Override
+    public ArrayList<Node> GetChildren() {
+        Children = new ArrayList<>();
+        Children.add(Identifier);
+
+        return Children;
     }
 }

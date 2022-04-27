@@ -4,6 +4,8 @@ import ASTNodes.Node;
 import ASTVisitors.IBaseVisitor;
 import ASTVisitors.IYATSIVisitor;
 
+import java.util.ArrayList;
+
 public class ArrayExprNode extends ExpressionNode {
     public String Name = "Expr: arr";
 
@@ -18,5 +20,15 @@ public class ArrayExprNode extends ExpressionNode {
         if(visitor instanceof IYATSIVisitor) {
             return ((IYATSIVisitor<? extends T>) visitor).visitArrayExprNode(this);
         } else return null;
+    }
+
+    @Override
+    public ArrayList<Node> GetChildren() {
+        Children = new ArrayList<>();
+        Children.add(Left);
+        Children.add(Index);
+        Children.add(Right);
+
+        return Children;
     }
 }

@@ -14,4 +14,13 @@ public class SectionNode extends Node {
             return ((IYATSIVisitor<? extends T>) visitor).visitSectionNode(this);
         } else return null;
     }
+
+    @Override
+    public ArrayList<Node> GetChildren() {
+        Children = new ArrayList<>();
+        Children = new ArrayList<>();
+        Children.addAll(Lines);
+
+        return Children;
+    }
 }

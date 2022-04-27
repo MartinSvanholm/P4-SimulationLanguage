@@ -14,4 +14,12 @@ public class SwitchBody extends Node {
             return ((IYATSIVisitor<? extends T>) visitor).visitSwitchBodyNode(this);
         } else return null;
     }
+
+    @Override
+    public ArrayList<Node> GetChildren() {
+        Children = new ArrayList<>();
+        Children.addAll(cases);
+
+        return Children;
+    }
 }

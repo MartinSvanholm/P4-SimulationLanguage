@@ -21,4 +21,13 @@ public class ConstructorDclNode extends DclNode {
             return ((IYATSIVisitor<? extends T>) visitor).visitConstructorNode(this);
         } else return null;
     }
+
+    @Override
+    public ArrayList<Node> GetChildren() {
+        Children = new ArrayList<>();
+        Children.addAll(Parameters);
+        Children.add(Body);
+
+        return Children;
+    }
 }

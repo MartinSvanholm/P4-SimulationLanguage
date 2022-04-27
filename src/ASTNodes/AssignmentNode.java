@@ -4,6 +4,7 @@ import ASTNodes.ValueNodes.OpNode;
 import ASTVisitors.IBaseVisitor;
 import ASTVisitors.IYATSIVisitor;
 
+import java.util.ArrayList;
 import java.util.jar.Attributes;
 
 public class AssignmentNode extends Node {
@@ -20,5 +21,12 @@ public class AssignmentNode extends Node {
         if(visitor instanceof IYATSIVisitor) {
             return ((IYATSIVisitor<? extends T>) visitor).visitAssignmentNode(this);
         } else return null;
+    }
+
+
+    @Override
+    public ArrayList<Node> GetChildren() {
+        Children.add(ValueNode);
+        return Children;
     }
 }

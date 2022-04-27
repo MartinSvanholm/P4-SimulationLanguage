@@ -17,5 +17,9 @@ public abstract class Node {
         return Name;
     }
 
+    public ArrayList<Node> Children = new ArrayList<>();
+
     public abstract <T> T accept(IBaseVisitor<? extends T> visitor);
+
+    public abstract ArrayList<Node> GetChildren();
 }

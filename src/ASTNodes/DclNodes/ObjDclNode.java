@@ -4,9 +4,9 @@ import ASTNodes.*;
 import ASTVisitors.IBaseVisitor;
 import ASTVisitors.IYATSIVisitor;
 
-public class ObjDclNode extends DclNode{
-    public String Name = "dcl";
+import java.util.ArrayList;
 
+public class ObjDclNode extends DclNode{
     public Node ObjValue;
 
     @Override
@@ -14,5 +14,15 @@ public class ObjDclNode extends DclNode{
         if(visitor instanceof IYATSIVisitor) {
             return ((IYATSIVisitor<? extends T>) visitor).visitObjDcl(this);
         } else return null;
+    }
+
+    @Override
+    public ArrayList<Node> GetChildren() {
+        Children = new ArrayList<>();
+        Children.add(Type);
+        Children.add(Identifier);
+        Children.add(ObjValue);
+
+        return Children;
     }
 }

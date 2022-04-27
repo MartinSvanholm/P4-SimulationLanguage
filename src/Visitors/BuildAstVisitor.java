@@ -176,6 +176,7 @@ public class BuildAstVisitor extends CFGBaseVisitor<Node> {
 
     @Override public Node visitObjDcl(CFGParser.ObjDclContext ctx) {
         ObjDclNode node = new ObjDclNode();
+        node.Name = "dcl";
         node.Line = ctx.getStart().getLine();
 
         node.Type = visit(ctx.type());

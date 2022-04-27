@@ -5,6 +5,8 @@ import ASTNodes.Node;
 import ASTVisitors.IBaseVisitor;
 import ASTVisitors.IYATSIVisitor;
 
+import java.util.ArrayList;
+
 public class ClassNode extends DclNode {
     public String Name = "Class";
 
@@ -15,5 +17,13 @@ public class ClassNode extends DclNode {
         if(visitor instanceof IYATSIVisitor) {
             return ((IYATSIVisitor<? extends T>) visitor).visitClassNode(this);
         } else return null;
+    }
+
+    @Override
+    public ArrayList<Node> GetChildren() {
+        Children = new ArrayList<>();
+        Children.add(Body);
+
+        return Children;
     }
 }

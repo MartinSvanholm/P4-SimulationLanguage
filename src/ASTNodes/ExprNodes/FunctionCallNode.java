@@ -21,4 +21,10 @@ public class FunctionCallNode extends Node {
             return ((IYATSIVisitor<? extends T>) visitor).visitFunctionCallNode(this);
         } else return null;
     }
+
+    @Override
+    public ArrayList<Node> GetChildren() {
+        Children = new ArrayList<>();
+        return null;
+    }
 }

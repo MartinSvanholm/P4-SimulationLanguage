@@ -18,4 +18,12 @@ public class ConstructorCallNode extends Node {
             return ((IYATSIVisitor<? extends T>) visitor).visitConstructorCallNode(this);
         } else return null;
     }
+
+    @Override
+    public ArrayList<Node> GetChildren() {
+        Children = new ArrayList<>();
+        Children.add(Type);
+
+        return Children;
+    }
 }

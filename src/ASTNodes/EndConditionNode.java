@@ -3,6 +3,8 @@ package ASTNodes;
 import ASTVisitors.IBaseVisitor;
 import ASTVisitors.IYATSIVisitor;
 
+import java.util.ArrayList;
+
 public class EndConditionNode extends Node {
     public String Name = "endcondition";
 
@@ -13,5 +15,13 @@ public class EndConditionNode extends Node {
         if(visitor instanceof IYATSIVisitor) {
             return ((IYATSIVisitor<? extends T>) visitor).visitEndCondition(this);
         } else return null;
+    }
+
+    @Override
+    public ArrayList<Node> GetChildren() {
+        Children = new ArrayList<>();
+        Children.add(Body);
+
+        return Children;
     }
 }

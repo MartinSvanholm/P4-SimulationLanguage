@@ -1,6 +1,7 @@
 package ASTNodes.DclNodes;
 
 import ASTNodes.BodyNode;
+import ASTNodes.Node;
 import ASTNodes.ParamNode;
 import ASTVisitors.IBaseVisitor;
 import ASTVisitors.IYATSIVisitor;
@@ -19,5 +20,14 @@ public class FunctionDclNode extends DclNode{
         if(visitor instanceof IYATSIVisitor) {
             return ((IYATSIVisitor<? extends T>) visitor).visitFunctionNode(this);
         } else return null;
+    }
+
+    @Override
+    public ArrayList<Node> GetChildren() {
+        Children = new ArrayList<>();
+        Children.addAll(Parameters);
+        Children.add(Body);
+
+        return Children;
     }
 }

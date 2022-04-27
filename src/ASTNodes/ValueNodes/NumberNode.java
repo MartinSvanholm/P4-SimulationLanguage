@@ -1,8 +1,11 @@
 package ASTNodes.ValueNodes;
 
 import ASTNodes.ExprNodes.ExpressionNode;
+import ASTNodes.Node;
 import ASTVisitors.IBaseVisitor;
 import ASTVisitors.IYATSIVisitor;
+
+import java.util.ArrayList;
 
 public class NumberNode extends ExpressionNode {
     @Override
@@ -10,5 +13,11 @@ public class NumberNode extends ExpressionNode {
         if(visitor instanceof IYATSIVisitor) {
             return ((IYATSIVisitor<? extends T>) visitor).visitNumberNode(this);
         } else return null;
+    }
+
+    @Override
+    public ArrayList<Node> GetChildren() {
+        Children = new ArrayList<>();
+        return null;
     }
 }
