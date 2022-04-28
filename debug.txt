@@ -1,24 +1,8 @@
 //Mandatory "Environment" section
 //This functions as the setup for the simulation
 Simulation Environment {
-    number x = 5;
-
-    Vehicle Car {
-
-        function number test() {
-
-        }
-
-        string hej = "kjf";
-
-        function bool Is() {
-
-        }
-    }
-
-    Road road {
-
-    }
+    number r;
+    number k = r;
 }
 
 //Mandatory "behavior" section

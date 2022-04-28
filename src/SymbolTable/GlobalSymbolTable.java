@@ -27,8 +27,6 @@ public class GlobalSymbolTable extends SymbolTable {
 
     public void BuildSymbolTable(ASTNodes.Node ast) {
         ProcessNode(ast);
-
-        PrintTable(this);
     }
 
     private void ProcessNode(Node node) {
@@ -38,9 +36,11 @@ public class GlobalSymbolTable extends SymbolTable {
             InsertSymbol(node);
         }
 
-        if (node.GetChildren() != null) {
-            for(Node tempNode : node.GetChildren()) {
-                ProcessNode(tempNode);
+        if(node != null) {
+            if (node.GetChildren() != null) {
+                for(Node tempNode : node.GetChildren()) {
+                    ProcessNode(tempNode);
+                }
             }
         }
 

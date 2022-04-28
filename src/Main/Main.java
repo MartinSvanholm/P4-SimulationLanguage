@@ -2,6 +2,7 @@ package Main;
 
 import ASTNodes.ProgramNode;
 import SymbolTable.*;
+import Visitors.TypeChecker;
 
 public class Main {
 
@@ -27,6 +28,9 @@ public class Main {
 
         GlobalSymbolTable globalSymbolTable = new GlobalSymbolTable("Global Symbol Table", 0, errorHandler);
         globalSymbolTable.BuildSymbolTable(astBuilder.AST);
+
+        TypeChecker typeChecker = new TypeChecker(errorHandler, globalSymbolTable);
+        typeChecker.CheckTypes(astBuilder.AST);
 
         errorHandler.PrintErrors();
     }
