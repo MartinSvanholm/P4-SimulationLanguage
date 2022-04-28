@@ -11,6 +11,7 @@ import ASTNodes.ValueNodes.StringNode;
 import ASTVisitors.BaseVisitor;
 import Main.Error;
 import Main.ErrorHandler;
+import Parser.CFGParser;
 import SymbolTable.*;
 
 import java.util.Enumeration;
@@ -177,7 +178,14 @@ public class TypeChecker extends BaseVisitor<Object> {
 
     @Override
     public Object visitForLoopNode(ForLoopNode forLoopNode) {
-        visitChildren(forLoopNode);
+
+        Symbol listIdentifierSymbol = GetSymbol(forLoopNode.listIdentifier.Name, Level);
+
+        if(listIdentifierSymbol == null) {
+            AddError(forLoopNode, String.format("%s %s",
+                    forLoopNode.listIdentifier.Name, "has never been declared - List expected"));
+        }
+
         return null;
     }
 
@@ -261,7 +269,7 @@ public class TypeChecker extends BaseVisitor<Object> {
 
     @Override
     public Object visitIdentifierNode(IdentifierNode identifierNode) {
-        visitChildren(identifierNode);
+
         return null;
     }
 
@@ -273,7 +281,7 @@ public class TypeChecker extends BaseVisitor<Object> {
 
     @Override
     public Object visitNumberNode(NumberNode numberNode) {
-        visitChildren(numberNode);
+
         return null;
     }
 

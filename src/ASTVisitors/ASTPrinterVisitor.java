@@ -197,9 +197,10 @@ public class ASTPrinterVisitor extends BaseVisitor<SimpleTreeNode>{
 
         treeNode.addChild(visit(forLoopNode.identifier));
 
-        if(forLoopNode.rangeInt != null)
-            treeNode.addChild(visit(forLoopNode.rangeInt));
-        treeNode.addChild(visit(forLoopNode.rangeIdentifier));
+        //if(forLoopNode.rangeInt != null)
+        //    treeNode.addChild(visit(forLoopNode.rangeInt));
+        treeNode.addChild(visit(forLoopNode.listIdentifier));
+        //treeNode.addChild(visit(forLoopNode.Type));
         treeNode.addChild(visit(forLoopNode.Body));
 
         return treeNode;

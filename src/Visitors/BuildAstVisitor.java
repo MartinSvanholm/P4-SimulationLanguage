@@ -275,11 +275,9 @@ public class BuildAstVisitor extends CFGBaseVisitor<Node> {
         ForLoopNode node = new ForLoopNode();
         node.Line = ctx.getStart().getLine();
 
-        node.identifier = (IdentifierNode) visit(ctx.loopNumber);
-        if(ctx.numberLiteral() != null)
-            node.rangeInt = (NumberNode) visit(ctx.numberLiteral());
-        else
-            node.rangeIdentifier = (IdentifierNode) visit(ctx.rangeNumber);
+        node.identifier = (IdentifierNode) visit(ctx.forIdentifier);
+        node.listIdentifier = (IdentifierNode) visit(ctx.forListIdentifier);
+        //node.Type = visit(ctx.forListIdentifier.());
 
         node.Body = (BodyNode) visit(ctx.codeBlock());
 

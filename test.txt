@@ -1,3 +1,29 @@
+@Override
+    public Object visitObjDcl(ObjDclNode objDclNode) {
+        if(objDclNode.ObjValue != null) {
+            switch (objDclNode.Type.Name) {
+                case "number " -> {
+                    if(!(objDclNode.ObjValue instanceof IdentifierNode)) {
+                        if (!Pattern.matches("[0-9]*(\\.)?[0-9]*", objDclNode.ObjValue.Name)) {
+                            AddError(objDclNode, objDclNode.Identifier.Name + " must be of type number");
+                        }
+                    } else {
+                        Symbol var = GetSymbol(objDclNode.ObjValue.Name, Level);
+                        if (var == null) {
+                            AddError(objDclNode, objDclNode.Identifier.Name + " has never been declared");
+                        } else if (!var.Type.equals(objDclNode.Type.Name)){
+                            AddError(objDclNode, objDclNode.Identifier.Name + " must be of type number");
+                        }
+                    }
+
+                }
+                case "string " -> {
+                }
+            }
+        }
+
+
+
 //Mandatory "behavior" section
 //Here the user defines the classes and their behavior
 Simulation Behavior {

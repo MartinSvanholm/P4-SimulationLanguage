@@ -92,7 +92,7 @@ iterativeCtrl: whileLoop | forLoop;
 // while(Sentinal) { }
 whileLoop: 'while' '('left=expr')' codeBlock;
 
-forLoop: 'for' '(' loopNumber=identifier  'in range' (numberLiteral | rangeNumber=identifier) ')' codeBlock;
+forLoop: 'for' '(' forIdentifier=identifier  'in range' forListIdentifier=identifier ')' codeBlock;
 
 assignment: identifier Equals (value=identifier | expr) SemiColon;
 

@@ -1,8 +1,10 @@
 //Mandatory "Environment" section
 //This functions as the setup for the simulation
 Simulation Environment {
-    number r;
-    number k = r;
+    List<int> yomama {1, 2};
+    for(broo in range johncena) {
+
+    }
 }
 
 //Mandatory "behavior" section

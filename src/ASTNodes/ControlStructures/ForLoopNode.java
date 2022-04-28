@@ -12,10 +12,10 @@ import java.util.ArrayList;
 
 public class ForLoopNode extends ControlNode {
     public String Name = "for";
+    public Node Type;
     public IdentifierNode identifier;
 
-    public NumberNode rangeInt;
-    public IdentifierNode rangeIdentifier;
+    public IdentifierNode listIdentifier;
 
     public BodyNode Body;
 
@@ -29,9 +29,9 @@ public class ForLoopNode extends ControlNode {
     @Override
     public ArrayList<Node> GetChildren() {
         Children = new ArrayList<>();
+        Children.add(Type);
         Children.add(identifier);
-        Children.add(rangeInt);
-        Children.add(rangeIdentifier);
+        Children.add(listIdentifier);
         Children.add(Body);
 
         return Children;
