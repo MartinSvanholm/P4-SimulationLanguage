@@ -1,11 +1,12 @@
 package ASTNodes;
 
+import ASTNodes.ExprNodes.ExpressionNode;
 import ASTVisitors.IBaseVisitor;
 import ASTVisitors.IYATSIVisitor;
 
 import java.util.ArrayList;
 
-public class IdentifierNode extends Node {
+public class IdentifierNode extends ExpressionNode {
     @Override
     public <T> T accept(IBaseVisitor<? extends T> visitor) {
         if(visitor instanceof IYATSIVisitor) {
