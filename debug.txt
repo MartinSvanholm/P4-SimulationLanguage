@@ -1,8 +1,15 @@
 //Mandatory "Environment" section
 //This functions as the setup for the simulation
 Simulation Environment {
-    number r;
-    number k = r;
+    Vehicle car {
+        constructor Create<Car>() {
+
+        }
+
+        constructor Create<Car>() {
+
+        }
+    }
 }
 
 //Mandatory "behavior" section

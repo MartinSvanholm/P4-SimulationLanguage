@@ -27,6 +27,8 @@ public class GlobalSymbolTable extends SymbolTable {
 
     public void BuildSymbolTable(ASTNodes.Node ast) {
         ProcessNode(ast);
+
+        PrintTable(this);
     }
 
     private void ProcessNode(Node node) {
@@ -70,14 +72,23 @@ public class GlobalSymbolTable extends SymbolTable {
     }
 
     private void InsertSymbol(Node node) {
-        if(Scope.Symbols.containsKey(((DclNode) node).Identifier.Name)) {
+        if(!(node instanceof ConstructorDclNode) && Scope.Symbols.containsKey(((DclNode) node).Identifier.Name)) {
             ErrorHandler.HasErrors = true;
-
             ErrorHandler.Errors.add(new Error(node.Line, ((DclNode) node).Identifier.Name + " has already been declared"));
+        } else if(Scope.Symbols.containsKey("constructor")) {
+            ErrorHandler.HasErrors = true;
+            ErrorHandler.Errors.add(new Error(node.Line,  "constructor for " + ((DclNode) node).Type.Name + " has already been declared"));
         }
-        Scope.Symbols.put(((DclNode) node).Identifier.Name, new Symbol(
-                ((DclNode) node).Identifier.Name,
-                ((DclNode) node).Type.Name));
+
+        if(!(node instanceof ConstructorDclNode)) {
+            Scope.Symbols.put(((DclNode) node).Identifier.Name, new Symbol(
+                    ((DclNode) node).Identifier.Name,
+                    ((DclNode) node).Type.Name));
+        } else {
+            Scope.Symbols.put("constructor", new Symbol(
+                    "constructor",
+                    ((ConstructorDclNode) node).Type.Name));
+        }
     }
 
     private void PrintTable(SymbolTable symbolTable) {
