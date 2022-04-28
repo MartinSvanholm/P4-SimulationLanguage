@@ -22,6 +22,11 @@ public class TypeChecker extends BaseVisitor<Object> {
     GlobalSymbolTable GlobalSymbolTable;
     int Level = 0;
 
+    public TypeChecker(ErrorHandler errorHandler, GlobalSymbolTable globalSymbolTable) {
+        ErrorHandler = errorHandler;
+        GlobalSymbolTable = globalSymbolTable;
+    }
+
     private Symbol GetSymbol(String name, int lvl) {
         SymbolTable symbolTable = FindTable(GlobalSymbolTable, lvl);
 
@@ -29,25 +34,27 @@ public class TypeChecker extends BaseVisitor<Object> {
         if(symbolTable != null)
             keys = symbolTable.Symbols.keys();
 
-        while(keys.hasMoreElements()) {
-            Symbol symbol = null;
-            symbol = symbolTable.Symbols.get(keys.nextElement());
+        if(keys != null) {
+            while(keys.hasMoreElements()) {
+                Symbol symbol = null;
+                symbol = symbolTable.Symbols.get(keys.nextElement());
 
-            if(symbol.Identifier.equals(name))
-                return symbol;
+                if(symbol.Identifier.equals(name))
+                    return symbol;
+            }
         }
         return null;
     }
     
     private SymbolTable FindTable(SymbolTable symbolTable, int lvl) {
-        for(SymbolTable symbolTable1 : symbolTable.Children) {
-            if(symbolTable1.Children == null)
-                continue;
+        if(symbolTable.Children == null)
+            return null;
 
-            if(symbolTable1.Level == lvl)
-                return symbolTable1;
-
-            FindTable(symbolTable1, lvl);
+        for(SymbolTable table : symbolTable.Children) {
+            if(table.Level == lvl)
+                return table;
+            else
+                return FindTable(table, lvl);
         }
 
         return null;
@@ -56,11 +63,6 @@ public class TypeChecker extends BaseVisitor<Object> {
     private void AddError(Node node, String message) {
         ErrorHandler.HasErrors = true;
         ErrorHandler.Errors.add(new Error(node.Line, message));
-    }
-
-    public TypeChecker(ErrorHandler errorHandler, GlobalSymbolTable globalSymbolTable) {
-        ErrorHandler = errorHandler;
-        GlobalSymbolTable = globalSymbolTable;
     }
 
     public void CheckTypes(Node ast) {
@@ -107,13 +109,22 @@ public class TypeChecker extends BaseVisitor<Object> {
 
     @Override
     public Object visitClassNode(ClassNode classNode) {
+        Level++;
         visitChildren(classNode);
+        Level--;
         return null;
     }
 
     @Override
     public Object visitConstructorNode(ConstructorDclNode constructorDclNode) {
-        visitChildren(constructorDclNode);
+        SymbolTable table = FindTable(GlobalSymbolTable, Level);
+
+        if (table != null) {
+            if(!table.Name.equals(constructorDclNode.Type.Name))
+                AddError(constructorDclNode, "constructor must be of type " + table.Name);
+        } else {
+            AddError(constructorDclNode, constructorDclNode.Type.Name + " has not been declared");
+        }
         return null;
     }
 

@@ -49,11 +49,21 @@ public class GlobalSymbolTable extends SymbolTable {
         if(node instanceof SectionNode ||
                 node instanceof FunctionDclNode ||
                 node instanceof  ClassNode) {
-            CloseScope();
+            CloseScope(node);
         }
     }
 
     private void OpenScope(Node node) {
+        if(node instanceof ClassNode) {
+            for(SymbolTable symbolTable : Scope.Children) {
+                if(symbolTable.Name.equals(((ClassNode) node).Identifier.Name)) {
+                    ErrorHandler.HasErrors = true;
+                    ErrorHandler.Errors.add(new Error(node.Line, ((ClassNode) node).Identifier.Name + " has already been declared"));
+                    return;
+                }
+            }
+        }
+
         tempLvl ++;
         if(node instanceof FunctionDclNode)
             Scope = new SymbolTable(((DclNode) node).Identifier.Name, tempLvl, Scope);
@@ -63,7 +73,14 @@ public class GlobalSymbolTable extends SymbolTable {
             Scope = new SymbolTable(node.Name, tempLvl, this);
     }
 
-    private void CloseScope() {
+    private void CloseScope(Node node) {
+        if(node instanceof ClassNode) {
+            for(SymbolTable symbolTable : Scope.Children) {
+                if(symbolTable.Name.equals(((ClassNode) node).Identifier.Name)) {
+                    return;
+                }
+            }
+        }
         tempLvl --;
 
         Scope.Parent.Children.add(Scope);
@@ -75,7 +92,7 @@ public class GlobalSymbolTable extends SymbolTable {
         if(!(node instanceof ConstructorDclNode) && Scope.Symbols.containsKey(((DclNode) node).Identifier.Name)) {
             ErrorHandler.HasErrors = true;
             ErrorHandler.Errors.add(new Error(node.Line, ((DclNode) node).Identifier.Name + " has already been declared"));
-        } else if(Scope.Symbols.containsKey("constructor")) {
+        } else if(Scope.Symbols.containsKey("constructor") && (node instanceof ConstructorDclNode)) {
             ErrorHandler.HasErrors = true;
             ErrorHandler.Errors.add(new Error(node.Line,  "constructor for " + ((DclNode) node).Type.Name + " has already been declared"));
         }
