@@ -157,14 +157,51 @@ public class TypeChecker extends BaseVisitor<Object> {
 
     @Override
     public Object visitIfElseNode(IfElseNode ifElseNode) {
-        visitChildren(ifElseNode);
-        //if(ifElseNode.condition)
+        if(ifElseNode.condition instanceof FunctionCallNode ||
+            ifElseNode.condition instanceof CompareNode ||
+            ifElseNode.condition instanceof  LogicalNode) {
+        } else if (ifElseNode.condition instanceof IdentifierNode) {
+            String ClassName = ifElseNode.condition.Name;
+            Symbol var = GetSymbol(ClassName, Level);
+
+            if(var == null) {
+                ErrorHandler.HasErrors = true;
+                AddError(ifElseNode, ifElseNode.condition.Name + " has never been declared");
+            } else if(!(var.Type.equals("bool "))) {
+                AddError(ifElseNode, ifElseNode.Name + " must be of type bool");
+            } else {
+            }
+        } else {
+            AddError(ifElseNode, ifElseNode.Name + " must be of type bool");
+        }
+
+        if(ifElseNode.ElseIf != null)
+            visit(ifElseNode.ElseIf);
         return null;
     }
 
     @Override
     public Object visitElseIfNode(ElseIfNode elseIfNode) {
-        visitChildren(elseIfNode);
+        if(elseIfNode.condition instanceof FunctionCallNode ||
+                elseIfNode.condition instanceof CompareNode ||
+                elseIfNode.condition instanceof  LogicalNode) {
+        } else if (elseIfNode.condition instanceof IdentifierNode) {
+            String ClassName = elseIfNode.condition.Name;
+            Symbol var = GetSymbol(ClassName, Level);
+
+            if(var == null) {
+                ErrorHandler.HasErrors = true;
+                AddError(elseIfNode, elseIfNode.condition.Name + " has never been declared");
+            } else if(!(var.Type.equals("bool "))) {
+                AddError(elseIfNode, elseIfNode.Name + " must be of type bool");
+            } else {
+            }
+        } else {
+            AddError(elseIfNode, elseIfNode.Name + " must be of type bool");
+        }
+
+        if(elseIfNode.ElseIf != null)
+            visit(elseIfNode.ElseIf);
         return null;
     }
 

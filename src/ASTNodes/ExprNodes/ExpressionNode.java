@@ -1,5 +1,6 @@
 package ASTNodes.ExprNodes;
 
+import ASTNodes.IdentifierNode;
 import ASTNodes.Node;
 import ASTVisitors.IBaseVisitor;
 import ASTVisitors.IYATSIVisitor;
