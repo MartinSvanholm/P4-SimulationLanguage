@@ -17,10 +17,15 @@ import java.util.Enumeration;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class TypeChecker extends BaseVisitor<Object> {
+public class TypeChecker extends BaseVisitor<String> {
     ErrorHandler ErrorHandler;
     GlobalSymbolTable GlobalSymbolTable;
     int Level = 0;
+
+    public TypeChecker(ErrorHandler errorHandler, GlobalSymbolTable globalSymbolTable) {
+        ErrorHandler = errorHandler;
+        GlobalSymbolTable = globalSymbolTable;
+    }
 
     private Symbol GetSymbol(String name, int lvl) {
         SymbolTable symbolTable = FindTable(GlobalSymbolTable, lvl);
@@ -29,25 +34,27 @@ public class TypeChecker extends BaseVisitor<Object> {
         if(symbolTable != null)
             keys = symbolTable.Symbols.keys();
 
-        while(keys.hasMoreElements()) {
-            Symbol symbol = null;
-            symbol = symbolTable.Symbols.get(keys.nextElement());
+        if(keys != null) {
+            while(keys.hasMoreElements()) {
+                Symbol symbol = null;
+                symbol = symbolTable.Symbols.get(keys.nextElement());
 
-            if(symbol.Identifier.equals(name))
-                return symbol;
+                if(symbol.Identifier.equals(name))
+                    return symbol;
+            }
         }
         return null;
     }
     
     private SymbolTable FindTable(SymbolTable symbolTable, int lvl) {
-        for(SymbolTable symbolTable1 : symbolTable.Children) {
-            if(symbolTable1.Children == null)
-                continue;
+        if(symbolTable.Children == null)
+            return null;
 
-            if(symbolTable1.Level == lvl)
-                return symbolTable1;
-
-            FindTable(symbolTable1, lvl);
+        for(SymbolTable table : symbolTable.Children) {
+            if(table.Level == lvl)
+                return table;
+            else
+                return FindTable(table, lvl);
         }
 
         return null;
@@ -58,23 +65,18 @@ public class TypeChecker extends BaseVisitor<Object> {
         ErrorHandler.Errors.add(new Error(node.Line, message));
     }
 
-    public TypeChecker(ErrorHandler errorHandler, GlobalSymbolTable globalSymbolTable) {
-        ErrorHandler = errorHandler;
-        GlobalSymbolTable = globalSymbolTable;
-    }
-
     public void CheckTypes(Node ast) {
         visitProgramNode((ProgramNode) ast);
     }
 
     @Override
-    public Object visitProgramNode(ProgramNode programNode) {
+    public String visitProgramNode(ProgramNode programNode) {
         visitChildren(programNode);
         return null;
     }
 
     @Override
-    public Object visitSectionNode(SectionNode sectionNode) {
+    public String visitSectionNode(SectionNode sectionNode) {
         Level++;
         visitChildren(sectionNode);
         Level--;
@@ -82,243 +84,241 @@ public class TypeChecker extends BaseVisitor<Object> {
     }
 
     @Override
-    public Object visitEndCondition(EndConditionNode endConditionNode) {
+    public String visitEndCondition(EndConditionNode endConditionNode) {
         visitChildren(endConditionNode);
         return null;
     }
 
     @Override
-    public Object visitInitCondition(InitConditionNode initConditionNode) {
+    public String visitInitCondition(InitConditionNode initConditionNode) {
         visitChildren(initConditionNode);
         return null;
     }
 
     @Override
-    public Object visitFunctionNode(FunctionDclNode functionDclNode) {
-        visitChildren(functionDclNode);
+    public String visitFunctionNode(FunctionDclNode functionDclNode) {
+        Level++;
+        for(Node node : functionDclNode.Body.Children) {
+            if(node instanceof ReturnNode) {
+                if(visit(node).equals(functionDclNode.Type));
+            }
+        }
+        Level--;
         return null;
     }
 
     @Override
-    public Object visitListNode(ListDclNode listDclNode) {
+    public String visitListNode(ListDclNode listDclNode) {
         visitChildren(listDclNode);
         return null;
     }
 
     @Override
-    public Object visitClassNode(ClassNode classNode) {
+    public String visitClassNode(ClassNode classNode) {
+        Level++;
         visitChildren(classNode);
+        Level--;
         return null;
     }
 
     @Override
-    public Object visitConstructorNode(ConstructorDclNode constructorDclNode) {
-        visitChildren(constructorDclNode);
+    public String visitConstructorNode(ConstructorDclNode constructorDclNode) {
+        SymbolTable table = FindTable(GlobalSymbolTable, Level);
+
+        if (table != null) {
+            if(!table.Name.equals(constructorDclNode.Type.Name))
+                AddError(constructorDclNode, "constructor must be of type " + table.Name);
+        } else {
+            AddError(constructorDclNode, constructorDclNode.Type.Name + " has not been declared");
+        }
         return null;
     }
 
     @Override
-    public Object visitObjDcl(ObjDclNode objDclNode) {
-        if(objDclNode.ObjValue != null) {
-            switch (objDclNode.Type.Name) {
-                case "number " -> {
-                    if(!(objDclNode.ObjValue instanceof IdentifierNode)) {
-                        if (!Pattern.matches("[0-9]*(\\.)?[0-9]*", objDclNode.ObjValue.Name)) {
-                            AddError(objDclNode, objDclNode.Identifier.Name + " must be of type number");
-                        }
-                    } else {
-                        Symbol var = GetSymbol(objDclNode.ObjValue.Name, Level);
-                        if (var == null) {
-                            AddError(objDclNode, objDclNode.Identifier.Name + " has never been declared");
-                        } else if (!var.Type.equals(objDclNode.Type.Name)){
-                            AddError(objDclNode, objDclNode.Identifier.Name + " must be of type number");
-                        }
-                    }
+    public String visitObjDcl(ObjDclNode objDclNode) {
+        if(objDclNode.ObjValue != null && !objDclNode.Type.Name.strip().equals(visit(objDclNode.ObjValue).strip()))
+            AddError(objDclNode, objDclNode.Identifier.Name+" must be of type "+ objDclNode.Type.Name.strip());
+        return null;
+    }
 
-                }
-                case "string " -> {
-                }
+    @Override
+    public String visitIfElseNode(IfElseNode ifElseNode) {
+        if(visit(ifElseNode.condition).strip().equals("bool")) {
+            if(ifElseNode.ElseIf != null)
+                visit(ifElseNode.ElseIf);
+        } else {
+            AddError(ifElseNode, "condition must be of type bool");
+        }
+        return null;
+    }
+
+    @Override
+    public String visitElseIfNode(ElseIfNode elseIfNode) {
+        if(elseIfNode.condition instanceof FunctionCallNode ||
+                elseIfNode.condition instanceof CompareNode ||
+                elseIfNode.condition instanceof  LogicalNode) {
+        } else if (elseIfNode.condition instanceof IdentifierNode) {
+            String ClassName = elseIfNode.condition.Name;
+            Symbol var = GetSymbol(ClassName, Level);
+
+            if(var == null) {
+                ErrorHandler.HasErrors = true;
+                AddError(elseIfNode, elseIfNode.condition.Name + " has never been declared");
+            } else if(!(var.Type.equals("bool "))) {
+                AddError(elseIfNode, elseIfNode.Name + " must be of type bool");
+            } else {
             }
+        } else {
+            AddError(elseIfNode, elseIfNode.Name + " must be of type bool");
         }
 
+        if(elseIfNode.ElseIf != null)
+            visit(elseIfNode.ElseIf);
         return null;
     }
 
     @Override
-    public Object visitIfElseNode(IfElseNode ifElseNode) {
-        visitChildren(ifElseNode);
-        //if(ifElseNode.condition)
-        return null;
-    }
-
-    @Override
-    public Object visitElseIfNode(ElseIfNode elseIfNode) {
-        visitChildren(elseIfNode);
-        return null;
-    }
-
-    @Override
-    public Object visitSwitchNode(SwitchNode switchNode) {
-        if(switchNode != null) {
-            if (switchNode.switchValue instanceof NumberNode) {
-                visitChildren(switchNode);
-            }
-            else {
-                AddError(switchNode, "Must be of type number");
-            }
-        }
-        else{
-            AddError(switchNode, switchNode.Name + " must contain an identifier");
-        }
+    public String visitSwitchNode(SwitchNode switchNode) {
         visitChildren(switchNode);
         return null;
     }
 
     @Override
-    public Object visitSwitchBodyNode(SwitchBody switchBody) {
-        if (switchBody.cases != null){
-            /*for (Node var: switchBody.cases) {
-                switch (var){
-                    case
-                }
-            }*/
-        }
-        else {
-            AddError(switchBody, "Body cannot be empty");
-        }
+    public String visitSwitchBodyNode(SwitchBody switchBody) {
         visitChildren(switchBody);
         return null;
     }
 
     @Override
-    public Object visitCaseNode(CaseNode caseNode) {
-        if (caseNode.switchValue != null){
-
-        }
-        else {
-            AddError(caseNode, "Case cannot be empty");
-        }
+    public String visitCaseNode(CaseNode caseNode) {
         visitChildren(caseNode);
         return null;
     }
 
     @Override
-    public Object visitForLoopNode(ForLoopNode forLoopNode) {
+    public String visitForLoopNode(ForLoopNode forLoopNode) {
         visitChildren(forLoopNode);
         return null;
     }
 
     @Override
-    public Object visitWhileLoopNode(WhileLoopNode whileLoopNode) {
+    public String visitWhileLoopNode(WhileLoopNode whileLoopNode) {
         visitChildren(whileLoopNode);
             return null;
     }
 
     @Override
-    public Object visitAssignmentNode(AssignmentNode assignmentNode) {
+    public String visitAssignmentNode(AssignmentNode assignmentNode) {
         visitChildren(assignmentNode);
         return null;
     }
 
     @Override
-    public Object visitArrayExprNode(ArrayExprNode arrayExprNode) {
-        visitChildren(arrayExprNode);
-        return null;
+    public String visitArrayExprNode(ArrayExprNode arrayExprNode) {
+        return visit(arrayExprNode.Left).strip();
     }
 
     @Override
-    public Object visitCompareNode(CompareNode compareNode) {
-        visitChildren(compareNode);
-        return null;
+    public String visitCompareNode(CompareNode compareNode) {
+        if(visit(compareNode.Left).strip().equals("number") && visit(compareNode.Right).strip().equals("number"))
+            return "bool";
+        else return "error";
     }
 
     @Override
-    public Object visitFunctionCallNode(FunctionCallNode functionCallNode) {
-        visitChildren(functionCallNode);
-        return null;
+    public String visitFunctionCallNode(FunctionCallNode functionCallNode) {
+        return visit(functionCallNode.Identifier).strip();
     }
 
     @Override
-    public Object visitConstructorCallNode(ConstructorCallNode constructorCallNode) {
+    public String visitConstructorCallNode(ConstructorCallNode constructorCallNode) {
         visitChildren(constructorCallNode);
         return null;
     }
 
     @Override
-    public Object visitInfixExpressionNode(InfixExpressionNode infixExpressionNode) {
-        visitChildren(infixExpressionNode);
-        return null;
+    public String visitInfixExpressionNode(InfixExpressionNode infixExpressionNode) {
+        String Left = visit(infixExpressionNode.Left);
+        String Right = visit(infixExpressionNode.Right);
+        if(Left.strip().equals(Right.strip()))
+            return Left;
+        else
+            return "error";
     }
 
     @Override
-    public Object visitLogicalNode(LogicalNode logicalNode) {
-        visitChildren(logicalNode);
-        return null;
+    public String visitLogicalNode(LogicalNode logicalNode) {
+        if(visit(logicalNode.Left).strip().equals("bool") && visit(logicalNode.Right).strip().equals("bool"))
+            return "bool";
+        else
+            return "error";
     }
 
     @Override
-    public Object visitMathExpressionNode(MathExpressionNode mathExpressionNode) {
-        visitChildren(mathExpressionNode);
-        return null;
+    public String visitMathExpressionNode(MathExpressionNode mathExpressionNode) {
+        if(visit(mathExpressionNode.Left).strip().equals("number") && visit(mathExpressionNode.Right).strip().equals("number"))
+            return "number";
+
+        return "error";
     }
 
     @Override
-    public Object visitReturnNode(ReturnNode returnNode) {
+    public String visitReturnNode(ReturnNode returnNode) {
         visitChildren(returnNode);
         return null;
     }
 
     @Override
-    public Object visitParamNode(ParamNode paramNode) {
+    public String visitParamNode(ParamNode paramNode) {
         visitChildren(paramNode);
          return null;
     }
 
     @Override
-    public Object visitBodyNode(BodyNode bodyNode) {
+    public String visitBodyNode(BodyNode bodyNode) {
         visitChildren(bodyNode);
         return null;
     }
 
     @Override
-    public Object visitConstructorBodyNode(ConstructorBodyNode constructorBodyNode) {
+    public String visitConstructorBodyNode(ConstructorBodyNode constructorBodyNode) {
         visitChildren(constructorBodyNode);
         return null;
     }
 
     @Override
-    public Object visitIdentifierNode(IdentifierNode identifierNode) {
-        visitChildren(identifierNode);
-        return null;
+    public String visitIdentifierNode(IdentifierNode identifierNode) {
+        Symbol var = GetSymbol(identifierNode.Name, Level);
+        if(var == null) {
+            AddError(identifierNode, identifierNode.Name + " has never been declared");
+            return "error";
+        }
+        else
+            return var.Type.strip();
     }
 
     @Override
-    public Object visitTypeNode(TypeNode typeNode) {
-        visitChildren(typeNode);
-        return null;
+    public String visitTypeNode(TypeNode typeNode) {
+        return typeNode.Name;
     }
 
     @Override
-    public Object visitNumberNode(NumberNode numberNode) {
-        visitChildren(numberNode);
-        return null;
+    public String visitNumberNode(NumberNode numberNode) {
+        return "number";
     }
 
     @Override
-    public Object visitStringNode(StringNode stringNode) {
-        visitChildren(stringNode);
-        return null;
+    public String visitStringNode(StringNode stringNode) {
+        return "string";
     }
 
     @Override
-    public Object visitBoolNode(BoolNode boolNode) {
-        visitChildren(boolNode);
-        return null;
+    public String visitBoolNode(BoolNode boolNode) {
+        return "bool";
     }
 
     @Override
-    public Object visitOpNode(OpNode opNode) {
-        visitChildren(opNode);
+    public String visitOpNode(OpNode opNode) {
         return null;
     }
 }

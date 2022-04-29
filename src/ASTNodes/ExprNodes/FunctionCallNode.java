@@ -8,7 +8,7 @@ import ASTVisitors.IYATSIVisitor;
 
 import java.util.ArrayList;
 
-public class FunctionCallNode extends Node {
+public class FunctionCallNode extends InfixExpressionNode {
     public String Name = "functioncall";
 
     public IdentifierNode Identifier;

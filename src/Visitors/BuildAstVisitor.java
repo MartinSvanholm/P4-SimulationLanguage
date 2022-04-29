@@ -197,7 +197,6 @@ public class BuildAstVisitor extends CFGBaseVisitor<Node> {
             ReturnNode node = new ReturnNode();
             node.Line = ctx.getStart().getLine();
             node.expressionNode = (ExpressionNode) visit(ctx.expr());
-
             return node;
         }
 
@@ -363,12 +362,10 @@ public class BuildAstVisitor extends CFGBaseVisitor<Node> {
                 return null;
         }
 
-        node.Left = (ExpressionNode) visit(ctx.left);
-        node.Right = (ExpressionNode) visit(ctx.right);
+        node.Left = visit(ctx.left);
+        node.Right = visit(ctx.right);
         node.Operator = new OpNode();
         node.Operator.Name = ctx.op.getText();
-
-
 
         return node;
     }
