@@ -62,6 +62,14 @@ public class GlobalSymbolTable extends SymbolTable {
                     return;
                 }
             }
+        } else if (node instanceof FunctionDclNode) {
+            for(SymbolTable symbolTable : Scope.Children) {
+                if(symbolTable.Name.equals(((FunctionDclNode) node).Identifier.Name)) {
+                    ErrorHandler.HasErrors = true;
+                    ErrorHandler.Errors.add(new Error(node.Line, ((FunctionDclNode) node).Identifier.Name + " has already been declared"));
+                    return;
+                }
+            }
         }
 
         tempLvl ++;
@@ -79,6 +87,11 @@ public class GlobalSymbolTable extends SymbolTable {
                 if(symbolTable.Name.equals(((ClassNode) node).Identifier.Name)) {
                     return;
                 }
+            }
+        } else if(node instanceof FunctionDclNode) {
+            for(SymbolTable symbolTable : Scope.Children) {
+                if(symbolTable.Name.equals(((FunctionDclNode) node).Identifier.Name))
+                    return;
             }
         }
         tempLvl --;

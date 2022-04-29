@@ -19,6 +19,9 @@ public class Main {
     public static void main(String[] args) {
         ErrorHandler errorHandler = new ErrorHandler();
         AstBuilder astBuilder = new AstBuilder(args[0], errorHandler);
+        GlobalSymbolTable globalSymbolTable = new GlobalSymbolTable("Global Symbol Table", 0, errorHandler);
+        TypeChecker typeChecker = new TypeChecker(errorHandler, globalSymbolTable);
+
         astBuilder.BuildAST();
 
         if(!errorHandler.HasErrors) {
@@ -26,11 +29,13 @@ public class Main {
             astPrinter.PrintAST();
         }
 
-        GlobalSymbolTable globalSymbolTable = new GlobalSymbolTable("Global Symbol Table", 0, errorHandler);
-        globalSymbolTable.BuildSymbolTable(astBuilder.AST);
+        if(!errorHandler.HasErrors) {
+            globalSymbolTable.BuildSymbolTable(astBuilder.AST);
+        }
 
-        TypeChecker typeChecker = new TypeChecker(errorHandler, globalSymbolTable);
-        typeChecker.CheckTypes(astBuilder.AST);
+        if(!errorHandler.HasErrors) {
+            typeChecker.CheckTypes(astBuilder.AST);
+        }
 
         errorHandler.PrintErrors();
     }

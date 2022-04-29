@@ -1,7 +1,10 @@
 //Mandatory "Environment" section
 //This functions as the setup for the simulation
 Simulation Environment {
-    List<number> test;
+    number y;
+    if() {
+
+    }
 }
 
 //Mandatory "behavior" section

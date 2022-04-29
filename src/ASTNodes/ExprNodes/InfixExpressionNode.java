@@ -14,8 +14,6 @@ public class InfixExpressionNode extends ExpressionNode {
 
     public Node Right;
 
-    public String Type;
-
     @Override
     public <T> T accept(IBaseVisitor<? extends T> visitor) {
         if(visitor instanceof IYATSIVisitor) {
