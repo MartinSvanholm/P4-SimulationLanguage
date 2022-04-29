@@ -2,6 +2,7 @@ package ASTNodes.ControlStructures;
 
 import ASTNodes.BodyNode;
 import ASTNodes.ExprNodes.ExpressionNode;
+import ASTNodes.IdentifierNode;
 import ASTNodes.Node;
 import ASTNodes.SwitchBody;
 import ASTVisitors.IBaseVisitor;
@@ -14,6 +15,7 @@ public class SwitchNode extends ControlNode {
     public String Name = "switch";
 
     public Node switchValue;
+    //public IdentifierNode Identifier;
 
     public SwitchBody Body;
 

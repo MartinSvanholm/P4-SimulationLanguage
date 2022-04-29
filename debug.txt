@@ -1,8 +1,12 @@
 //Mandatory "Environment" section
 //This functions as the setup for the simulation
 Simulation Environment {
-    number r;
-    number k = r;
+List<number> num {1, 3};
+switch(num){
+        case 1 {x=1;}
+        case 2 {x=2;}
+        default {x=3;}
+    }
 }
 
 //Mandatory "behavior" section

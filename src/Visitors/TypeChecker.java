@@ -159,18 +159,45 @@ public class TypeChecker extends BaseVisitor<Object> {
 
     @Override
     public Object visitSwitchNode(SwitchNode switchNode) {
+        if(switchNode != null) {
+            if (switchNode.switchValue instanceof NumberNode) {
+                visitChildren(switchNode);
+            }
+            else {
+                AddError(switchNode, "Must be of type number");
+            }
+        }
+        else{
+            AddError(switchNode, switchNode.Name + " must contain an identifier");
+        }
         visitChildren(switchNode);
         return null;
     }
 
     @Override
     public Object visitSwitchBodyNode(SwitchBody switchBody) {
+        if (switchBody.cases != null){
+            /*for (Node var: switchBody.cases) {
+                switch (var){
+                    case
+                }
+            }*/
+        }
+        else {
+            AddError(switchBody, "Body cannot be empty");
+        }
         visitChildren(switchBody);
         return null;
     }
 
     @Override
     public Object visitCaseNode(CaseNode caseNode) {
+        if (caseNode.switchValue != null){
+
+        }
+        else {
+            AddError(caseNode, "Case cannot be empty");
+        }
         visitChildren(caseNode);
         return null;
     }
