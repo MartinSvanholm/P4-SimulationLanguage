@@ -85,7 +85,7 @@ switchStmt: 'switch' '(' expr ')' switchBody;
 */
 switchBody: '{' ('case' switchcase codeBlock )+ ('default' codeBlock)? '}';
 
-switchcase: numberLiteral | type;
+switchcase: expr;
 
 iterativeCtrl: whileLoop | forLoop;
 

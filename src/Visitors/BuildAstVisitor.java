@@ -227,7 +227,8 @@ public class BuildAstVisitor extends CFGBaseVisitor<Node> {
         } else {
             node.condition = (ExpressionNode) visit(ctx.expr());
             node.Body = (BodyNode) visit(ctx.codeBlock());
-            node.ElseIf = (ElseIfNode) visitElseIfStmt(ctx.right);
+            if(ctx.left != null)
+                node.ElseIf = (ElseIfNode) visitElseIfStmt(ctx.right);
         }
 
         return node;
@@ -249,6 +250,7 @@ public class BuildAstVisitor extends CFGBaseVisitor<Node> {
 
     @Override public Node visitSwitchBody(CFGParser.SwitchBodyContext ctx) {
         SwitchBody node = new SwitchBody();
+        node.Name = "cases";
         node.Line = ctx.getStart().getLine();
 
         for(var switchCase : ctx.switchcase()) {
@@ -442,7 +444,6 @@ public class BuildAstVisitor extends CFGBaseVisitor<Node> {
     @Override public Node visitParams(CFGParser.ParamsContext ctx) {
         ParamNode node = new ParamNode();
         node.Line = ctx.getStart().getLine();
-
         node.Identifier = visitChildren(ctx);
 
         return node;
@@ -464,7 +465,7 @@ public class BuildAstVisitor extends CFGBaseVisitor<Node> {
         TypeNode node = new TypeNode();
         node.Line = ctx.getStart().getLine();
 
-        node.Name = ctx.getText();
+        node.Name = ctx.getText().strip();
 
         return node;
     }
@@ -474,9 +475,9 @@ public class BuildAstVisitor extends CFGBaseVisitor<Node> {
         node.Line = ctx.getStart().getLine();
 
         if(ctx.listType != null) {
-            node.Name = "List<" + visit(ctx.type()).Value + ">";
+            node.Name = "List<" + visit(ctx.type()).Value.strip() + ">";
         } else {
-            node.Name = ctx.getText();
+            node.Name = ctx.getText().strip();
         }
 
         return node;
@@ -486,7 +487,7 @@ public class BuildAstVisitor extends CFGBaseVisitor<Node> {
         IdentifierNode node = new IdentifierNode();
         node.Line = ctx.getStart().getLine();
 
-        node.Name = ctx.getText();
+        node.Name = ctx.getText().strip();
 
         return node;
     }
@@ -499,7 +500,7 @@ public class BuildAstVisitor extends CFGBaseVisitor<Node> {
         NumberNode numberNode = new NumberNode();
         numberNode.Line = ctx.getStart().getLine();
 
-        numberNode.Name = ctx.getText();
+        numberNode.Name = ctx.getText().strip();
 
         return numberNode;
     }
@@ -507,7 +508,7 @@ public class BuildAstVisitor extends CFGBaseVisitor<Node> {
     @Override public Node visitStringLiteral(CFGParser.StringLiteralContext ctx) {
         StringNode stringNode = new StringNode();
         stringNode.Line = ctx.getStart().getLine();
-        stringNode.Name = "\"" + ctx.getChild(1).getText() + "\"";
+        stringNode.Name = "\"" + ctx.getChild(1).getText().strip() + "\"";
 
         return stringNode;
     }
@@ -515,7 +516,7 @@ public class BuildAstVisitor extends CFGBaseVisitor<Node> {
     @Override public Node visitBoolLiteral(CFGParser.BoolLiteralContext ctx) {
         BoolNode boolNode = new BoolNode();
         boolNode.Line = ctx.getStart().getLine();
-        boolNode.Name = ctx.getText();
+        boolNode.Name = ctx.getText().strip();
 
         return boolNode;
     }

@@ -73,12 +73,16 @@ public class GlobalSymbolTable extends SymbolTable {
         }
 
         tempLvl ++;
-        if(node instanceof FunctionDclNode)
-            Scope = new SymbolTable(((DclNode) node).Identifier.Name, tempLvl, Scope);
+        if(node instanceof FunctionDclNode) {
+            Scope = new SymbolTable(((DclNode) node).Identifier.Name, tempLvl, Scope, ((FunctionDclNode) node).Type.Name);
+            for(Node param : ((FunctionDclNode) node).Parameters) {
+                InsertSymbol(param);
+            }
+        }
         else if (node instanceof ClassNode)
-            Scope = new SymbolTable(((ClassNode) node).Identifier.Name, tempLvl, Scope);
+            Scope = new SymbolTable(((ClassNode) node).Identifier.Name, tempLvl, Scope, ((ClassNode) node).Type.Name);
         else
-            Scope = new SymbolTable(node.Name, tempLvl, this);
+            Scope = new SymbolTable(node.Name, tempLvl, this, "Simulation");
     }
 
     private void CloseScope(Node node) {
@@ -102,7 +106,13 @@ public class GlobalSymbolTable extends SymbolTable {
     }
 
     private void InsertSymbol(Node node) {
-        if(!(node instanceof ConstructorDclNode) && Scope.Symbols.containsKey(((DclNode) node).Identifier.Name)) {
+        if(node instanceof ParamNode) {
+            Scope.Symbols.put(((ParamNode) node).Identifier.Name, new Symbol(
+                    ((ParamNode) node).Identifier.Name,
+                    ((ParamNode) node).Type.Name,
+                    "Parameter"));
+            return;
+        } else if(!(node instanceof ConstructorDclNode) && Scope.Symbols.containsKey(((DclNode) node).Identifier.Name)) {
             ErrorHandler.HasErrors = true;
             ErrorHandler.Errors.add(new Error(node.Line, ((DclNode) node).Identifier.Name + " has already been declared"));
         } else if(Scope.Symbols.containsKey("constructor") && (node instanceof ConstructorDclNode)) {
@@ -129,7 +139,7 @@ public class GlobalSymbolTable extends SymbolTable {
 
         while (keys.hasMoreElements()) {
             Symbol symbol = symbolTable.Symbols.get(keys.nextElement());
-            System.out.println("    " + symbol.Identifier + " " + symbol.Type);
+            System.out.println("    " + symbol.Identifier + " " + symbol.Type+" "+symbol.Attribute);
         }
 
         if(symbolTable.Children != null) {

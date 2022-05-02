@@ -14,8 +14,6 @@ import Main.ErrorHandler;
 import SymbolTable.*;
 
 import java.util.Enumeration;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class TypeChecker extends BaseVisitor<String> {
     ErrorHandler ErrorHandler;
@@ -29,6 +27,25 @@ public class TypeChecker extends BaseVisitor<String> {
 
     private Symbol GetSymbol(String name, int lvl) {
         SymbolTable symbolTable = FindTable(GlobalSymbolTable, lvl);
+
+        Enumeration<String> keys = null;
+        if(symbolTable != null)
+            keys = symbolTable.Symbols.keys();
+
+        if(keys != null) {
+            while(keys.hasMoreElements()) {
+                Symbol symbol = null;
+                symbol = symbolTable.Symbols.get(keys.nextElement());
+
+                if(symbol.Identifier.equals(name))
+                    return symbol;
+            }
+        }
+        return null;
+    }
+
+    private Symbol GetSymbolByScopeName(String name, String scopeName) {
+        SymbolTable symbolTable = FindTableByName(GlobalSymbolTable, scopeName);
 
         Enumeration<String> keys = null;
         if(symbolTable != null)
@@ -60,6 +77,20 @@ public class TypeChecker extends BaseVisitor<String> {
         return null;
     }
 
+    private SymbolTable FindTableByName(SymbolTable symbolTable, String name) {
+        if(symbolTable.Children == null)
+            return null;
+
+        for(SymbolTable table : symbolTable.Children) {
+            if(table.Name.equals(name))
+                return table;
+            else
+                return FindTableByName(table, name);
+        }
+
+        return null;
+    }
+
     private void AddError(Node node, String message) {
         ErrorHandler.HasErrors = true;
         ErrorHandler.Errors.add(new Error(node.Line, message));
@@ -85,13 +116,26 @@ public class TypeChecker extends BaseVisitor<String> {
 
     @Override
     public String visitEndCondition(EndConditionNode endConditionNode) {
-        visitChildren(endConditionNode);
+        for(Node node : endConditionNode.Body.Children) {
+            if(node instanceof ReturnNode) {
+                if(visit(node).strip().equals("bool")) {
+                    return null;
+                } else {
+                    AddError(node, "return must be of type bool");
+                }
+            }
+        }
         return null;
     }
 
     @Override
     public String visitInitCondition(InitConditionNode initConditionNode) {
-        visitChildren(initConditionNode);
+        SymbolTable table = FindTableByName(GlobalSymbolTable, initConditionNode.type.Name.strip());
+
+        if(table != null)
+            return null;
+        else
+            AddError(initConditionNode, initConditionNode.type.Name.strip() + " has not been declared");
         return null;
     }
 
@@ -100,7 +144,9 @@ public class TypeChecker extends BaseVisitor<String> {
         Level++;
         for(Node node : functionDclNode.Body.Children) {
             if(node instanceof ReturnNode) {
-                if(visit(node).equals(functionDclNode.Type));
+                if(!visit(node).strip().equals(functionDclNode.Type.Name.strip())) {
+                    AddError(node, "return must be of type " + functionDclNode.Type.Name.strip());
+                }
             }
         }
         Level--;
@@ -109,7 +155,11 @@ public class TypeChecker extends BaseVisitor<String> {
 
     @Override
     public String visitListNode(ListDclNode listDclNode) {
-        visitChildren(listDclNode);
+        for(Node node : listDclNode.Parameters) {
+            if(!visit(node).strip().equals(listDclNode.Type.Name.strip())) {
+                AddError(listDclNode, "parameters must be of type " + listDclNode.Type.Name.strip());
+            }
+        }
         return null;
     }
 
@@ -154,32 +204,22 @@ public class TypeChecker extends BaseVisitor<String> {
 
     @Override
     public String visitElseIfNode(ElseIfNode elseIfNode) {
-        if(elseIfNode.condition instanceof FunctionCallNode ||
-                elseIfNode.condition instanceof CompareNode ||
-                elseIfNode.condition instanceof  LogicalNode) {
-        } else if (elseIfNode.condition instanceof IdentifierNode) {
-            String ClassName = elseIfNode.condition.Name;
-            Symbol var = GetSymbol(ClassName, Level);
-
-            if(var == null) {
-                ErrorHandler.HasErrors = true;
-                AddError(elseIfNode, elseIfNode.condition.Name + " has never been declared");
-            } else if(!(var.Type.equals("bool "))) {
-                AddError(elseIfNode, elseIfNode.Name + " must be of type bool");
-            } else {
-            }
+        if(visit(elseIfNode.condition).strip().equals("bool")) {
+            if(elseIfNode.ElseIf != null)
+                visit(elseIfNode.ElseIf);
         } else {
-            AddError(elseIfNode, elseIfNode.Name + " must be of type bool");
+            AddError(elseIfNode, "condition must be of type bool");
         }
-
-        if(elseIfNode.ElseIf != null)
-            visit(elseIfNode.ElseIf);
         return null;
     }
 
     @Override
     public String visitSwitchNode(SwitchNode switchNode) {
-        visitChildren(switchNode);
+        for(Node switchCase : switchNode.Body.GetChildren()) {
+            if(!visit(switchNode.switchValue).strip().equals(visit(switchCase))) {
+                AddError(switchCase, "case must be of type " + visit(switchNode.switchValue).strip());
+            }
+        }
         return null;
     }
 
@@ -191,8 +231,7 @@ public class TypeChecker extends BaseVisitor<String> {
 
     @Override
     public String visitCaseNode(CaseNode caseNode) {
-        visitChildren(caseNode);
-        return null;
+        return visit(caseNode.switchValue);
     }
 
     @Override
@@ -203,19 +242,27 @@ public class TypeChecker extends BaseVisitor<String> {
 
     @Override
     public String visitWhileLoopNode(WhileLoopNode whileLoopNode) {
+        if(!visit(whileLoopNode.condition).strip().equals("bool")){
+            AddError(whileLoopNode, "while loop condition must be of type bool");
+        }
         visitChildren(whileLoopNode);
-            return null;
+        return null;
     }
 
     @Override
     public String visitAssignmentNode(AssignmentNode assignmentNode) {
-        visitChildren(assignmentNode);
+        if(!visit(assignmentNode.Identifier).strip().equals(visit(assignmentNode.ValueNode))) {
+            AddError(assignmentNode, assignmentNode.ValueNode.Name + " must be of type " + visit(assignmentNode.Identifier).strip());
+        }
         return null;
     }
 
     @Override
     public String visitArrayExprNode(ArrayExprNode arrayExprNode) {
-        return visit(arrayExprNode.Left).strip();
+        if(!visit(arrayExprNode.Left).strip().equals(visit(arrayExprNode.Index).strip())) {
+            AddError(arrayExprNode, "index must be of type " + visit(arrayExprNode.Left).strip());
+        }
+        return null;
     }
 
     @Override
@@ -227,13 +274,27 @@ public class TypeChecker extends BaseVisitor<String> {
 
     @Override
     public String visitFunctionCallNode(FunctionCallNode functionCallNode) {
-        return visit(functionCallNode.Identifier).strip();
+        SymbolTable table = FindTableByName(GlobalSymbolTable, functionCallNode.Identifier.Name);
+        if(table != null) {
+            for(ParamNode param : functionCallNode.Parameters) {
+                Enumeration<String> keys = table.Symbols.keys();
+
+                while (keys.hasMoreElements()) {
+                    Symbol var = GetSymbolByScopeName(keys.nextElement(), functionCallNode.Identifier.Name.strip());
+                    if(var != null && !var.Type.equals(visit(param.Identifier)))  {
+                        AddError(param, "parameter must be of type " + var.Type.strip());
+                    }
+                }
+            }
+            return visit(functionCallNode.Identifier).strip();
+        } else {
+            return "error";
+        }
     }
 
     @Override
     public String visitConstructorCallNode(ConstructorCallNode constructorCallNode) {
-        visitChildren(constructorCallNode);
-        return null;
+        return constructorCallNode.Type.Name;
     }
 
     @Override
@@ -264,14 +325,12 @@ public class TypeChecker extends BaseVisitor<String> {
 
     @Override
     public String visitReturnNode(ReturnNode returnNode) {
-        visitChildren(returnNode);
-        return null;
+        return visit(returnNode.expressionNode);
     }
 
     @Override
     public String visitParamNode(ParamNode paramNode) {
-        visitChildren(paramNode);
-         return null;
+        return visit(paramNode.Identifier);
     }
 
     @Override
@@ -289,12 +348,15 @@ public class TypeChecker extends BaseVisitor<String> {
     @Override
     public String visitIdentifierNode(IdentifierNode identifierNode) {
         Symbol var = GetSymbol(identifierNode.Name, Level);
-        if(var == null) {
-            AddError(identifierNode, identifierNode.Name + " has never been declared");
-            return "error";
-        }
-        else
+        SymbolTable table = FindTableByName(GlobalSymbolTable, identifierNode.Name);
+        if(var != null) {
             return var.Type.strip();
+        } else if(table != null) {
+            return table.Type.strip();
+        } else {
+            AddError(identifierNode, identifierNode.Name + " has not been declared");
+        }
+        return "error";
     }
 
     @Override
