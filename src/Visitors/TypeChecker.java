@@ -156,8 +156,10 @@ public class TypeChecker extends BaseVisitor<String> {
     @Override
     public String visitListNode(ListDclNode listDclNode) {
         for(Node node : listDclNode.Parameters) {
+            String test2 = visit(node).strip();
             if(!visit(node).strip().equals(listDclNode.Type.Name.strip())) {
                 AddError(listDclNode, "parameters must be of type " + listDclNode.Type.Name.strip());
+                return "parameters must be of type " + listDclNode.Type.Name.strip();
             }
         }
         return null;

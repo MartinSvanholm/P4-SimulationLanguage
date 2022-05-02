@@ -1,12 +1,8 @@
 //Mandatory "Environment" section
 //This functions as the setup for the simulation
 Simulation Environment {
-    //Initializing nodes and intersections
-    IONode startNode = Create<IONode>();
-    IONode endNode = Create<IONode>();
-    List<IONode> IONodes {startNode, endNode};
-    List<Node> intersectionConnections {startNode, endNode};
-    Ligthregulation intersection = Create<Ligthregulation>(intersectionConnections);
+    number test = 1;
+    number wooptest = test;
 }
 
 //Mandatory "behavior" section
