@@ -13,9 +13,9 @@ import java.util.Enumeration;
 public class GlobalSymbolTable extends SymbolTable {
     public ErrorHandler ErrorHandler;
 
-    public Vehicle Vehicle;
-    public Node Node;
-    public Road Road;
+    public SymbolTable Vehicle;
+    public SymbolTable Node;
+    public SymbolTable Road;
 
     private SymbolTable Scope;
     private int tempLvl = 0;
@@ -128,12 +128,18 @@ public class GlobalSymbolTable extends SymbolTable {
             Scope.Symbols.put("constructor", new Symbol(
                     "constructor",
                     ((ConstructorDclNode) node).Type.Name));
+            for(ParamNode node1 : ((ConstructorDclNode) node).Parameters) {
+                Scope.Symbols.put(node1.Identifier.Name, new Symbol(
+                        node1.Identifier.Name,
+                        node1.Type.Name,
+                        "Parameter"));
+            }
         }
     }
 
     private void PrintTable(SymbolTable symbolTable) {
         System.out.println("");
-        System.out.println(symbolTable.Name + " " + symbolTable.Level);
+        System.out.println(symbolTable.Name + " : " + symbolTable.Type + " " + symbolTable.Level);
 
         Enumeration<String> keys = symbolTable.Symbols.keys();
 
@@ -142,7 +148,7 @@ public class GlobalSymbolTable extends SymbolTable {
             System.out.println("    " + symbol.Identifier + " " + symbol.Type+" "+symbol.Attribute);
         }
 
-        if(symbolTable.Children != null) {
+        if(!symbolTable.Children.isEmpty()) {
             for(SymbolTable symbolTable1 : symbolTable.Children) {
                 PrintTable(symbolTable1);
             }

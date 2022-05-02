@@ -1,12 +1,14 @@
 //Mandatory "Environment" section
 //This functions as the setup for the simulation
 Simulation Environment {
+    Node Test {
+        constructor Create<Test>(number x, string s) {
+
+        }
+    }
+
     //Initializing nodes and intersections
-    IONode startNode = Create<IONode>();
-    IONode endNode = Create<IONode>();
-    List<IONode> IONodes {startNode, endNode};
-    List<Node> intersectionConnections {startNode, endNode};
-    Ligthregulation intersection = Create<Ligthregulation>(intersectionConnections);
+    Node startNode = Create<Test>(5, "dfdf");
 }
 
 //Mandatory "behavior" section

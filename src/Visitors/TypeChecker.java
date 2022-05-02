@@ -62,15 +62,13 @@ public class TypeChecker extends BaseVisitor<String> {
         }
         return null;
     }
-    
-    private SymbolTable FindTable(SymbolTable symbolTable, int lvl) {
-        if(symbolTable.Children == null)
-            return null;
 
+    private SymbolTable FindTable(SymbolTable symbolTable, int lvl) {
         for(SymbolTable table : symbolTable.Children) {
             if(table.Level == lvl)
                 return table;
-            else
+
+            if(!table.Children.isEmpty())
                 return FindTable(table, lvl);
         }
 
@@ -78,13 +76,11 @@ public class TypeChecker extends BaseVisitor<String> {
     }
 
     private SymbolTable FindTableByName(SymbolTable symbolTable, String name) {
-        if(symbolTable.Children == null)
-            return null;
-
         for(SymbolTable table : symbolTable.Children) {
-            if(table.Name.equals(name))
+            if(table.Name.strip().equals(name.strip()))
                 return table;
-            else
+
+            if(!table.Children.isEmpty())
                 return FindTableByName(table, name);
         }
 
@@ -186,8 +182,12 @@ public class TypeChecker extends BaseVisitor<String> {
 
     @Override
     public String visitObjDcl(ObjDclNode objDclNode) {
-        if(objDclNode.ObjValue != null && !objDclNode.Type.Name.strip().equals(visit(objDclNode.ObjValue).strip()))
-            AddError(objDclNode, objDclNode.Identifier.Name+" must be of type "+ objDclNode.Type.Name.strip());
+        if(objDclNode.ObjValue instanceof ConstructorCallNode) {
+            if(!visit(objDclNode.ObjValue).equals(objDclNode.Type.Name)) {
+                AddError(objDclNode, objDclNode.Identifier.Name+" must be of type "+ visit(objDclNode.Type));
+            }
+        } else if(objDclNode.ObjValue != null && !objDclNode.Type.Name.strip().equals(visit(objDclNode.ObjValue).strip()))
+            AddError(objDclNode, objDclNode.Identifier.Name+" must be of type "+ visit(objDclNode.Type));
         return null;
     }
 
@@ -294,7 +294,26 @@ public class TypeChecker extends BaseVisitor<String> {
 
     @Override
     public String visitConstructorCallNode(ConstructorCallNode constructorCallNode) {
-        return constructorCallNode.Type.Name;
+        SymbolTable table = FindTableByName(GlobalSymbolTable, constructorCallNode.Type.Name);
+        if(table == null) {
+            AddError(constructorCallNode, constructorCallNode.Type.Name + " has never been declared");
+            return "error";
+        } else {
+            Enumeration<String> keys = table.Symbols.keys();
+            for(ParamNode param : constructorCallNode.Parameters) {
+                String line = keys.nextElement();
+                if(line.equals("constructor"))
+                    continue;
+                Symbol var = GetSymbolByScopeName(line, constructorCallNode.Type.Name);
+                if(var == null)
+                    AddError(constructorCallNode, "to many parameters");
+                else if(!visit(param.Identifier).strip().equals(var.Type))
+                    AddError(constructorCallNode, "parameter must be of type " + var.Type);
+            }
+            if(keys.hasMoreElements() && !keys.nextElement().equals("constructor"))
+                AddError(constructorCallNode, "missing parameter");
+            return table.Type;
+        }
     }
 
     @Override
