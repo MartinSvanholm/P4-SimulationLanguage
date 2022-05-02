@@ -76,6 +76,12 @@ public class TypeChecker extends BaseVisitor<String> {
     }
 
     private SymbolTable FindTableByName(SymbolTable symbolTable, String name) {
+        if(name.equals("Node"))
+            return GlobalSymbolTable.Node;
+        else if(name.equals("Vehicle"))
+            return GlobalSymbolTable.Vehicle;
+        else if(name.equals("Road"))
+            return GlobalSymbolTable.Road;
         for(SymbolTable table : symbolTable.Children) {
             if(table.Name.strip().equals(name.strip()))
                 return table;
@@ -151,8 +157,12 @@ public class TypeChecker extends BaseVisitor<String> {
 
     @Override
     public String visitListNode(ListDclNode listDclNode) {
+        SymbolTable table = FindTableByName(GlobalSymbolTable, listDclNode.Type.Name);
         for(Node node : listDclNode.Parameters) {
-            if(!visit(node).strip().equals(listDclNode.Type.Name.strip())) {
+            if(table == null) {
+            } else if(table.Type.equals(listDclNode.Type.Name) && !visit(node).equals(table.Name)) {
+                AddError(listDclNode, "error");
+            } else if(!visit(node).strip().equals(listDclNode.Type.Name.strip())) {
                 AddError(listDclNode, "parameters must be of type " + listDclNode.Type.Name.strip());
             }
         }
@@ -183,7 +193,7 @@ public class TypeChecker extends BaseVisitor<String> {
     @Override
     public String visitObjDcl(ObjDclNode objDclNode) {
         if(objDclNode.ObjValue instanceof ConstructorCallNode) {
-            if(!visit(objDclNode.ObjValue).equals(objDclNode.Type.Name)) {
+            if(!visit(objDclNode.ObjValue).equals(objDclNode.Type.Name) && !((ConstructorCallNode) objDclNode.ObjValue).Type.Name.equals(objDclNode.Type.Name)) {
                 AddError(objDclNode, objDclNode.Identifier.Name+" must be of type "+ visit(objDclNode.Type));
             }
         } else if(objDclNode.ObjValue != null && !objDclNode.Type.Name.strip().equals(visit(objDclNode.ObjValue).strip()))
@@ -288,12 +298,17 @@ public class TypeChecker extends BaseVisitor<String> {
             }
             return visit(functionCallNode.Identifier).strip();
         } else {
+            AddError(functionCallNode, functionCallNode.Identifier.Name + " has never been declared");
             return "error";
         }
     }
 
     @Override
     public String visitConstructorCallNode(ConstructorCallNode constructorCallNode) {
+        if(IsAbstractType(constructorCallNode.Type.Name)) {
+            AddError(constructorCallNode, "cannot declare value from abstract class");
+            return "error";
+        }
         SymbolTable table = FindTableByName(GlobalSymbolTable, constructorCallNode.Type.Name);
         if(table == null) {
             AddError(constructorCallNode, constructorCallNode.Type.Name + " has never been declared");
@@ -401,5 +416,12 @@ public class TypeChecker extends BaseVisitor<String> {
     @Override
     public String visitOpNode(OpNode opNode) {
         return null;
+    }
+
+    private Boolean IsAbstractType(String type){
+        return switch (type) {
+            case "Node", "Vehicle", "Road" -> true;
+            default -> false;
+        };
     }
 }

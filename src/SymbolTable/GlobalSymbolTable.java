@@ -13,9 +13,10 @@ import java.util.Enumeration;
 public class GlobalSymbolTable extends SymbolTable {
     public ErrorHandler ErrorHandler;
 
-    public SymbolTable Vehicle;
-    public SymbolTable Node;
-    public SymbolTable Road;
+    public SymbolTable Vehicle = new SymbolTable("Vehicle", 0, null, "Vehicle");
+    public SymbolTable Node = new SymbolTable("Node", 0, null, "Node");
+    public SymbolTable Road = new SymbolTable("Road", 0, null, "Road");
+    public SymbolTable Simulation = new SymbolTable("Simulation", 0, null, "Simulation");
 
     private SymbolTable Scope;
     private int tempLvl = 0;
