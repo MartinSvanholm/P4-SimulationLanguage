@@ -13,12 +13,14 @@ import Main.Error;
 import Main.ErrorHandler;
 import SymbolTable.*;
 
+import java.util.ArrayList;
 import java.util.Enumeration;
 
 public class TypeChecker extends BaseVisitor<String> {
     ErrorHandler ErrorHandler;
     GlobalSymbolTable GlobalSymbolTable;
     int Level = 0;
+    String typeError = "error";
 
     public TypeChecker(ErrorHandler errorHandler, GlobalSymbolTable globalSymbolTable) {
         ErrorHandler = errorHandler;
@@ -26,6 +28,7 @@ public class TypeChecker extends BaseVisitor<String> {
     }
 
     private Symbol GetSymbol(String name, int lvl) {
+        Symbol symbol;
         SymbolTable symbolTable = FindTable(GlobalSymbolTable, lvl);
 
         Enumeration<String> keys = null;
@@ -34,18 +37,22 @@ public class TypeChecker extends BaseVisitor<String> {
 
         if(keys != null) {
             while(keys.hasMoreElements()) {
-                Symbol symbol = null;
                 symbol = symbolTable.Symbols.get(keys.nextElement());
 
                 if(symbol.Identifier.equals(name))
                     return symbol;
             }
         }
+
+        symbol = SearchClasses(name);
+        if(symbol != null)
+            return symbol;
+
         return null;
     }
 
     private Symbol GetSymbolByScopeName(String name, String scopeName) {
-        SymbolTable symbolTable = FindTableByName(GlobalSymbolTable, scopeName);
+        SymbolTable symbolTable = FindTableByName(GlobalSymbolTable, scopeName, 0);
 
         Enumeration<String> keys = null;
         if(symbolTable != null)
@@ -61,6 +68,25 @@ public class TypeChecker extends BaseVisitor<String> {
             }
         }
         return null;
+    }
+
+    private Symbol SearchClasses(String name) {
+        Symbol symbol;
+
+        symbol = GetSymbolByScopeName(name, "Vehicle");
+        if(symbol != null)
+            return symbol;
+
+        symbol = GetSymbolByScopeName(name, "Node");
+        if(symbol != null)
+            return symbol;
+
+        symbol = GetSymbolByScopeName(name, "Road");
+        if(symbol != null)
+            return symbol;
+
+        symbol = GetSymbolByScopeName(name, "Simulation");
+        return symbol;
     }
 
     private SymbolTable FindTable(SymbolTable symbolTable, int lvl) {
@@ -75,19 +101,28 @@ public class TypeChecker extends BaseVisitor<String> {
         return null;
     }
 
-    private SymbolTable FindTableByName(SymbolTable symbolTable, String name) {
-        if(name.equals("Node"))
-            return GlobalSymbolTable.Node;
-        else if(name.equals("Vehicle"))
-            return GlobalSymbolTable.Vehicle;
-        else if(name.equals("Road"))
-            return GlobalSymbolTable.Road;
+    private SymbolTable FindTableByName(SymbolTable symbolTable, String name, int i) {
         for(SymbolTable table : symbolTable.Children) {
             if(table.Name.strip().equals(name.strip()))
                 return table;
 
-            if(!table.Children.isEmpty())
-                return FindTableByName(table, name);
+            if(!table.Children.isEmpty()) {
+                SymbolTable var = FindTableByName(table, name, i + 1);
+                if(var != null)
+                    return var;
+            }
+        }
+
+        if(i == 0) {
+            for(SymbolTable table : GlobalSymbolTable.PredifindValues) {
+                if(!table.Children.isEmpty()) {
+                    SymbolTable var = FindTableByName(table, name, i + 1);
+                    if(var != null)
+                        return var;
+                }
+                if(table.Name.equals(name))
+                    return table;
+            }
         }
 
         return null;
@@ -132,7 +167,7 @@ public class TypeChecker extends BaseVisitor<String> {
 
     @Override
     public String visitInitCondition(InitConditionNode initConditionNode) {
-        SymbolTable table = FindTableByName(GlobalSymbolTable, initConditionNode.type.Name.strip());
+        SymbolTable table = FindTableByName(GlobalSymbolTable, initConditionNode.type.Name.strip(), 0);
 
         if(table != null)
             return null;
@@ -157,13 +192,23 @@ public class TypeChecker extends BaseVisitor<String> {
 
     @Override
     public String visitListNode(ListDclNode listDclNode) {
-        SymbolTable table = FindTableByName(GlobalSymbolTable, listDclNode.Type.Name);
-        for(Node node : listDclNode.Parameters) {
-            if(table == null) {
-            } else if(table.Type.equals(listDclNode.Type.Name) && !visit(node).equals(table.Name)) {
-                AddError(listDclNode, "error");
-            } else if(!visit(node).strip().equals(listDclNode.Type.Name.strip())) {
-                AddError(listDclNode, "parameters must be of type " + listDclNode.Type.Name.strip());
+        for(ParamNode node : listDclNode.Parameters) {
+            if(node.Identifier.Name.equals(listDclNode.Identifier.Name)) {
+                AddError(listDclNode, listDclNode.Identifier.Name + " cannot be a parameter of itself");
+            }
+
+            String paramType = visit(node);
+            if(!paramType.equals(typeError)) {
+                SymbolTable table = FindTableByName(GlobalSymbolTable, paramType, 0);
+                if(table != null && !table.Type.equals(listDclNode.Type.Name) && !paramType.equals(listDclNode.Type.Name)) {
+                    AddError(listDclNode, "parameter must be of type " + listDclNode.Type.Name.strip());
+                }
+
+                if(!paramType.equals(listDclNode.Type.Name) && table == null) {
+                    AddError(listDclNode, "parameter must be of type " + listDclNode.Type.Name.strip());
+                }
+            } else {
+                AddError(listDclNode, node.Identifier.Name + " has never been declared");
             }
         }
         return null;
@@ -261,8 +306,10 @@ public class TypeChecker extends BaseVisitor<String> {
 
     @Override
     public String visitAssignmentNode(AssignmentNode assignmentNode) {
-        if(!visit(assignmentNode.Identifier).strip().equals(visit(assignmentNode.ValueNode))) {
-            AddError(assignmentNode, assignmentNode.ValueNode.Name + " must be of type " + visit(assignmentNode.Identifier).strip());
+        if(visit(assignmentNode.Identifier).equals(typeError)) {
+            AddError(assignmentNode,assignmentNode.Identifier.Name + " has never been declared");
+        } else if(!visit(assignmentNode.Identifier).strip().equals(visit(assignmentNode.ValueNode))) {
+            AddError(assignmentNode, assignmentNode.Identifier.Name + " must be of type " + visit(assignmentNode.Identifier));
         }
         return null;
     }
@@ -277,30 +324,45 @@ public class TypeChecker extends BaseVisitor<String> {
 
     @Override
     public String visitCompareNode(CompareNode compareNode) {
-        if(visit(compareNode.Left).strip().equals("number") && visit(compareNode.Right).strip().equals("number"))
+        if( visit(compareNode.Left).equals(visit(compareNode.Right)))
             return "bool";
-        else return "error";
+        else
+            return "error";
     }
 
     @Override
     public String visitFunctionCallNode(FunctionCallNode functionCallNode) {
-        SymbolTable table = FindTableByName(GlobalSymbolTable, functionCallNode.Identifier.Name);
-        if(table != null) {
-            for(ParamNode param : functionCallNode.Parameters) {
-                Enumeration<String> keys = table.Symbols.keys();
+        String funcName = functionCallNode.Identifier.Name;
 
-                while (keys.hasMoreElements()) {
-                    Symbol var = GetSymbolByScopeName(keys.nextElement(), functionCallNode.Identifier.Name.strip());
-                    if(var != null && !var.Type.equals(visit(param.Identifier)))  {
-                        AddError(param, "parameter must be of type " + var.Type.strip());
+        SymbolTable table = FindTableByName(GlobalSymbolTable, functionCallNode.Identifier.Name, 0);
+        if(table == null) {
+            table = FindTableByName(GlobalSymbolTable, functionCallNode.Identifier.Name.split("\\.")[1], 0);
+            funcName = functionCallNode.Identifier.Name.split("\\.")[1];
+        }
+
+        if(table != null) {
+            ArrayList<Symbol> formParams = table.Symbols;
+
+            for(ParamNode param : functionCallNode.Parameters) {
+                String line =  keys.nextElement();
+                Symbol formalParam = GetSymbolByScopeName(line, funcName);
+
+                if(formalParam != null) {
+
+                    if(formalParam.Type.equals("Generic")) {
+                        String paramType = visit(param);
+                        Symbol field = GetSymbol(functionCallNode.Identifier.Name.split("\\.")[0], Level);
+                        if(!paramType.equals(field.Type))
+                            AddError(param, param.Identifier.Name + " must be of type " + field.Type);
                     }
                 }
             }
-            return visit(functionCallNode.Identifier).strip();
+
         } else {
             AddError(functionCallNode, functionCallNode.Identifier.Name + " has never been declared");
             return "error";
         }
+        return null;
     }
 
     @Override
@@ -309,7 +371,7 @@ public class TypeChecker extends BaseVisitor<String> {
             AddError(constructorCallNode, "cannot declare value from abstract class");
             return "error";
         }
-        SymbolTable table = FindTableByName(GlobalSymbolTable, constructorCallNode.Type.Name);
+        SymbolTable table = FindTableByName(GlobalSymbolTable, constructorCallNode.Type.Name, 0);
         if(table == null) {
             AddError(constructorCallNode, constructorCallNode.Type.Name + " has never been declared");
             return "error";
@@ -382,15 +444,14 @@ public class TypeChecker extends BaseVisitor<String> {
     @Override
     public String visitIdentifierNode(IdentifierNode identifierNode) {
         Symbol var = GetSymbol(identifierNode.Name, Level);
-        SymbolTable table = FindTableByName(GlobalSymbolTable, identifierNode.Name);
+        SymbolTable table = FindTableByName(GlobalSymbolTable, identifierNode.Name, 0);
         if(var != null) {
             return var.Type.strip();
         } else if(table != null) {
             return table.Type.strip();
-        } else {
-            AddError(identifierNode, identifierNode.Name + " has not been declared");
         }
-        return "error";
+
+        return typeError;
     }
 
     @Override
@@ -424,4 +485,6 @@ public class TypeChecker extends BaseVisitor<String> {
             default -> false;
         };
     }
+
+    private
 }

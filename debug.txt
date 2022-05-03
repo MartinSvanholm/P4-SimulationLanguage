@@ -1,13 +1,27 @@
 //Mandatory "Environment" section
 //This functions as the setup for the simulation
 Simulation Environment {
-    print("dfdf");
 }
 
 //Mandatory "behavior" section
 //Here the user defines the classes and their behavior
 Simulation Behavior {
 
+    Vehicle Car {
+        Node start = Create<INode>();
+
+        Length = 5;
+        Acceleration = 10;
+        Path.Add(start);
+    }
+
+    Node INode {
+
+    }
+
+    Node ONode {
+
+    }
 }
 
 //Mandatory "Update" section

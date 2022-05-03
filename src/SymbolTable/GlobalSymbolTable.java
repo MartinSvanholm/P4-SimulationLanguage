@@ -9,6 +9,7 @@ import Models.*;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 
 public class GlobalSymbolTable extends SymbolTable {
     public ErrorHandler ErrorHandler;
@@ -17,6 +18,11 @@ public class GlobalSymbolTable extends SymbolTable {
     public SymbolTable Node = new SymbolTable("Node", 0, null, "Node");
     public SymbolTable Road = new SymbolTable("Road", 0, null, "Road");
     public SymbolTable Simulation = new SymbolTable("Simulation", 0, null, "Simulation");
+    public SymbolTable List = new SymbolTable("List", 0, null, "List");
+
+    public List<SymbolTable> PredifindValues = new ArrayList<SymbolTable>(
+            java.util.List.of(Vehicle, Node, Road, Simulation, List)
+    );
 
     private SymbolTable Scope;
     private int tempLvl = 0;
@@ -27,8 +33,14 @@ public class GlobalSymbolTable extends SymbolTable {
     }
 
     public void BuildSymbolTable(ASTNodes.Node ast) {
+        InittializeTables();
         ProcessNode(ast);
 
+        PrintTable(Vehicle);
+        PrintTable(Node);
+        PrintTable(Road);
+        PrintTable(Simulation);
+        PrintTable(List);
         PrintTable(this);
     }
 
@@ -154,5 +166,22 @@ public class GlobalSymbolTable extends SymbolTable {
                 PrintTable(symbolTable1);
             }
         }
+    }
+
+    private void InittializeTables() {
+        Vehicle.Symbols.put("Length" , new Symbol("Length", "number"));
+        Vehicle.Symbols.put("Acceleration", new Symbol("Acceleration", "number"));
+        Vehicle.Symbols.put("Path", new Symbol("Path", "Node", "List"));
+        Vehicle.Symbols.put("Pathfinding", new Symbol("Pathfinding", "void", "Procedure"));
+
+        Node.Symbols.put("Connections" , new Symbol("Connections", "Node", "List"));
+
+        Road.Symbols.put("Length" , new Symbol("Length", "Number"));
+        Road.Symbols.put("startNode", new Symbol("startNode", "Node"));
+        Road.Symbols.put("endNode", new Symbol("endNode", "endNode"));
+
+        SymbolTable Add = new SymbolTable("Add", 0, List, "void");
+        Add.Symbols.put("value", new Symbol("value", "Generic", "Parameter"));
+        List.Children.add(Add);
     }
 }
