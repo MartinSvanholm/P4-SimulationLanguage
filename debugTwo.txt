@@ -1,0 +1,78 @@
+//Mandatory "Environment" section
+//This functions as the setup for the simulation
+Simulation Environment {
+    IONode NodeOne = Create<IONode>();
+    List<IONode> tempConnections{NodeOne};
+    IONode NodeTwo = Create<IONode>(tempConnections);
+    tempConnections.Remove(0);
+    tempConnections.Add(NodeTwo);
+    NodeOne.connections = tempConnections;
+
+    TownRoad RoadOne = Create<TownRoad>(50, 500, NodeOne, NodeTwo);
+
+    InitCondition<Car>{
+        if(Simulation.CurrentTick % 5 == 0){
+            Simulation.Vehicles.Add(Create<Car>());
+        }
+    }
+
+    EndCondition{
+        return Simulation.CurrentTick > 100;
+    }
+}
+
+//Mandatory "behavior" section
+//Here the user defines the classes and their behavior
+Simulation Behavior {
+    Vehicle Car {
+        number x = 1;
+        number y;
+
+        function number Square(number x){
+            return x*x;
+        }
+
+        constructor Create<Car>(){
+            this.length = 10;
+            this.acceleration = 200;
+        }
+    }
+
+    Node IONode {
+        constructor Create<IONode>(List<Node> connections){
+            this.connections = connections;
+        }
+
+        constructor Create<IONode>(){
+        }
+    }
+
+    Road TownRoad {
+        number speedLimit;
+        constructor Create<TownRoad>(number speedLimit, number length, Node startNode, Node endNode){
+            this.speedLimit = speedLimit;
+            this.length = length;
+            this.startNode = startNode;
+            this.endNode = endNode;
+        }
+    }
+}
+
+//Mandatory "Update" section
+//Here the main simulation logic is defined. Works as a foreach loop, looping over all instansiated agents
+Simulation Update {/*
+    switch(Vehicle.type){
+        case Car{
+            Print(Vehicle.Square(Simulation.CurrentTick));
+        }
+        default{
+            Print("Bling Blong");
+        }
+    }*/
+}
+
+//Mandatory "Output" section
+//Here the user defines what and how data is extracted from the simulation
+Simulation Output {
+    Output.Log("EKS DEE");
+}

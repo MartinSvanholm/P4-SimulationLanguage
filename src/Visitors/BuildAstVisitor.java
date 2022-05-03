@@ -477,7 +477,7 @@ public class BuildAstVisitor extends CFGBaseVisitor<Node> {
         node.Line = ctx.getStart().getLine();
 
         if(ctx.listType != null) {
-            node.Name = "List<" + visit(ctx.type()).Value + ">";
+            node.Name = "List<" + visit(ctx.type()).Name + ">";
         } else {
             node.Name = ctx.getText();
         }
