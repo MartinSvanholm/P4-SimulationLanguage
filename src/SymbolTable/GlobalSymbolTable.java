@@ -172,7 +172,8 @@ public class GlobalSymbolTable extends SymbolTable {
         Vehicle.Symbols.put("Length" , new Symbol("Length", "number"));
         Vehicle.Symbols.put("Acceleration", new Symbol("Acceleration", "number"));
         Vehicle.Symbols.put("Path", new Symbol("Path", "Node", "List"));
-        Vehicle.Symbols.put("Pathfinding", new Symbol("Pathfinding", "void", "Procedure"));
+        SymbolTable Pathfinding = new SymbolTable("Pathfinding", 0, Vehicle, "Node");
+        Vehicle.Children.add(Pathfinding);
 
         Node.Symbols.put("Connections" , new Symbol("Connections", "Node", "List"));
 
@@ -182,6 +183,21 @@ public class GlobalSymbolTable extends SymbolTable {
 
         SymbolTable Add = new SymbolTable("Add", 0, List, "void");
         Add.Symbols.put("value", new Symbol("value", "Generic", "Parameter"));
+
+        SymbolTable Remove = new SymbolTable("Remove", 0, List, "void");
+        Remove.Symbols.put("value", new Symbol("index", "number", "Parameter"));
+
+        SymbolTable GetIndex = new SymbolTable("GetIndex", 0, List, "number");
+        GetIndex.Symbols.put("value", new Symbol("value", "Generic", "Parameter"));
+
         List.Children.add(Add);
+        List.Children.add(Remove);
+        List.Children.add(GetIndex);
+
+        SymbolTable Print = new SymbolTable("Print", 0, null, "void");
+        Print.Symbols.put("line", new Symbol("line", "string", "parameter"));
+        this.Children.add(Print);
+
+        Simulation.Symbols.put("currentTick", new Symbol("currentTick", "number"));
     }
 }
