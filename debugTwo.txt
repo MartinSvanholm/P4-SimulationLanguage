@@ -32,6 +32,47 @@ Simulation Behavior {
             return x*x;
         }
 
+        function IfElseTest(){
+            bool testBool = true;
+            bool testBool2 = true;
+            string str;
+
+            if (testBool == true) {
+                str = "If";
+            } else if (testBool2 == true) {
+                str = "Else If";
+            } else {
+                str = "Else";
+            }
+        }
+
+        /* function SwitchTest(){
+            number testNum = 2;
+            string str;
+
+            switch(testNum){
+                case 1:
+                    str = "case1";
+                case 2:
+                    str = "case2";
+                default:
+                    str = "default";
+            }
+        } */
+
+        function WhileTest(){
+            bool testBool = true;
+            while(testBool == true) {
+                Print("xd");
+            }
+        }
+
+        function IndexTest() {
+            List<number> numList {1,2,3};
+
+            number x = numList[1];
+        }
+
         constructor Create<Car>(){
             this.length = 10;
             this.acceleration = 200;
