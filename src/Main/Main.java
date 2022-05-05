@@ -2,6 +2,7 @@ package Main;
 
 import ASTNodes.ProgramNode;
 import SymbolTable.*;
+import Visitors.FlowControl;
 import Visitors.TypeChecker;
 
 public class Main {
@@ -21,6 +22,7 @@ public class Main {
         AstBuilder astBuilder = new AstBuilder(args[0], errorHandler);
         GlobalSymbolTable globalSymbolTable = new GlobalSymbolTable("Global Symbol Table", 0, errorHandler);
         TypeChecker typeChecker = new TypeChecker(errorHandler, globalSymbolTable);
+        FlowControl flowControl = new FlowControl(globalSymbolTable, errorHandler);
 
         astBuilder.BuildAST();
 
@@ -31,6 +33,10 @@ public class Main {
 
         if(!errorHandler.HasErrors) {
             globalSymbolTable.BuildSymbolTable(astBuilder.AST);
+        }
+
+        if(!errorHandler.HasErrors) {
+            flowControl.CheckFlow(astBuilder.AST);
         }
 
         if(!errorHandler.HasErrors) {

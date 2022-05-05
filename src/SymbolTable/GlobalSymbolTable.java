@@ -120,34 +120,68 @@ public class GlobalSymbolTable extends SymbolTable {
 
     private void InsertSymbol(Node node) {
         if(node instanceof ParamNode) {
+            if(Scope.Symbols.containsKey(((ParamNode) node).Identifier.Name)) {
+                ErrorHandler.HasErrors = true;
+                ErrorHandler.Errors.add(new Error(node.Line, ((ParamNode) node).Identifier.Name + " has already been declared"));
+                return;
+            }
             Scope.Symbols.put(((ParamNode) node).Identifier.Name, new Symbol(
                     ((ParamNode) node).Identifier.Name,
                     ((ParamNode) node).Type.Name,
                     "Parameter"));
             return;
-        } else if(!(node instanceof ConstructorDclNode) && Scope.Symbols.containsKey(((DclNode) node).Identifier.Name)) {
-            ErrorHandler.HasErrors = true;
-            ErrorHandler.Errors.add(new Error(node.Line, ((DclNode) node).Identifier.Name + " has already been declared"));
-        } else if(Scope.Symbols.containsKey("constructor") && (node instanceof ConstructorDclNode)) {
-            ErrorHandler.HasErrors = true;
-            ErrorHandler.Errors.add(new Error(node.Line,  "constructor for " + ((DclNode) node).Type.Name + " has already been declared"));
         }
 
-        if(!(node instanceof ConstructorDclNode)) {
-            Scope.Symbols.put(((DclNode) node).Identifier.Name, new Symbol(
-                    ((DclNode) node).Identifier.Name,
-                    ((DclNode) node).Type.Name));
-        } else {
-            Scope.Symbols.put("constructor", new Symbol(
-                    "constructor",
-                    ((ConstructorDclNode) node).Type.Name));
-            for(ParamNode node1 : ((ConstructorDclNode) node).Parameters) {
-                Scope.Symbols.put(node1.Identifier.Name, new Symbol(
-                        node1.Identifier.Name,
-                        node1.Type.Name,
-                        "Parameter"));
+        if(DclAllreadyExist(((DclNode) node))) {
+            ErrorHandler.HasErrors = true;
+            ErrorHandler.Errors.add(new Error(node.Line, ((DclNode) node).Identifier.Name + " has already been declared"));
+            return;
+        }
+
+        if(node instanceof ObjDclNode) {
+            String Attribute = "Standard";
+
+            if(((ObjDclNode) node).ObjValue instanceof ConstructorCallNode) {
+                Attribute = ((ConstructorCallNode) ((ObjDclNode) node).ObjValue).Type.Name;
+            }
+            Scope.Symbols.put(((ObjDclNode) node).Identifier.Name, new Symbol(
+                    ((ObjDclNode) node).Identifier.Name,
+                    ((ObjDclNode) node).Type.Name,
+                    Attribute
+            ));
+            return;
+        }
+
+        if(node instanceof ListDclNode) {
+            Scope.Symbols.put(((ListDclNode) node).Identifier.Name, new Symbol(
+                    ((ListDclNode) node).Identifier.Name,
+                    ((ListDclNode) node).Type.Name,
+                    "List"
+            ));
+            return;
+        }
+
+        if(node instanceof ConstructorDclNode) {
+            if(Scope.Symbols.containsKey("constructor")) {
+                ErrorHandler.HasErrors = true;
+                ErrorHandler.Errors.add(new Error(node.Line,  "constructor for " + ((DclNode) node).Type.Name + " has already been declared"));
+            } else {
+                Scope.Symbols.put("constructor", new Symbol(
+                        "constructor",
+                        ((ConstructorDclNode) node).Type.Name,
+                        "Constructor"));
+                for(ParamNode node1 : ((ConstructorDclNode) node).Parameters) {
+                    Scope.Symbols.put(node1.Identifier.Name, new Symbol(
+                            node1.Identifier.Name,
+                            node1.Type.Name,
+                            "Parameter"));
+                }
             }
         }
+    }
+
+    private boolean DclAllreadyExist(DclNode node) {
+        return Scope.Symbols.containsKey(node.Identifier.Name);
     }
 
     private void PrintTable(SymbolTable symbolTable) {
@@ -197,6 +231,9 @@ public class GlobalSymbolTable extends SymbolTable {
         SymbolTable Print = new SymbolTable("Print", 0, null, "void");
         Print.Symbols.put("line", new Symbol("line", "string", "parameter"));
         this.Children.add(Print);
+
+        SymbolTable Type = new SymbolTable("Type", 0, null, "string");
+        this.Children.add(Type);
 
         Simulation.Symbols.put("currentTick", new Symbol("currentTick", "number"));
     }

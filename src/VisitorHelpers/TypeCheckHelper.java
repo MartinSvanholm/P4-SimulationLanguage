@@ -1,31 +1,13 @@
-package Visitors;
+package VisitorHelpers;
 
-import ASTNodes.Node;
-import Main.Error;
-import Main.ErrorHandler;
 import SymbolTable.Symbol;
 import SymbolTable.SymbolTable;
 import SymbolTable.GlobalSymbolTable;
-
-import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.Hashtable;
 
-public class TypeCheckHelper {
-    private final ErrorHandler ErrorHandler;
-    private final GlobalSymbolTable GlobalSymbolTable;
-
-    public TypeCheckHelper(ErrorHandler errorHandler, GlobalSymbolTable globalSymbolTable) {
-        ErrorHandler = errorHandler;
-        GlobalSymbolTable = globalSymbolTable;
-    }
-    public <T> ArrayList<T> MapToList(Hashtable<String, T> table) {
-        ArrayList<T> result = new ArrayList<>();
-        Enumeration<String> keys = table.keys();
-        while (keys.hasMoreElements()) {
-            result.add(table.get(keys.nextElement()));
-        }
-        return result;
+public class TypeCheckHelper extends BaseHelper{
+    public TypeCheckHelper(Main.ErrorHandler errorHandler, GlobalSymbolTable globalSymbolTable) {
+        super(errorHandler, globalSymbolTable);
     }
 
     public boolean IsBaseType(String type) {
@@ -35,7 +17,7 @@ public class TypeCheckHelper {
         };
     }
 
-    Symbol GetSymbolByScopeName(String name, String scopeName) {
+    public Symbol GetSymbolByScopeName(String name, String scopeName) {
         SymbolTable symbolTable = FindTableByName(GlobalSymbolTable, scopeName, 0);
 
         Enumeration<String> keys = null;
@@ -79,10 +61,5 @@ public class TypeCheckHelper {
         }
 
         return null;
-    }
-
-    public void AddError(Node node, String message) {
-        ErrorHandler.HasErrors = true;
-        ErrorHandler.Errors.add(new Error(node.Line, message));
     }
 }

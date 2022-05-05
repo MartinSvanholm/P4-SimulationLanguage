@@ -9,9 +9,9 @@ import ASTNodes.ValueNodes.NumberNode;
 import ASTNodes.ValueNodes.OpNode;
 import ASTNodes.ValueNodes.StringNode;
 import ASTVisitors.BaseVisitor;
+import VisitorHelpers.TypeCheckHelper;
 import Main.ErrorHandler;
 import SymbolTable.*;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -28,7 +28,7 @@ public class TypeChecker extends BaseVisitor<String> {
     }
 
     public void CheckTypes(Node ast) {
-        visitProgramNode((ProgramNode) ast);
+        visit(ast);
     }
 
     @Override
@@ -233,7 +233,7 @@ public class TypeChecker extends BaseVisitor<String> {
     public String visitFunctionCallNode(FunctionCallNode functionCallNode) {
         String funcName = functionCallNode.Identifier.Name;
 
-        SymbolTable table = helper.FindTableByName(GlobalSymbolTable, functionCallNode.Identifier.Name, 0);
+        SymbolTable table = helper.FindTableByName(GlobalSymbolTable, funcName, 0);
         if(table == null) {
             table = helper.FindTableByName(GlobalSymbolTable, functionCallNode.Identifier.Name.split("\\.")[1], 0);
             funcName = functionCallNode.Identifier.Name.split("\\.")[1];
@@ -248,7 +248,7 @@ public class TypeChecker extends BaseVisitor<String> {
                 helper.AddError(functionCallNode, paramError);
 
         } else {
-            helper.AddError(functionCallNode, functionCallNode.Identifier.Name + " has never been declared");
+            helper.AddError(functionCallNode, funcName + " has never been declared");
             return "error";
         }
         return visit(functionCallNode.Identifier);
