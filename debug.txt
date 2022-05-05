@@ -1,14 +1,17 @@
 //Mandatory "Environment" section
 //This functions as the setup for the simulation
 Simulation Environment {
-    number test = 1;
-    number wooptest = test;
+    number n = 1;
+    number s = n;
 }
 
 //Mandatory "behavior" section
 //Here the user defines the classes and their behavior
 Simulation Behavior {
-
+    function number test() {
+        number n = 1;
+        number s = n;
+    }
 }
 
 //Mandatory "Update" section

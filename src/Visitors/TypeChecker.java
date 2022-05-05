@@ -18,7 +18,7 @@ import java.util.Enumeration;
 public class TypeChecker extends BaseVisitor<String> {
     ErrorHandler ErrorHandler;
     GlobalSymbolTable GlobalSymbolTable;
-    int Level = 0;
+    public int Level = 0;
 
     public TypeChecker(ErrorHandler errorHandler, GlobalSymbolTable globalSymbolTable) {
         ErrorHandler = errorHandler;
@@ -196,23 +196,29 @@ public class TypeChecker extends BaseVisitor<String> {
     @Override
     public String visitIfElseNode(IfElseNode ifElseNode) {
         if(visit(ifElseNode.condition).strip().equals("bool")) {
-            if(ifElseNode.ElseIf != null)
+            if(ifElseNode.ElseIf != null) {
                 visit(ifElseNode.ElseIf);
+                return "Test1Success";
+            }
+            return "Test2Success";
         } else {
             AddError(ifElseNode, "condition must be of type bool");
+            return "Test3Success";
         }
-        return null;
     }
 
     @Override
     public String visitElseIfNode(ElseIfNode elseIfNode) {
         if(visit(elseIfNode.condition).strip().equals("bool")) {
-            if(elseIfNode.ElseIf != null)
+            if(elseIfNode.ElseIf != null) {
                 visit(elseIfNode.ElseIf);
+                return "Test1Success";
+            }
+            return "Test2Success";
         } else {
             AddError(elseIfNode, "condition must be of type bool");
+            return "Test3Success";
         }
-        return null;
     }
 
     @Override
@@ -220,10 +226,14 @@ public class TypeChecker extends BaseVisitor<String> {
         for(Node switchCase : switchNode.Body.GetChildren()) {
             if(!visit(switchNode.switchValue).strip().equals(visit(switchCase))) {
                 AddError(switchCase, "case must be of type " + visit(switchNode.switchValue).strip());
+                return "Test1Success";
             }
+            return "Test2Success";
         }
         return null;
     }
+
+
 
     @Override
     public String visitSwitchBodyNode(SwitchBody switchBody) {
@@ -246,17 +256,20 @@ public class TypeChecker extends BaseVisitor<String> {
     public String visitWhileLoopNode(WhileLoopNode whileLoopNode) {
         if(!visit(whileLoopNode.condition).strip().equals("bool")){
             AddError(whileLoopNode, "while loop condition must be of type bool");
+            return "Test1Success";
         }
         visitChildren(whileLoopNode);
-        return null;
+        return "Test2Success";
     }
 
     @Override
     public String visitAssignmentNode(AssignmentNode assignmentNode) {
+        var t = visit(assignmentNode.Identifier);
         if(!visit(assignmentNode.Identifier).strip().equals(visit(assignmentNode.ValueNode))) {
             AddError(assignmentNode, assignmentNode.ValueNode.Name + " must be of type " + visit(assignmentNode.Identifier).strip());
+            return "Test1Success";
         }
-        return null;
+        return "Test2Success";
     }
 
     @Override
@@ -357,8 +370,8 @@ public class TypeChecker extends BaseVisitor<String> {
             return table.Type.strip();
         } else {
             AddError(identifierNode, identifierNode.Name + " has not been declared");
+            return "TestErrorSuccess";
         }
-        return "error";
     }
 
     @Override
