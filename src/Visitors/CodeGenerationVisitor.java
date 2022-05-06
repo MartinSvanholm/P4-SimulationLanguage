@@ -4,31 +4,78 @@ import ASTNodes.*;
 import ASTNodes.ControlStructures.*;
 import ASTNodes.DclNodes.*;
 import ASTNodes.ExprNodes.*;
+import ASTNodes.ValueNodes.BoolNode;
+import ASTNodes.ValueNodes.NumberNode;
+import ASTNodes.ValueNodes.OpNode;
+import ASTNodes.ValueNodes.StringNode;
 import ASTVisitors.BaseVisitor;
+import Main.CodeGenIO;
 import hu.webarticum.treeprinter.SimpleTreeNode;
 
 public class CodeGenerationVisitor extends BaseVisitor<String> {
+    /* ---------------------------List af ting der mangler---------------------------
+    - Der er noget fuckery med semicolon... Det er mest ved et InfixExpression, hvis den ikke er del af at større expression/statement
+    - Lister er ikke lavet endnu
+    - Hele Environment delen er ikk lavet endnu
+    - Har ikke testet Update delen endnu, siden vi har en lidt gamle version af type checker osv.
+    - Eller virker resten overraskende godt xd.
+     */
     @Override
     public String visitProgramNode(ProgramNode programNode) {
+        CodeGenIO io = new CodeGenIO();
 
-        /*
-        String output = readfile(header.txt);
+        String output = io.ReadFile("Header.txt");
 
-        output = output + visit(programNode.Update);
+        output += visit(programNode.Update);
 
-         */
+        output += "                    output.Run();\n" +
+                "\n" +
+                "                }\n" +
+                "                tick++;\n" +
+                "            }\n" +
+                "            output.LogToFile();\n" +
+                "            List<Node> InitNodes() {";
 
+        //Her skal environment (og mere hardcoding) shit ske, men det kigger vi lige på lidt senere.
 
+        output += "            }\n" +
+                "        }";
 
-        return visit(programNode.Environment) + visit(programNode.Behavior) + visit(programNode.Update) + visit(programNode.Output);
+        output += visit(programNode.Behavior);
+
+        output += "        public class Output {\n" +
+                "            public string fileName = DateTime.Now.ToString(); //Foreslag\n" +
+                "            public List<string> dataList = new();\n" +
+                "\n" +
+                "            public void Run() {\n" +
+                "                string data = \"\";";
+
+        output += visit(programNode.Output);
+
+        output += "                dataList.Add(data);\n" +
+                "        }\n" +
+                "\n" +
+                "            public void LogToFile() {\n" +
+                "                //Logic der logger \"dataList\" listen til en fil med navn \"fileName\"\n" +
+                "            }\n" +
+                "        }\n" +
+                "    }\n" +
+                "}";
+
+        return output;
     }
 
     @Override
     public String visitSectionNode(SectionNode sectionNode){
         String output = "";
+        System.out.println("Section:) : " + sectionNode.Name);
 
         for(Node line : sectionNode.Lines) {
             output += visit(line);
+            //DET HER ER PÆNT FUCKING GAY!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            if (line.getClass().toString().equals("class ASTNodes.ExprNodes.FunctionCallNode")){
+                output += ";";
+            }
         }
         return output;
     }
@@ -57,7 +104,11 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
         if(functionDclNode.Type == null) {
             output += "void ";
         } else {
-            output += visit(functionDclNode.Type) + " ";
+            if (visit(functionDclNode.Type).equals("number ")) {
+                output += "float ";
+            } else {
+                output += visit(functionDclNode.Type) + " ";
+            }
         }
 
         output += visit(functionDclNode.Identifier) + "(";
@@ -70,9 +121,13 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
             if (currPar < parAmount) {
                 output += ",";
             }
+
+            currPar++;
         }
 
         output += "){";
+
+        output += visit(functionDclNode.Body) + "}";
 
         return output;
     }
@@ -81,7 +136,7 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
     public String visitListNode(ListDclNode listDclNode) {
         //<---------------Den her venter lige til senere--------------->
 
-        return "";
+        return "ListDcl; ";
     }
 
     @Override
@@ -90,6 +145,7 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
 
         output += ":" + visit(classNode.Type) + "{";
 
+        System.out.println(visit(classNode.Type) + " " + visit(classNode.Identifier) + " Class body start");
         output += visit(classNode.Body);
 
         return output + "}";
@@ -108,6 +164,8 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
             if (currPar < parAmount) {
                 output += ",";
             }
+
+            currPar++;
         }
         output += "){";
 
@@ -118,9 +176,25 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
 
     @Override
     public String visitObjDcl(ObjDclNode objDclNode) {
-        //<---------------Den her venter lige til senere--------------->
+        String output = "";
 
-        return "";
+        if (visit(objDclNode.Type).equals("number ")) {
+            output += "float ";
+        } else {
+            output += visit(objDclNode.Type) + " ";
+        }
+
+        output += visit(objDclNode.Identifier);
+
+        if (objDclNode.ObjValue != null) {
+            if (visit(objDclNode.Type).equals("number ") && objDclNode.ObjValue.getClass().toString().equals("class ASTNodes.ValueNodes.NumberNode")) {
+                output += " = " + visit(objDclNode.ObjValue) + "f";
+            } else {
+                output += " = " + visit(objDclNode.ObjValue);
+            }
+        }
+
+        return output + ";";
     }
 
     @Override
@@ -135,7 +209,6 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
 
         return output;
     }
-
     @Override
     public String visitElseIfNode(ElseIfNode elseIfNode) {
         String output = "else";
@@ -183,6 +256,7 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
 
     @Override
     public String visitAssignmentNode(AssignmentNode assignmentNode) {
+        System.out.println("HALLI HALLO!: " + assignmentNode.ValueNode.getClass());
         return visit(assignmentNode.Identifier) + " " + visit(assignmentNode.Equals) + " " + visit(assignmentNode.ValueNode) + ";";
     }
 
@@ -208,6 +282,8 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
             if (currPar < parAmount) {
                 output += ",";
             }
+
+            currPar++;
         }
 
         return output + ")";
@@ -225,6 +301,8 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
             if (currPar < parAmount) {
                 output += ",";
             }
+
+            currPar++;
         }
 
         return output + ")";
@@ -265,5 +343,79 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
         return output;
     }
 
+    @Override
+    public String visitReturnNode(ReturnNode returnNode) {
+        return "return " + visit(returnNode.expressionNode) + ";";
+    }
+
+    @Override
+    public String visitParamNode(ParamNode paramNode) {
+        String output = "";
+
+        if (paramNode.Type != null) {
+            if (visit(paramNode.Type).equals("number ")) {
+                output += "float ";
+            } else {
+                output += visit(paramNode.Type) + " ";
+            }
+        }
+
+        return output + visit(paramNode.Identifier);
+    }
+
+    @Override
+    public String visitBodyNode(BodyNode bodyNode) {
+        String output = "";
+
+        System.out.println("Body Entered!");
+
+        for(Node line : bodyNode.Lines) {
+            System.out.println(line.getClass());
+            System.out.println(visit(line));
+            System.out.println("");
+            output += visit(line);
+            if (line.getClass().toString().equals("class ASTNodes.ExprNodes.FunctionCallNode")){
+                output += ";";
+            }
+        }
+        System.out.println("----------------------------------");
+        System.out.println(output);
+        System.out.println("----------------------------------");
+        return output;
+    }
+
+    //Den her bliver ikk brugt, men tilføjede den alligevel siden Martin har den i ASTPrinter xd
+    @Override
+    public String visitConstructorBodyNode(ConstructorBodyNode constructorBodyNode) { return null; }
+
+    @Override
+    public String visitIdentifierNode(IdentifierNode identifierNode) {
+        return identifierNode.Name;
+    }
+
+    @Override
+    public String visitTypeNode(TypeNode typeNode) {
+        return typeNode.Name;
+    }
+
+    @Override
+    public String visitNumberNode(NumberNode numberNode) {
+        return numberNode.Name;
+    }
+
+    @Override
+    public String visitStringNode(StringNode stringNode) {
+        return stringNode.Name;
+    }
+
+    @Override
+    public String visitBoolNode(BoolNode boolNode) {
+        return boolNode.Name;
+    }
+
+    @Override
+    public String visitOpNode(OpNode opNode) {
+        return opNode.Name;
+    }
 
 }

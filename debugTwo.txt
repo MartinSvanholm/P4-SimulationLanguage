@@ -26,10 +26,23 @@ Simulation Environment {
 Simulation Behavior {
     Vehicle Car {
         number x = 1;
-        number y;
+        number y ;
 
         function number Square(number x){
             return x*x;
+        }
+
+        function number DinMor(){
+            return 3;
+        }
+
+        function number InLineFunc(number x) {
+            number y = 2;
+            Square(x) + y;
+            x + y;
+            y = Square(x) + y;
+
+            return Square(x) + x;
         }
 
         function IfElseTest(){

@@ -3,8 +3,13 @@ package Main;
 import ASTNodes.ProgramNode;
 import SymbolTable.*;
 
-public class Main {
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Scanner;
 
+public class Main {
     public static final String ANSI_RESET = "\u001B[0m";
     public static final String ANSI_BLACK = "\u001B[30m";
     public static final String ANSI_RED = "\u001B[31m";
@@ -23,6 +28,9 @@ public class Main {
         if(!errorHandler.HasErrors) {
             ASTPrinter astPrinter = new ASTPrinter((ProgramNode) astBuilder.AST);
             astPrinter.PrintAST();
+
+            CodeGenerator codeGenerator = new CodeGenerator((ProgramNode) astBuilder.AST);
+            codeGenerator.GenerateCode();
         }
 
         GlobalSymbolTable globalSymbolTable = new GlobalSymbolTable("Global Symbol Table", 0, errorHandler);
@@ -31,3 +39,4 @@ public class Main {
         errorHandler.PrintErrors();
     }
 }
+
