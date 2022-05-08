@@ -159,10 +159,10 @@ public class TypeChecker extends BaseVisitor<String> {
             String test2 = visit(node).strip();
             if(!visit(node).strip().equals(listDclNode.Type.Name.strip())) {
                 AddError(listDclNode, "parameters must be of type " + listDclNode.Type.Name.strip());
-                return "parameters must be of type " + listDclNode.Type.Name.strip();
+                return "Test1Success";
             }
         }
-        return null;
+        return "Test2Success";
     }
 
     @Override
@@ -178,19 +178,24 @@ public class TypeChecker extends BaseVisitor<String> {
         SymbolTable table = FindTable(GlobalSymbolTable, Level);
 
         if (table != null) {
-            if(!table.Name.equals(constructorDclNode.Type.Name))
+            if(!table.Name.equals(constructorDclNode.Type.Name)) {
                 AddError(constructorDclNode, "constructor must be of type " + table.Name);
+                return "Test1Success";
+            }
         } else {
             AddError(constructorDclNode, constructorDclNode.Type.Name + " has not been declared");
+            return "Test2Success";
         }
-        return null;
+        return "Test3Success";
     }
 
     @Override
     public String visitObjDcl(ObjDclNode objDclNode) {
-        if(objDclNode.ObjValue != null && !objDclNode.Type.Name.strip().equals(visit(objDclNode.ObjValue).strip()))
+        if(objDclNode.ObjValue != null && !objDclNode.Type.Name.strip().equals(visit(objDclNode.ObjValue).strip())) {
             AddError(objDclNode, objDclNode.Identifier.Name+" must be of type "+ objDclNode.Type.Name.strip());
-        return null;
+            return "Test1Success";
+        }
+        return "Test2Success";
     }
 
     @Override
@@ -264,8 +269,10 @@ public class TypeChecker extends BaseVisitor<String> {
 
     @Override
     public String visitAssignmentNode(AssignmentNode assignmentNode) {
-        var t = visit(assignmentNode.Identifier);
-        if(!visit(assignmentNode.Identifier).strip().equals(visit(assignmentNode.ValueNode))) {
+        String assignmentNodeIdentifier = visit(assignmentNode.Identifier);
+        String assignmentNodeValue = visit(assignmentNode.ValueNode);
+
+        if(!assignmentNodeIdentifier.equals(assignmentNodeValue)) {
             AddError(assignmentNode, assignmentNode.ValueNode.Name + " must be of type " + visit(assignmentNode.Identifier).strip());
             return "Test1Success";
         }

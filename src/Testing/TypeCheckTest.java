@@ -3,6 +3,7 @@ package Testing;
 
 import ASTNodes.*;
 import ASTNodes.ControlStructures.*;
+import ASTNodes.DclNodes.ConstructorDclNode;
 import ASTNodes.DclNodes.ListDclNode;
 import ASTNodes.DclNodes.ObjDclNode;
 import ASTNodes.ExprNodes.ExpressionNode;
@@ -99,54 +100,83 @@ public class TypeCheckTest {
     @Test
     @DisplayName("List type check")
     void testListCheck() {
-        ArrayList<ParamNode> testParams = new ArrayList<>();
-        paramMock1.Identifier.Name = "1";
-        paramMock2.Identifier.Name = "2";
-        paramMock1.Type.Name = "number";
-        paramMock2.Type.Name = "number";
-        NumberNode test = new NumberNode();
-        test.Name = "1";
-        paramMock1.Children.add(test);
-        paramMock2.Children.add(test);
-        testParams.add(paramMock1);
-        testParams.add(paramMock2);
         ListDclNode listDclMock = new ListDclNode();
-        listDclMock.Parameters = testParams;
-        TypeNode type = new TypeNode();
-        type.Name = "number";
-        listDclMock.Type = type;
+        ParamNode param = new ParamNode();
+        param.Identifier = new NumberNode();
+        param.Identifier.Name = "number";
+        listDclMock.Parameters.add(param);
+        listDclMock.Parameters.add(param);
+        listDclMock.Parameters.add(param);
 
-        assertEquals(null, tc.visitListNode(listDclMock));
+        listDclMock.Type = new TypeNode();
+        listDclMock.Type.Name = "string";
+
+        assertEquals("Test1Success", tc.visitListNode(listDclMock));
     }
 
     @Test
     @DisplayName("List type check 2")
     void testListCheck2() {
-        ArrayList<ParamNode> testParams = new ArrayList<>();
-        testParams.add(paramMock1);
-        testParams.add(paramMock2);
-        paramMock1.Type.Name = "number";
-        paramMock2.Type.Name = "number";
         ListDclNode listDclMock = new ListDclNode();
-        listDclMock.Parameters = testParams;
-        TypeNode type = new TypeNode();
-        type.Name = "string";
-        listDclMock.Type = type;
+        ParamNode param = new ParamNode();
+        param.Identifier = new NumberNode();
+        param.Identifier.Name = "number";
+        listDclMock.Parameters.add(param);
+        listDclMock.Parameters.add(param);
+        listDclMock.Parameters.add(param);
 
-        assertEquals(null, tc.visitListNode(listDclMock));
+        listDclMock.Type = new TypeNode();
+        listDclMock.Type.Name = "number";
+
+        assertEquals("Test2Success", tc.visitListNode(listDclMock));
     }
 
     @Test
     @DisplayName("Constructor type check")
     void testConstructorCheck() {
+        ConstructorDclNode constructorMock = new ConstructorDclNode();
 
+        //assertEquals("Test1Success", tc.visitConstructorNode(constructorMock));
+    }
+
+    @Test
+    @DisplayName("Constructor type check 2")
+    void testConstructorCheck2() {
+        ConstructorDclNode constructorMock = new ConstructorDclNode();
+
+        //assertEquals("Test2Success", tc.visitConstructorNode(constructorMock));
+    }
+
+    @Test
+    @DisplayName("Constructor type check 3")
+    void testConstructorCheck3() {
+        ConstructorDclNode constructorMock = new ConstructorDclNode();
+
+        //assertEquals("Test3Success", tc.visitConstructorNode(constructorMock));
     }
 
     @Test
     @DisplayName("Object dcl type check")
     void testObjectDclCheck() {
         ObjDclNode objDclMock = new ObjDclNode();
-       // objDclMock.ObjValue
+        objDclMock.ObjValue = new NumberNode();
+        objDclMock.Type = new TypeNode();
+        objDclMock.Identifier = new IdentifierNode(); // Prevents crash
+        objDclMock.Type.Name = "string";
+
+        assertEquals("Test1Success", tc.visitObjDcl(objDclMock));
+    }
+
+    @Test
+    @DisplayName("Object dcl type check 2")
+    void testObjectDclCheck2() {
+        ObjDclNode objDclMock = new ObjDclNode();
+        objDclMock.ObjValue = new NumberNode();
+        objDclMock.Type = new TypeNode();
+        objDclMock.Identifier = new IdentifierNode(); // Prevents crash if test fails
+        objDclMock.Type.Name = "number";
+
+        assertEquals("Test2Success", tc.visitObjDcl(objDclMock));
     }
 
     @Test
@@ -189,7 +219,7 @@ public class TypeCheckTest {
 
         elseIfMock = new ElseIfNode();
         elseIfMock.condition = boolNode;
-        ifElseMock.ElseIf = elseIfMock;
+        elseIfMock.ElseIf = elseIfMock;
 
         assertEquals("Test1Success", tc.visitElseIfNode(elseIfMock));
     }
@@ -260,11 +290,15 @@ public class TypeCheckTest {
     @Test
     @DisplayName("Assignment test 1")
     void testAssignment1() {
-        AssignmentNode assignmentMock = new AssignmentNode();
+        // Insert variable into symbol table
+        Symbol sym = new Symbol("n", "string");
+        globalSymbolTable.Children.get(0).Symbols.put("n", sym);
+        tc.Level = 1;
 
+        // Create mock object of assignmentNode
+        AssignmentNode assignmentMock = new AssignmentNode();
         assignmentMock.Identifier = new IdentifierNode();
         assignmentMock.Identifier.Name = "n";
-        globalSymbolTable.Symbols.put("5", new Symbol("n", "number", "t"));
         assignmentMock.ValueNode = new NumberNode();
 
         assertEquals("Test1Success", tc.visitAssignmentNode(assignmentMock));
@@ -273,12 +307,15 @@ public class TypeCheckTest {
     @Test
     @DisplayName("Assignment test 2")
     void testAssignment2() {
-        AssignmentNode assignmentMock = new AssignmentNode();
+        // Insert variable into symbol table
+        Symbol sym = new Symbol("n", "number");
+        globalSymbolTable.Children.get(0).Symbols.put("n", sym);
+        tc.Level = 1;
 
+        // Create mock object of assignmentNode
+        AssignmentNode assignmentMock = new AssignmentNode();
         assignmentMock.Identifier = new IdentifierNode();
         assignmentMock.Identifier.Name = "n";
-
-        globalSymbolTable.Symbols.put("5", new Symbol("n", "number", "t"));
         assignmentMock.ValueNode = new NumberNode();
 
         assertEquals("Test2Success", tc.visitAssignmentNode(assignmentMock));
