@@ -15,5 +15,6 @@ public class FlowControlHelper extends BaseHelper {
         FlowControl.canCreateEndCondition = false;
         FlowControl.canCreateFunction = false;
         FlowControl.canCreateVar = false;
+        FlowControl.canCreateLogic = false;
     }
 }

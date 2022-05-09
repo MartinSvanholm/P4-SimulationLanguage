@@ -25,6 +25,7 @@ public class FlowControl extends BaseVisitor<String> {
     public boolean canCreateInitCondition = false;
     public boolean canCreateEndCondition = false;
     public boolean canCreateVar = false;
+    public boolean canCreateLogic = false;
 
     public FlowControl(GlobalSymbolTable globalSymbolTable, ErrorHandler errorHandler) {
         GlobalSymbolTable = globalSymbolTable;
@@ -43,16 +44,24 @@ public class FlowControl extends BaseVisitor<String> {
 
     @Override
     public String visitSectionNode(SectionNode sectionNode) {
+        helper.ResetOptions();
         prevScopeName = scopeName;
         scopeName = sectionNode.Name;
 
-        if(sectionNode.Name.equals("Environment")) {
-            canCreateEndCondition = true;
-        } else if(sectionNode.Name.equals("Behavior")) {
-            canCreateClass = true;
-            canCreateInitCondition = true;
-        } else {
-            helper.ResetOptions();
+        switch (sectionNode.Name) {
+            case "Environment" -> {
+                canCreateEndCondition = true;
+                canCreateFunction = true;
+                canCreateVar = true;
+            }
+            case "Behavior" -> {
+                canCreateClass = true;
+                canCreateInitCondition = true;
+            }
+            case "Update", "Output" -> {
+                canCreateVar = true;
+                canCreateLogic = true;
+            }
         }
 
         visitChildren(sectionNode);
@@ -65,15 +74,27 @@ public class FlowControl extends BaseVisitor<String> {
     public String visitEndCondition(EndConditionNode endConditionNode) {
         canCreateClass = false;
         canCreateFunction = false;
+        canCreateVar = true;
+        canCreateLogic = true;
 
         visitChildren(endConditionNode);
+        canCreateVar = false;
+        canCreateLogic = false;
         canCreateEndCondition = false;
         return null;
     }
 
     @Override
     public String visitInitCondition(InitConditionNode initConditionNode) {
+        canCreateVar = true;
+        canCreateLogic = true;
+        canCreateClass = false;
+        canCreateFunction = false;
+
         visitChildren(initConditionNode);
+
+        canCreateVar = false;
+        canCreateLogic = false;
         canCreateInitCondition = false;
         return null;
     }
@@ -86,8 +107,12 @@ public class FlowControl extends BaseVisitor<String> {
         if(!canCreateFunction) {
             helper.AddError(functionDclNode, "cannot declare Function in this scope");
         }
-        visitChildren(functionDclNode);
 
+        canCreateFunction = false;
+        canCreateLogic = true;
+        visit(functionDclNode.Body);
+        canCreateFunction = true;
+        canCreateLogic = false;
         scopeName = prevScopeName;
         return null;
     }
@@ -103,22 +128,27 @@ public class FlowControl extends BaseVisitor<String> {
         prevScopeName = scopeName;
         scopeName = classNode.Name;
 
-        canCreateFunction = true;
-        canCreateVar = true;
-
         if(!canCreateClass) {
             helper.AddError(classNode, "cannot declare Class in this scope");
         }
+
+        canCreateFunction = true;
+        canCreateVar = true;
         canCreateClass = false;
+
         visitChildren(classNode.Body);
+
         canCreateClass = true;
+        canCreateVar = false;
         scopeName = prevScopeName;
         return null;
     }
 
     @Override
     public String visitConstructorNode(ConstructorDclNode constructorDclNode) {
-        visitChildren(constructorDclNode);
+        canCreateLogic = true;
+        visit(constructorDclNode.Body);
+        canCreateLogic = false;
         return null;
     }
 
@@ -131,24 +161,37 @@ public class FlowControl extends BaseVisitor<String> {
         if(objDclNode.ObjValue != null)
             visit(objDclNode.ObjValue);
 
-        canCreateVar = false;
         return null;
     }
 
     @Override
     public String visitIfElseNode(IfElseNode ifElseNode) {
-        visitChildren(ifElseNode);
+        if(!canCreateLogic) {
+            helper.AddError(ifElseNode, "cannot declare if-statement in this scope");
+        }
+
+        visit(ifElseNode.Body);
+
+        if(ifElseNode.ElseIf != null)
+            visit(ifElseNode.ElseIf);
         return null;
     }
 
     @Override
     public String visitElseIfNode(ElseIfNode elseIfNode) {
-        visitChildren(elseIfNode);
+        visit(elseIfNode.Body);
+
+        if(elseIfNode.ElseIf != null)
+            visit(elseIfNode.Body);
         return null;
     }
 
     @Override
     public String visitSwitchNode(SwitchNode switchNode) {
+        if(!canCreateLogic){
+            helper.AddError(switchNode, "can not declare switch-statement in this scope");
+        }
+
         visitChildren(switchNode);
         return null;
     }
@@ -167,37 +210,44 @@ public class FlowControl extends BaseVisitor<String> {
 
     @Override
     public String visitForLoopNode(ForLoopNode forLoopNode) {
-        visitChildren(forLoopNode);
+        if(!canCreateLogic){
+            helper.AddError(forLoopNode, "can not declare a for-loop in this scope");
+        }
+
+        visit(forLoopNode.Body);
         return null;
     }
 
     @Override
     public String visitWhileLoopNode(WhileLoopNode whileLoopNode) {
+        if (!canCreateLogic){
+            helper.AddError(whileLoopNode, "can not declare a while-loop in this scope");
+        }
+
         visitChildren(whileLoopNode);
         return null;
     }
 
     @Override
     public String visitAssignmentNode(AssignmentNode assignmentNode) {
-        visitChildren(assignmentNode);
         return null;
     }
 
     @Override
     public String visitArrayExprNode(ArrayExprNode arrayExprNode) {
-        visitChildren(arrayExprNode);
         return null;
     }
 
     @Override
     public String visitCompareNode(CompareNode compareNode) {
-        visitChildren(compareNode);
         return null;
     }
 
     @Override
     public String visitFunctionCallNode(FunctionCallNode functionCallNode) {
-        visitChildren(functionCallNode);
+        if(!canCreateVar) {
+            helper.AddError(functionCallNode, "cannot use function-call in this scope");
+        }
         return null;
     }
 
@@ -251,7 +301,7 @@ public class FlowControl extends BaseVisitor<String> {
 
     @Override
     public String visitIdentifierNode(IdentifierNode identifierNode) {
-        return null;
+        return identifierNode.Name;
     }
 
     @Override

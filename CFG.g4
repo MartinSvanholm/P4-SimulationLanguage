@@ -20,7 +20,6 @@ line: initCondition
     ;
 
 dcl: functionDcl
-   | procedureDcl
    | listDcl
    | classDcl
    | objDcl;
@@ -35,8 +34,6 @@ initCondition: 'InitCondition<' type '>' codeBlock;
     With return type: function bool IsClearToDrive() { }
 */
 functionDcl: 'function' type identifier '(' (dclParams (Comma dclParams)*)? ')' codeBlock;
-
-procedureDcl: 'function' identifier '(' (dclParams (Comma dclParams)*)? ')' codeBlock;
 
 //  List<Road> roadList {Road1, Road2};
 listDcl: 'List<' type '>' identifier ('{' params (Comma params)* '}')? SemiColon;

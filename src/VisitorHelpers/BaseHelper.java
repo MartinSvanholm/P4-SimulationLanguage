@@ -12,6 +12,7 @@ import java.util.Hashtable;
 public class BaseHelper {
     public final Main.ErrorHandler ErrorHandler;
     public final GlobalSymbolTable GlobalSymbolTable;
+    public String typeError = "error";
 
     public BaseHelper(ErrorHandler errorHandler, GlobalSymbolTable globalSymbolTable) {
         ErrorHandler = errorHandler;

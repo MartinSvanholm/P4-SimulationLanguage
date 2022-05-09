@@ -1,4 +1,4 @@
-// Generated from C:/Users/Martin Svanholm/Documents/GitHub/P4-SimulationLanguage\CFG.g4 by ANTLR 4.9.2
+// Generated from C:/Users/marti/OneDrive/Dokumenter/GitHub/P4-SimulationLanguage\CFG.g4 by ANTLR 4.9.2
 package Parser;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
@@ -107,16 +107,6 @@ public interface CFGListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitFunctionDcl(CFGParser.FunctionDclContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link CFGParser#procedureDcl}.
-	 * @param ctx the parse tree
-	 */
-	void enterProcedureDcl(CFGParser.ProcedureDclContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link CFGParser#procedureDcl}.
-	 * @param ctx the parse tree
-	 */
-	void exitProcedureDcl(CFGParser.ProcedureDclContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link CFGParser#listDcl}.
 	 * @param ctx the parse tree

@@ -106,21 +106,6 @@ public class BuildAstVisitor extends CFGBaseVisitor<Node> {
         return node;
     }
 
-    @Override public Node visitProcedureDcl(CFGParser.ProcedureDclContext ctx) {
-        FunctionDclNode node = new FunctionDclNode();
-        node.Line = ctx.getStart().getLine();
-
-        node.Identifier = (IdentifierNode) visit(ctx.identifier());
-
-        for(var paramChild : ctx.dclParams()) {
-            node.Parameters.add((ParamNode) visit(paramChild));
-        }
-
-        node.Body = (BodyNode) visit(ctx.codeBlock());
-
-        return node;
-    }
-
     @Override public Node visitListDcl(CFGParser.ListDclContext ctx) {
         ListDclNode node = new ListDclNode();
         node.Line = ctx.getStart().getLine();

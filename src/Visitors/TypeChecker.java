@@ -129,6 +129,7 @@ public class TypeChecker extends BaseVisitor<String> {
         } else {
             helper.AddError(constructorDclNode, constructorDclNode.Type.Name + " has not been declared");
         }
+        visit(constructorDclNode.Body);
         return null;
     }
 
@@ -158,11 +159,13 @@ public class TypeChecker extends BaseVisitor<String> {
 
     @Override
     public String visitElseIfNode(ElseIfNode elseIfNode) {
-        if(visit(elseIfNode.condition).strip().equals("bool")) {
-            if(elseIfNode.ElseIf != null)
-                visit(elseIfNode.ElseIf);
-        } else {
-            helper.AddError(elseIfNode, "condition must be of type bool");
+        if(elseIfNode.condition != null) {
+            if(visit(elseIfNode.condition).strip().equals("bool")) {
+                if(elseIfNode.ElseIf != null)
+                    visit(elseIfNode.ElseIf);
+            } else {
+                helper.AddError(elseIfNode, "condition must be of type bool");
+            }
         }
         return null;
     }
@@ -190,6 +193,7 @@ public class TypeChecker extends BaseVisitor<String> {
 
     @Override
     public String visitForLoopNode(ForLoopNode forLoopNode) {
+        System.out.println(forLoopNode.Line);
         visitChildren(forLoopNode);
         return null;
     }
@@ -208,7 +212,7 @@ public class TypeChecker extends BaseVisitor<String> {
         if(visit(assignmentNode.Identifier).equals(typeError)) {
             helper.AddError(assignmentNode,assignmentNode.Identifier.Name + " has never been declared");
         } else if(!visit(assignmentNode.Identifier).strip().equals(visit(assignmentNode.ValueNode))) {
-            helper.AddError(assignmentNode, assignmentNode.Identifier.Name + " must be of type " + visit(assignmentNode.Identifier));
+            helper.AddError(assignmentNode, assignmentNode.ValueNode.Name + " must be of type " + visit(assignmentNode.Identifier));
         }
         return null;
     }
@@ -234,7 +238,7 @@ public class TypeChecker extends BaseVisitor<String> {
         String funcName = functionCallNode.Identifier.Name;
 
         SymbolTable table = helper.FindTableByName(GlobalSymbolTable, funcName, 0);
-        if(table == null) {
+        if(table == null && functionCallNode.Identifier.Name.split("\\.").length > 1) {
             table = helper.FindTableByName(GlobalSymbolTable, functionCallNode.Identifier.Name.split("\\.")[1], 0);
             funcName = functionCallNode.Identifier.Name.split("\\.")[1];
         }
@@ -242,6 +246,10 @@ public class TypeChecker extends BaseVisitor<String> {
         if(table != null) {
             ArrayList<Symbol> formParams = helper.MapToList(table.Symbols);
             Symbol var = helper.GetSymbolByScopeName(functionCallNode.Identifier.Name.split("\\.")[0], scopeName);
+            if(var == null) {
+                helper.AddError(functionCallNode, functionCallNode.Identifier.Name.split("\\.")[0] + " has never been declared");
+                return typeError;
+            }
 
             String paramError = CheckParameters(formParams.iterator(), functionCallNode.Parameters, var);
             if(paramError != null)
@@ -249,7 +257,7 @@ public class TypeChecker extends BaseVisitor<String> {
 
         } else {
             helper.AddError(functionCallNode, funcName + " has never been declared");
-            return "error";
+            return typeError;
         }
         return visit(functionCallNode.Identifier);
     }
@@ -328,15 +336,11 @@ public class TypeChecker extends BaseVisitor<String> {
 
     @Override
     public String visitIdentifierNode(IdentifierNode identifierNode) {
-        Symbol var = helper.GetSymbolByScopeName(identifierNode.Name, scopeName);
-        SymbolTable table = helper.FindTableByName(GlobalSymbolTable, identifierNode.Name, 0);
-        if(var != null) {
-            return var.Type.strip();
-        } else if(table != null) {
-            return table.Type.strip();
+        if(identifierNode.Name.split("\\.").length > 1) {
+            return helper.GetTypeOfDotNotation(scopeName, identifierNode, 0);
         }
 
-        return typeError;
+        return helper.CheckIdentifier(scopeName, identifierNode.Name);
     }
 
     @Override
@@ -391,18 +395,10 @@ public class TypeChecker extends BaseVisitor<String> {
             }
         }
 
-        while (formalParameters.hasNext() && !formalParameters.next().Identifier.equals("constructor")) {
+        if (formalParameters.hasNext() && formalParameters.next().Identifier.equals("Parameter")) {
             return "too few arguments";
         }
 
         return null;
-    }
-
-    public String GetInheritance(String type) {
-        SymbolTable table = helper.FindTableByName(GlobalSymbolTable, type, 0);
-        if(table != null)
-            return table.Type;
-        else
-            return null;
     }
 }

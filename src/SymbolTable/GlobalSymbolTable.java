@@ -132,6 +132,25 @@ public class GlobalSymbolTable extends SymbolTable {
             return;
         }
 
+        if(node instanceof ConstructorDclNode) {
+            if(Scope.Symbols.containsKey("constructor")) {
+                ErrorHandler.HasErrors = true;
+                ErrorHandler.Errors.add(new Error(node.Line,  "constructor for " + ((DclNode) node).Type.Name + " has already been declared"));
+            } else {
+                Scope.Symbols.put("constructor", new Symbol(
+                        "constructor",
+                        ((ConstructorDclNode) node).Type.Name,
+                        "Constructor"));
+                for(ParamNode node1 : ((ConstructorDclNode) node).Parameters) {
+                    Scope.Symbols.put(node1.Identifier.Name, new Symbol(
+                            node1.Identifier.Name,
+                            node1.Type.Name,
+                            "Parameter"));
+                }
+            }
+            return;
+        }
+
         if(DclAllreadyExist(((DclNode) node))) {
             ErrorHandler.HasErrors = true;
             ErrorHandler.Errors.add(new Error(node.Line, ((DclNode) node).Identifier.Name + " has already been declared"));
@@ -159,24 +178,6 @@ public class GlobalSymbolTable extends SymbolTable {
                     "List"
             ));
             return;
-        }
-
-        if(node instanceof ConstructorDclNode) {
-            if(Scope.Symbols.containsKey("constructor")) {
-                ErrorHandler.HasErrors = true;
-                ErrorHandler.Errors.add(new Error(node.Line,  "constructor for " + ((DclNode) node).Type.Name + " has already been declared"));
-            } else {
-                Scope.Symbols.put("constructor", new Symbol(
-                        "constructor",
-                        ((ConstructorDclNode) node).Type.Name,
-                        "Constructor"));
-                for(ParamNode node1 : ((ConstructorDclNode) node).Parameters) {
-                    Scope.Symbols.put(node1.Identifier.Name, new Symbol(
-                            node1.Identifier.Name,
-                            node1.Type.Name,
-                            "Parameter"));
-                }
-            }
         }
     }
 
@@ -235,6 +236,6 @@ public class GlobalSymbolTable extends SymbolTable {
         SymbolTable Type = new SymbolTable("Type", 0, null, "string");
         this.Children.add(Type);
 
-        Simulation.Symbols.put("currentTick", new Symbol("currentTick", "number"));
+        Simulation.Symbols.put("CurrentTick", new Symbol("CurrentTick", "number"));
     }
 }
