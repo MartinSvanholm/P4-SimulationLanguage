@@ -10,7 +10,6 @@ import ASTNodes.ExprNodes.ExpressionNode;
 import ASTNodes.ValueNodes.BoolNode;
 import ASTNodes.ValueNodes.NumberNode;
 import ASTNodes.ValueNodes.StringNode;
-import ASTVisitors.IBaseVisitor;
 import Main.ErrorHandler;
 import SymbolTable.GlobalSymbolTable;
 import SymbolTable.SymbolTable;
@@ -18,8 +17,6 @@ import Visitors.TypeChecker;
 import org.junit.jupiter.api.*;
 import SymbolTable.Symbol;
 
-import java.util.ArrayList;
-import java.util.logging.Level;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -54,47 +51,12 @@ public class TypeCheckTest {
         SymbolTable environment = new SymbolTable("Environment", 1);
         environment.Type = "Simulation";
 
-        Symbol numberLiteral1 = new Symbol("numberLiteral1", "number", "Standard");
-        Symbol numberLiteral2 = new Symbol("numberLiteral1", "number", "Standard");
-        Symbol stringLiteral1 = new Symbol("stringLiteral1", "string", "Standard");
-        Symbol stringLiteral2 = new Symbol("stringLiteral1", "string", "Standard");
-
-        environment.Symbols.put("1", numberLiteral1);
-        environment.Symbols.put("2", numberLiteral2);
-        environment.Symbols.put("3", stringLiteral1);
-        environment.Symbols.put("4", stringLiteral2);
         globalSymbolTable.Children.add(environment);
 
         tc = new TypeChecker(new ErrorHandler(), globalSymbolTable);
-        type = new TypeNode();
-        paramMock1 = new ParamNode();
-        paramMock2 = new ParamNode();
-        paramMock1.Type = new TypeNode();
-        paramMock2.Type = new TypeNode();
-        paramMock1.Identifier = new IdentifierNode();
-        paramMock2.Identifier = new IdentifierNode();
-
-        numberIdentifierNode = new IdentifierNode();
-        numberIdentifierNode.Name = "customNumber";
-
-        stringIdentifierNode = new IdentifierNode();
-        stringIdentifierNode.Name = "customString";
-
-        exprNode = new ExpressionNode() {
-            @Override
-            public ArrayList<Node> GetChildren() {
-                return null;
-            }
-        };
 
         boolNode = new BoolNode();
         numberNode = new NumberNode();
-    }
-
-    @Test
-    @DisplayName("Proper symbol should be returned")
-    void testGetSymbol() {
-
     }
 
     @Test
@@ -136,23 +98,24 @@ public class TypeCheckTest {
     void testConstructorCheck() {
         ConstructorDclNode constructorMock = new ConstructorDclNode();
 
-        //assertEquals("Test1Success", tc.visitConstructorNode(constructorMock));
+        tc.Level = 1;
+        SymbolTable table = new SymbolTable("tablename", 1);
+        table.Name = "tablename";
+        globalSymbolTable.Children.add(table);
+
+        constructorMock.Type = new TypeNode();
+        constructorMock.Type.Name = "tablename";
+
+        assertEquals("Test1Success", tc.visitConstructorNode(constructorMock));
     }
 
     @Test
     @DisplayName("Constructor type check 2")
     void testConstructorCheck2() {
         ConstructorDclNode constructorMock = new ConstructorDclNode();
-
-        //assertEquals("Test2Success", tc.visitConstructorNode(constructorMock));
-    }
-
-    @Test
-    @DisplayName("Constructor type check 3")
-    void testConstructorCheck3() {
-        ConstructorDclNode constructorMock = new ConstructorDclNode();
-
-        //assertEquals("Test3Success", tc.visitConstructorNode(constructorMock));
+        tc.Level = 2;
+        constructorMock.Type = new TypeNode();
+        assertEquals("Test2Success", tc.visitConstructorNode(constructorMock));
     }
 
     @Test
@@ -217,9 +180,8 @@ public class TypeCheckTest {
         elseIfMock = new ElseIfNode();
         elseIfMock.condition = boolNode;
 
-        elseIfMock = new ElseIfNode();
-        elseIfMock.condition = boolNode;
-        elseIfMock.ElseIf = elseIfMock;
+        elseIfMock.ElseIf = new ElseIfNode();
+        elseIfMock.ElseIf.condition = boolNode;
 
         assertEquals("Test1Success", tc.visitElseIfNode(elseIfMock));
     }
