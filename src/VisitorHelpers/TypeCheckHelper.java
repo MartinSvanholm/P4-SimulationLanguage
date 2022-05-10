@@ -1,6 +1,6 @@
 package VisitorHelpers;
 
-import ASTNodes.IdentifierNode;
+import ASTNodes.Identifier.IdentifierNode;
 import SymbolTable.Symbol;
 import SymbolTable.SymbolTable;
 import SymbolTable.GlobalSymbolTable;
@@ -65,8 +65,45 @@ public class TypeCheckHelper extends BaseHelper{
         return null;
     }
 
-    public String CheckIdentifier(String scopeName, String varName) {
-        return getType(varName, scopeName, FindTableByName(GlobalSymbolTable, varName, 0));
+    private SymbolTable GetFunc(String parentScopeName, String funcName) {
+        SymbolTable parent = FindTableByName(GlobalSymbolTable, parentScopeName, 0);
+        if(parent != null) {
+            for(SymbolTable table : parent.Children) {
+                if(table.Name.equals(funcName))
+                    return table;
+            }
+        }
+        return null;
+    }
+
+    public String GetTypeOfIdentifier(String scopeName, String varName) {
+        Symbol var = GetSymbolByScopeName(varName, scopeName);
+        if(var != null)
+            return var.Type;
+
+        var = GetInheritance(varName, scopeName);
+        if(var != null)
+            return var.Type;
+
+        SymbolTable func = GetFunc(scopeName, varName);
+        if(func != null)
+            return func.Type;
+
+        func = GetGlobalFunc(varName);
+        if(func != null)
+            return func.Type;
+
+        return typeError;
+    }
+
+    public String GetTypeofThis(String scopeName) {
+        SymbolTable scope = FindTableByName(GlobalSymbolTable, scopeName, 0);
+
+        if(scope.Attribute.equals("Function")) {
+            scope = scope.Parent;
+        }
+
+        return scope.Type;
     }
 
     public String GetTypeOfDotNotation(String scopeName, IdentifierNode node, int i) {
@@ -75,7 +112,7 @@ public class TypeCheckHelper extends BaseHelper{
             return CheckSimulation(identifiers[1]);
 
         if ("this".equals(identifiers[0]))
-            return CheckThisKeyword(identifiers[1], scopeName);
+            return CheckThisKeyword(identifiers[1], scopeName, node);
 
         SymbolTable function = FindTableByName(GlobalSymbolTable, identifiers[1+i], 0);
         Symbol property = GetSymbolByScopeName(identifiers[i], scopeName);
@@ -109,18 +146,48 @@ public class TypeCheckHelper extends BaseHelper{
         return typeError;
     }
 
-    private String CheckThisKeyword(String varName, String scopeName) {
-        return getType(varName, scopeName, FindTableByName(GlobalSymbolTable, scopeName, 0));
+    private String CheckThisKeyword(String varName, String scopeName, IdentifierNode node) {
+        SymbolTable scope = FindTableByName(GlobalSymbolTable, scopeName, 0);
+
+        if(scope.Attribute.equals("Function")) {
+            scope = scope.Parent;
+        }
+
+        Symbol var = GetSymbolByScopeName(varName, scope.Name);
+
+        if (var != null)
+            return var.Type.strip();
+
+        var = GetInheritance(varName, scope.Type);
+
+        if (var != null)
+            return var.Type.strip();
+
+        for(SymbolTable childTable : scope.Children) {
+            if(childTable.Name.equals(varName)) {
+                return childTable.Type;
+            }
+        }
+
+        AddError(node, scope.Name + " does not contain a variable " + varName);
+        return typeError;
     }
 
-    private String getType(String varName, String scopeName, SymbolTable symbolTable) {
-        Symbol var = GetSymbolByScopeName(varName, scopeName);
 
-        if(var != null) {
-            return var.Type.strip();
-        } else if(symbolTable != null) {
-            return symbolTable.Type.strip();
+    private Symbol GetInheritance(String varName, String scopeName) {
+        SymbolTable varClass = FindTableByName(GlobalSymbolTable, scopeName, 0);
+        SymbolTable inheritedClass = FindTableByName(GlobalSymbolTable, varClass.Type, 0);
+
+        if(inheritedClass != null)
+            return GetSymbolByScopeName(varName, inheritedClass.Name);
+        return null;
+    }
+
+    private SymbolTable GetGlobalFunc(String funcName) {
+        for(SymbolTable func : GlobalSymbolTable.Children) {
+            if(func.Name.equals(funcName))
+                return func;
         }
-        return typeError;
+        return null;
     }
 }

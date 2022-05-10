@@ -4,13 +4,13 @@ import ASTNodes.*;
 import ASTNodes.ControlStructures.*;
 import ASTNodes.DclNodes.*;
 import ASTNodes.ExprNodes.*;
+import ASTNodes.Identifier.IdentifierNode;
 import ASTNodes.ValueNodes.BoolNode;
 import ASTNodes.ValueNodes.NumberNode;
 import ASTNodes.ValueNodes.OpNode;
 import ASTNodes.ValueNodes.StringNode;
 import ASTVisitors.BaseVisitor;
 import Main.ErrorHandler;
-import Main.Error;
 import SymbolTable.GlobalSymbolTable;
 import VisitorHelpers.FlowControlHelper;
 

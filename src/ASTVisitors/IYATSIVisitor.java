@@ -4,6 +4,7 @@ import ASTNodes.*;
 import ASTNodes.ControlStructures.*;
 import ASTNodes.DclNodes.*;
 import ASTNodes.ExprNodes.*;
+import ASTNodes.Identifier.IdentifierNode;
 import ASTNodes.ValueNodes.*;
 
 public interface IYATSIVisitor<T> extends IBaseVisitor<T> {

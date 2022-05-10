@@ -4,6 +4,7 @@ import ASTNodes.*;
 import ASTNodes.ControlStructures.*;
 import ASTNodes.DclNodes.*;
 import ASTNodes.ExprNodes.*;
+import ASTNodes.Identifier.IdentifierNode;
 import ASTNodes.ValueNodes.BoolNode;
 import ASTNodes.ValueNodes.NumberNode;
 import ASTNodes.ValueNodes.OpNode;

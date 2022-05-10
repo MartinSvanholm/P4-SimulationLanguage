@@ -19,7 +19,7 @@ null
 'else if'
 'else'
 'switch'
-'case'
+'case '
 'default'
 'while'
 'for'

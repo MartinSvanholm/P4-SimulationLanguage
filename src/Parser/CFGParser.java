@@ -57,7 +57,7 @@ public class CFGParser extends Parser {
 			null, "'Simulation Environment'", "'{'", "'}'", "'Simulation Behavior'", 
 			"'Simulation Update'", "'Simulation Output'", "'EndCondition'", "'InitCondition<'", 
 			"'function'", "'('", "')'", "'List<'", "'constructor'", "'Create<'", 
-			"'return'", "'if'", "'else if'", "'else'", "'switch'", "'case'", "'default'", 
+			"'return'", "'if'", "'else if'", "'else'", "'switch'", "'case '", "'default'", 
 			"'while'", "'for'", "'in range'", "'['", "']'", "'number '", "'string '", 
 			"'bool '", "'Vehicle'", "'Node'", "'.'", "'\"'", "'true'", "'false'", 
 			"'^'", "'*'", "'/'", "'%'", "'+'", "'-'", "'<='", "'>='", "'<'", "'>'", 

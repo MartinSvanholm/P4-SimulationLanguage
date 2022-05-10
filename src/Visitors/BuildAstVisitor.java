@@ -4,6 +4,7 @@ import ASTNodes.*;
 import ASTNodes.ControlStructures.*;
 import ASTNodes.DclNodes.*;
 import ASTNodes.ExprNodes.*;
+import ASTNodes.Identifier.IdentifierNode;
 import ASTNodes.ValueNodes.BoolNode;
 import ASTNodes.ValueNodes.NumberNode;
 import ASTNodes.ValueNodes.OpNode;
@@ -460,7 +461,7 @@ public class BuildAstVisitor extends CFGBaseVisitor<Node> {
         node.Line = ctx.getStart().getLine();
 
         if(ctx.listType != null) {
-            node.Name = "List<" + visit(ctx.type()).Value.strip() + ">";
+            node.Name = "List<" + visit(ctx.type()).Name.strip() + ">";
         } else {
             node.Name = ctx.getText().strip();
         }
