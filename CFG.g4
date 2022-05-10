@@ -20,7 +20,6 @@ line: initCondition
     ;
 
 dcl: functionDcl
-   | procedureDcl
    | listDcl
    | classDcl
    | objDcl;
@@ -35,8 +34,6 @@ initCondition: 'InitCondition<' type '>' codeBlock;
     With return type: function bool IsClearToDrive() { }
 */
 functionDcl: 'function' type identifier '(' (dclParams (Comma dclParams)*)? ')' codeBlock;
-
-procedureDcl: 'function' identifier '(' (dclParams (Comma dclParams)*)? ')' codeBlock;
 
 //  List<Road> roadList {Road1, Road2};
 listDcl: 'List<' type '>' identifier ('{' params (Comma params)* '}')? SemiColon;
@@ -85,14 +82,14 @@ switchStmt: 'switch' '(' expr ')' switchBody;
 */
 switchBody: '{' ('case' switchcase codeBlock )+ ('default' codeBlock)? '}';
 
-switchcase: numberLiteral | type;
+switchcase: expr;
 
 iterativeCtrl: whileLoop | forLoop;
 
 // while(Sentinal) { }
 whileLoop: 'while' '('left=expr')' codeBlock;
 
-forLoop: 'for' loopNumber=identifier  'in range' '(' (numberLiteral | rangeNumber=identifier) ')' codeBlock;
+forLoop: 'for' '(' loopNumber=identifier  'in range' (numberLiteral | rangeNumber=identifier) ')' codeBlock;
 
 assignment: identifier Equals (value=identifier | expr) SemiColon;
 

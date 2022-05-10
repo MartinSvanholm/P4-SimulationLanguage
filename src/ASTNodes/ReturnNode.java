@@ -9,7 +9,6 @@ import java.util.ArrayList;
 public class ReturnNode extends Node {
 
     public String Name = "return";
-
     public ExpressionNode expressionNode;
 
     @Override

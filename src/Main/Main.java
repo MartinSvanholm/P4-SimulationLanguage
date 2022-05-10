@@ -2,6 +2,8 @@ package Main;
 
 import ASTNodes.ProgramNode;
 import SymbolTable.*;
+import Visitors.FlowControl;
+import Visitors.TypeChecker;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -23,6 +25,10 @@ public class Main {
     public static void main(String[] args) {
         ErrorHandler errorHandler = new ErrorHandler();
         AstBuilder astBuilder = new AstBuilder(args[0], errorHandler);
+        GlobalSymbolTable globalSymbolTable = new GlobalSymbolTable("Global Symbol Table", 0, errorHandler);
+        TypeChecker typeChecker = new TypeChecker(errorHandler, globalSymbolTable);
+        FlowControl flowControl = new FlowControl(globalSymbolTable, errorHandler);
+
         astBuilder.BuildAST();
 
         if(!errorHandler.HasErrors) {
@@ -33,8 +39,17 @@ public class Main {
             codeGenerator.GenerateCode();
         }
 
-        GlobalSymbolTable globalSymbolTable = new GlobalSymbolTable("Global Symbol Table", 0, errorHandler);
-        globalSymbolTable.BuildSymbolTable(astBuilder.AST);
+        if(!errorHandler.HasErrors) {
+            globalSymbolTable.BuildSymbolTable(astBuilder.AST);
+        }
+
+        if(!errorHandler.HasErrors) {
+            flowControl.CheckFlow(astBuilder.AST);
+        }
+
+        if(!errorHandler.HasErrors) {
+            typeChecker.CheckTypes(astBuilder.AST);
+        }
 
         errorHandler.PrintErrors();
     }
