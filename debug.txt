@@ -8,6 +8,9 @@ Simulation Environment {
     List<Node> intersectionConnections {startNode, endNode};
     Ligthregulation intersection = Create<Ligthregulation>(intersectionConnections);
 
+    TownRoad Road1 = Create<TownRoad>(50, 1000, startNode, intersection);
+    TownRoad Road2 = Create<TownRoad>(50, 1000, intersection, endNode);
+
     //Putting the roads in a list
     List<Road> roadList {Road1, Road2};
 
@@ -29,18 +32,14 @@ Simulation Environment {
 //Here the user defines the classes and their behavior
 Simulation Behavior {
     //Initializing roads
-    Road Road1 {
-        speedLimit = 50;
-        length = 1000;
-        startNode = SimStartnode;
-        endNode = Trafficlight1;
-    }
-
-    Road Road2 {
-        speedLimit = 50;
-        length = 1000;
-        startNode = Trafficlight1;
-        endNode = SimEndnode;
+    Road TownRoad {
+        number speedLimit;
+        constructor Create<TownRoad>(number speedLimit, number length, Node startNode, Node endNode){
+            this.speedLimit = speedLimit;
+            this.length = length;
+            this.startNode = startNode;
+            this.endNode = endNode;
+        }
     }
 
     //Defining the "Car" class

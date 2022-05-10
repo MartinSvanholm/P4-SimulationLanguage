@@ -12,38 +12,91 @@ import ASTVisitors.BaseVisitor;
 import Main.CodeGenIO;
 import hu.webarticum.treeprinter.SimpleTreeNode;
 
+import java.util.ArrayList;
+
 public class CodeGenerationVisitor extends BaseVisitor<String> {
     /* ---------------------------List af ting der mangler---------------------------
-    - Der er noget fuckery med semicolon... Det er mest ved et InfixExpression, hvis den ikke er del af at større expression/statement
     - Lister er ikke lavet endnu
-    - Hele Environment delen er ikk lavet endnu
+    - Environment delen er jeg igang med.
+        - Det er ret cancer at splitte op i typer atm, siden der ikke er dedikeret sections til dem.
+            - Jeg har splittet dem op i Declarations, men ved ikke rigtigt om det er muligt at gøre med assignment
+            og functionskald som vi gør det nu...
+            - Derudover har jeg ikk fucket med lister endnu, siden de ikke er implementeret endnu.
+            - Honestly tror jeg det er lettest at lave nye sections til init af nodes og roads (lidt som end- og initcondition)
     - Har ikke testet Update delen endnu, siden vi har en lidt gamle version af type checker osv.
     - Eller virker resten overraskende godt xd.
      */
+
+    private String currSection = "";
+    private String currEnviCheck = "";
+
+    private ArrayList<String> nodeTypes = new ArrayList<>();
+    private ArrayList<String> roadTypes = new ArrayList<>();
+    private ArrayList<String> vehicleTypes = new ArrayList<>();
     @Override
     public String visitProgramNode(ProgramNode programNode) {
         CodeGenIO io = new CodeGenIO();
 
         String output = io.ReadFile("Header.txt");
 
+        output += visit(programNode.Behavior);
+
+        output += "\n" +
+                "    class Program {\n" +
+                "        static void Main(string[] args) {\n" +
+                "            List<Vehicle> vehicleList = new List<Vehicle>();\n" +
+                "            List<Node> nodeList = InitNodes();\n" +
+                "            List<Road> roadList = InitRoads();\n" +
+                "            Output output = new Output();\n" +
+                "\n" +
+                "            int CurrentTick = 0;\n" +
+                "\n" +
+                "            while(!EndCondition()) {\n" +
+                "                vehicleList = InitVehicles(vehicleList);\n" +
+                "                foreach(Vehicle vehicle in vehicleList) {";
+
         output += visit(programNode.Update);
 
         output += "                    output.Run();\n" +
                 "\n" +
                 "                }\n" +
-                "                tick++;\n" +
+                "                CurrentTick++;\n" +
                 "            }\n" +
                 "            output.LogToFile();\n" +
                 "            List<Node> InitNodes() {";
-
-        //Her skal environment (og mere hardcoding) shit ske, men det kigger vi lige på lidt senere.
+        //<---------Evironment Section Begin --------->
+        //Environment (Node init)
+        currEnviCheck = "Node";
+        output += visit(programNode.Environment);
 
         output += "            }\n" +
-                "        }";
+                "            \n" +
+                "            List<Road> InitRoads() {";
+        //Environment (Road init)
+        currEnviCheck = "Road";
+        output += visit(programNode.Environment);
 
-        output += visit(programNode.Behavior);
+        output += "            }\n" +
+                "\n" +
+                "            List<Vehicle> InitVehicles(List<Vehicle> Vehicles) {";
+        //Environment (Vehicle init (based on each type))
+        currEnviCheck = "initcondition";
+        output += visit(programNode.Environment);
+        output += "                return vehicleList;\n" +
+                "            }\n" +
+                "\n" +
+                "            bool EndCondition() {";
+        //Environment (EndCondition)
+        currEnviCheck = "endcondition";
+        output += visit(programNode.Environment);
 
-        output += "        public class Output {\n" +
+
+        //<---------Evironment Section End --------->
+
+        output += "            }\n" +
+                "        }\n" +
+                "        \n" +
+                "        public class Output {\n" +
                 "            public string fileName = DateTime.Now.ToString(); //Foreslag\n" +
                 "            public List<string> dataList = new();\n" +
                 "\n" +
@@ -69,12 +122,33 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
     public String visitSectionNode(SectionNode sectionNode){
         String output = "";
         System.out.println("Section:) : " + sectionNode.Name);
+        currSection = sectionNode.Name;
 
         for(Node line : sectionNode.Lines) {
-            output += visit(line);
-            //DET HER ER PÆNT FUCKING GAY!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            if (line.getClass().toString().equals("class ASTNodes.ExprNodes.FunctionCallNode")){
-                output += ";";
+            if (sectionNode.Name.equals("Environment")) {
+                switch (currEnviCheck) {
+                    case "initcondition":
+                        if (line.getClass() == InitConditionNode.class) {
+                            output += visit(line);
+                        }
+                        break;
+                    case "endcondition":
+                        if (line.getClass() == EndConditionNode.class) {
+                            output += visit(line);
+                        }
+                        break;
+                    default:
+                        if (!(line.getClass() == InitConditionNode.class || line.getClass() == EndConditionNode.class)){
+                            output += visit(line);
+                        }
+                        break;
+                }
+            } else {
+                output += visit(line);
+                //DET HER ER PÆNT FUCKING GAY!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                if (line.getClass().toString().equals("class ASTNodes.ExprNodes.FunctionCallNode")){
+                    output += ";";
+                }
             }
         }
         return output;
@@ -82,19 +156,12 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
 
     @Override
     public String visitEndCondition(EndConditionNode endConditionNode) {
-        String output = "bool EndCondition() {";
-
-        output += visit(endConditionNode.Body);
-        output += "}";
-
-        return output;
+        return visit(endConditionNode.Body);
     }
 
     @Override
     public String visitInitCondition(InitConditionNode initConditionNode) {
-        //<---------------Den her venter lige til senere--------------->
-
-        return "";
+        return visit(initConditionNode.Body);
     }
 
     @Override
@@ -104,7 +171,7 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
         if(functionDclNode.Type == null) {
             output += "void ";
         } else {
-            if (visit(functionDclNode.Type).equals("number ")) {
+            if (visit(functionDclNode.Type).equals("number")) {
                 output += "float ";
             } else {
                 output += visit(functionDclNode.Type) + " ";
@@ -141,6 +208,21 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
 
     @Override
     public String visitClassNode(ClassNode classNode) {
+        switch (visit(classNode.Type)) {
+            case "Road":
+                roadTypes.add(visit(classNode.Identifier));
+                break;
+            case "Vehicle":
+                vehicleTypes.add(visit(classNode.Identifier));
+                break;
+            case "Node":
+                nodeTypes.add(visit(classNode.Identifier));
+                break;
+            default:
+                System.out.println("ShitBroke");
+                break;
+        }
+
         String output = "public class " + visit(classNode.Identifier);
 
         output += ":" + visit(classNode.Type) + "{";
@@ -177,8 +259,18 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
     @Override
     public String visitObjDcl(ObjDclNode objDclNode) {
         String output = "";
+        if(currSection.equals("Environment")) {
+            if (CheckType(objDclNode)) {
+                output += visit(objDclNode.Type) + " " + visit(objDclNode.Identifier);
 
-        if (visit(objDclNode.Type).equals("number ")) {
+                if (objDclNode.ObjValue != null) {
+                    output += " = " + visit(objDclNode.ObjValue);
+                }
+            }
+            return output;
+        }
+
+        if (visit(objDclNode.Type).equals("number")) {
             output += "float ";
         } else {
             output += visit(objDclNode.Type) + " ";
@@ -187,7 +279,7 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
         output += visit(objDclNode.Identifier);
 
         if (objDclNode.ObjValue != null) {
-            if (visit(objDclNode.Type).equals("number ") && objDclNode.ObjValue.getClass().toString().equals("class ASTNodes.ValueNodes.NumberNode")) {
+            if (visit(objDclNode.Type).equals("number") && objDclNode.ObjValue.getClass().toString().equals("class ASTNodes.ValueNodes.NumberNode")) {
                 output += " = " + visit(objDclNode.ObjValue) + "f";
             } else {
                 output += " = " + visit(objDclNode.ObjValue);
@@ -226,18 +318,25 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
 
     @Override
     public String visitSwitchNode(SwitchNode switchNode) {
-        //<---------------Den her venter lige til senere--------------->
-        return "";
+        String output = "switch(" + visit(switchNode.switchValue) + "){";
+        return output + visit(switchNode.Body) + "}";
     }
 
     @Override
     public String visitSwitchBodyNode(SwitchBody switchBody){
-        //<---------------Den her venter lige til senere--------------->
-        return "";
+        String output = "";
+        for (Node cases : switchBody.cases) {
+            output += "case " + visit(cases) + ": ";
+            //Her skal den visit body'en af vores case, men af en eller anden grund er det ikk gemt i vores node...
+            output += " break;";
+        }
+
+        return output;
     }
 
     @Override
     public String visitCaseNode(CaseNode caseNode) {
+        //Har legit ikk rigtig nogen ide om hvad det her overhovedet er xd....
         //<---------------Den her venter lige til senere--------------->
         return "";
     }
@@ -291,7 +390,7 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
 
     @Override
     public String visitConstructorCallNode(ConstructorCallNode constructorCallNode) {
-        String output = visit(constructorCallNode.Type) + "(";
+        String output = "new " + visit(constructorCallNode.Type) + "(";
 
         int parAmount = constructorCallNode.Parameters.size();
         int currPar = 1;
@@ -310,6 +409,8 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
 
     @Override
     public String visitInfixExpressionNode(InfixExpressionNode infixExpressionNode) {
+        System.out.println("POOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOG");
+        System.out.println(infixExpressionNode.Left.getClass());
         return visit(infixExpressionNode.Left) + visit(infixExpressionNode.Operator) + visit(infixExpressionNode.Right);
     }
 
@@ -353,7 +454,7 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
         String output = "";
 
         if (paramNode.Type != null) {
-            if (visit(paramNode.Type).equals("number ")) {
+            if (visit(paramNode.Type).equals("number")) {
                 output += "float ";
             } else {
                 output += visit(paramNode.Type) + " ";
@@ -371,10 +472,12 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
 
         for(Node line : bodyNode.Lines) {
             System.out.println(line.getClass());
+            System.out.println(ExpressionNode.class.isAssignableFrom(line.getClass()));
             System.out.println(visit(line));
             System.out.println("");
             output += visit(line);
-            if (line.getClass().toString().equals("class ASTNodes.ExprNodes.FunctionCallNode")){
+
+            if (ExpressionNode.class.isAssignableFrom(line.getClass())) {
                 output += ";";
             }
         }
@@ -390,6 +493,10 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
 
     @Override
     public String visitIdentifierNode(IdentifierNode identifierNode) {
+        if (identifierNode.Name.contains("Simulation.")) {
+            identifierNode.Name = identifierNode.Name.split("Simulation.")[1];
+        }
+
         return identifierNode.Name;
     }
 
@@ -416,6 +523,20 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
     @Override
     public String visitOpNode(OpNode opNode) {
         return opNode.Name;
+    }
+
+    public boolean CheckType(DclNode node) {
+        switch (currEnviCheck) {
+            case "Node":
+                if (nodeTypes.contains(visit(node.Type))) return true;
+                break;
+            case "Road":
+                if (roadTypes.contains(visit(node.Type))) return true;
+                break;
+            default:
+                break;
+        }
+        return false;
     }
 
 }

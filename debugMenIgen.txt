@@ -3,16 +3,24 @@
 Simulation Environment {
     IONode NodeOne = Create<IONode>();
     List<IONode> tempConnections{NodeOne};
-    IONode NodeTwo = Create<IONode>(tempConnections);
+    IONode NodeTwo = Create<IONode>();
+    NodeTwo.connections = tempConnections;
     tempConnections.Remove(0);
     tempConnections.Add(NodeTwo);
     NodeOne.connections = tempConnections;
+    NodeTwo = NodeOne;
 
     TownRoad RoadOne = Create<TownRoad>(50, 500, NodeOne, NodeTwo);
 
     InitCondition<Car>{
         if(Simulation.CurrentTick % 5 == 0){
             Simulation.Vehicles.Add(Create<Car>());
+        }
+    }
+
+    InitCondition<Truck>{
+        if(Simulation.CurrentTick % 10 == 0){
+            Simulation.Vehicles.Add(Create<Truck>("Tonni"));
         }
     }
 
@@ -59,24 +67,28 @@ Simulation Behavior {
             }
         }
 
-        /* function void SwitchTest(){
+        function void SwitchTest() {
             number testNum = 2;
             string str;
 
-            switch(testNum){
-                case 1:
-                    str = "case1";
-                case 2:
-                    str = "case2";
-                default:
-                    str = "default";
+            switch(testNum) {
+                case 1 {
+                    str = "Kasse1";
+                }
+                case 2 {
+                    str = "Kasse2";
+                }
+                default {
+                    str = "DenSidste";
+                }
             }
-        } */
+
+        }
 
         function void WhileTest(){
             bool testBool = true;
             while(testBool == true) {
-                Print("xd");
+                Print("xd dinmor");
             }
         }
 
@@ -92,11 +104,18 @@ Simulation Behavior {
         }
     }
 
-    Node IONode {
-        constructor Create<IONode>(List<Node> connections){
-            this.connections = connections;
-        }
+    Vehicle Truck {
+        string name;
 
+        constructor Create<Truck>(string name){
+            this.length = 30;
+            this.acceleration = 100;
+
+            this.name = name;
+        }
+    }
+
+    Node IONode {
         constructor Create<IONode>(){
         }
     }

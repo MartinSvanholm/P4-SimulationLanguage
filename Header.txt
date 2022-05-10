@@ -21,16 +21,3 @@ namespace CodeGenTest {
         public Node startNode;
         public Node endNode;
     }
-
-    class Program {
-        static void Main(string[] args) {
-            List<Vehicle> vehicleList = new List<Vehicle>();
-            List<Node> nodeList = InitNodes();
-            List<Road> roadList = InitRoads();
-            Output output = new Output();
-
-            int tick = 0;
-
-            while(!EndCondition()) {
-                vehicleList = InitVehicles(vehicleList);
-                foreach(Vehicle vehicle in vehicleList) {
