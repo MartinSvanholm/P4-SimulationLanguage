@@ -1,0 +1,76 @@
+Simulation Environment {
+    Node startNode = Create<IONode>();
+    Node endNode = Create<IONode>();
+    Road townRoad = Create<TownRoad>(50, 1000, startNode, endNode);
+    Road countryRoad = Create<LandevejRoad>(80, 1000, startNode, endNode);
+
+    List<Node> IONodes {startNode, endNode};
+
+    List<Road> roads {townRoad, countryRoad};
+
+    EndCondition{return Simulation.CurrentTick > 100;}
+}
+
+Simulation Behavior {
+    Node IONode {
+
+    }
+
+    Vehicle Car {
+        number direction;
+        number brakeDistance = 10;
+
+        constructor Create<Car>() {
+            direction = Random(0, 1);
+        }
+    }
+
+    Road TownRoad {
+        number speedLimit;
+        constructor Create<TownRoad>(number speedLimit, number length, Node startNode, Node endNode) {
+            this.speedLimit = speedLimit;
+            this.length = length;
+            this.startNode = startNode;
+            this.endNode = endNode;
+        }
+    }
+
+    Road LandevejRoad {
+        number speedLimit;
+        constructor Create<LandevejRoad>(number speedLimit, number length, Node startNode, Node endNode) {
+            this.speedLimit = speedLimit;
+            this.length = length;
+            this.startNode = startNode;
+            this.endNode = endNode;
+        }
+    }
+
+    function bool isClearToDrive(Vehicle car1, Road road) {
+        for(car in range road.carList) {
+            if(car.direction == car1.direction) {
+                return isCarInFront();
+            }
+        }
+    }
+
+    function bool isCarInFront(Car car1, Car car2) {
+        number positionDiff = car2.position - car1.position;
+        if(positionDiff > 0 && positionDiff < 10) {
+            return true;
+        }
+        return false;
+    }
+}
+
+Simulation Update {
+    if(vehicle.isClearToDrive()) {
+        vehicle.brrr();
+    } else {
+        vehicle.breeeeee();
+    }
+}
+
+Simulation Output {
+
+}
+

@@ -1,5 +1,6 @@
 package ASTNodes;
 
+import ASTNodes.Identifier.IdentifierNode;
 import ASTVisitors.IBaseVisitor;
 import ASTVisitors.IYATSIVisitor;
 
@@ -7,7 +8,7 @@ import java.util.ArrayList;
 
 public class ParamNode extends Node {
     public String Name = "Parameter";
-    public TypeNode Type;
+    public IdentifierNode Type;
     public Node Identifier;
 
     @Override

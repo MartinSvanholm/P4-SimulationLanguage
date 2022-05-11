@@ -118,7 +118,7 @@ type: primType | complexType | identifier;
 primType: 'number ' | 'string ' | 'bool ';
 
 // Node node = Nodes[RandomInt(0, IONode.length)];
-complexType: 'Vehicle' | 'Node' | listType='List<' type '>';
+complexType: 'Vehicle ' | 'Node ' |  'Road ' | listType='List<' type '>';
 
 identifier: Letter (Letter | Number*) ('.' identifier)*;
 

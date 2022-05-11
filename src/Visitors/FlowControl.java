@@ -110,7 +110,9 @@ public class FlowControl extends BaseVisitor<String> {
 
         canCreateFunction = false;
         canCreateLogic = true;
+        canCreateVar = true;
         visit(functionDclNode.Body);
+        canCreateVar = false;
         canCreateFunction = true;
         canCreateLogic = false;
         scopeName = prevScopeName;
@@ -245,7 +247,7 @@ public class FlowControl extends BaseVisitor<String> {
 
     @Override
     public String visitFunctionCallNode(FunctionCallNode functionCallNode) {
-        if(!canCreateVar) {
+        if(!canCreateLogic) {
             helper.AddError(functionCallNode, "cannot use function-call in this scope");
         }
         return null;
