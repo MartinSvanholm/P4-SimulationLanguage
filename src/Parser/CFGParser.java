@@ -1716,6 +1716,7 @@ public class CFGParser extends Parser {
 	}
 
 	public static class SwitchBodyContext extends ParserRuleContext {
+		public CodeBlockContext defaultCode;
 		public List<SwitchcaseContext> switchcase() {
 			return getRuleContexts(SwitchcaseContext.class);
 		}
@@ -1782,7 +1783,7 @@ public class CFGParser extends Parser {
 				setState(296);
 				match(T__20);
 				setState(297);
-				codeBlock();
+				((SwitchBodyContext)_localctx).defaultCode = codeBlock();
 				}
 			}
 

@@ -1,40 +1,35 @@
 //Mandatory "Environment" section
 //This functions as the setup for the simulation
 Simulation Environment {
-    //Initializing nodes and intersections
-    Node startNode = Create<IONode>();
-    Node endNode = Create<IONode>();
-    Road road1 = Create<TownRoad>();
 
-    List<Node> IONodes {startNode, endNode};
-    List<Node> intersectionConnections {startNode, endNode};
-
-    //Putting the roads in a list
-    List<string> roadList {"road1"} ;
-
-    //Defining the end condition for the simulation
-    EndCondition {
-        return Simulation.CurrentTick >= 2000;
-    }
 }
 
 //Mandatory "behavior" section
 //Here the user defines the classes and their behavior
 Simulation Behavior {
-        //Initializing roads
-        Road TownRoad {
-            speedLimit = 50;
-            length = 1000;
-
-
-        }
-
-        //Defining the "IONode" class
-        Node IONode {
-            //The constructor for the class
-            constructor Create<IONode>() {
+    Vehicle Car {
+        function void Drive() {
+            switch(vehicle.Type) {
+                case "Car" {
+                    //Checks if the agent is clear to drive, with the function "IsClearToDrive"
+                    if (vehicle.IsClearToDrive()) {
+                        //Tells the agent to drive, with the function "Drive"
+                        vehicle.Drive();
+                        string x = "case1";
+                    } else if(true) {
+                        //Tells the agent to break, with the function "Break"
+                        vehicle.Break();
+                    } else {
+                        string hej = "hej";
+                    }
+                }
+                default {
+                    //Default case. This should in theory never be triggered
+                    number test;
+                }
             }
         }
+    }
 }
 
 //Mandatory "Update" section

@@ -80,7 +80,7 @@ switchStmt: 'switch' '(' expr ')' switchBody;
             x = 0;
     }
 */
-switchBody: '{' ('case ' switchcase codeBlock )+ ('default' codeBlock)? '}';
+switchBody: '{' ('case ' switchcase codeBlock )+ ('default' defaultCode=codeBlock)? '}';
 
 switchcase: expr;
 

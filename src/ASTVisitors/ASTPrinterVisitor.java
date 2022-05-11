@@ -187,7 +187,7 @@ public class ASTPrinterVisitor extends BaseVisitor<SimpleTreeNode>{
     public SimpleTreeNode visitCaseNode(CaseNode caseNode) {
         SimpleTreeNode treeNode = new SimpleTreeNode(caseNode.Name);
 
-        treeNode.addChild(visit(caseNode.switchValue));
+        treeNode.addChild(visit(caseNode.CaseBody));
 
         return treeNode;
     }

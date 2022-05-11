@@ -1,6 +1,8 @@
-package ASTNodes;
+package ASTNodes.ControlStructures;
 
+import ASTNodes.BodyNode;
 import ASTNodes.ExprNodes.ExpressionNode;
+import ASTNodes.Node;
 import ASTVisitors.IBaseVisitor;
 import ASTVisitors.IYATSIVisitor;
 
@@ -8,6 +10,7 @@ import java.util.ArrayList;
 
 public class CaseNode extends Node {
     public Node switchValue;
+    public BodyNode CaseBody;
 
     @Override
     public <T> T accept(IBaseVisitor<? extends T> visitor) {
@@ -20,6 +23,7 @@ public class CaseNode extends Node {
     public ArrayList<Node> GetChildren() {
         Children = new ArrayList<>();
         Children.add(switchValue);
+        Children.add(CaseBody);
 
         return Children;
     }

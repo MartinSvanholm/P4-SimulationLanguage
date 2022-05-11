@@ -1,5 +1,6 @@
-package ASTNodes;
+package ASTNodes.ControlStructures;
 
+import ASTNodes.Node;
 import ASTVisitors.IBaseVisitor;
 import ASTVisitors.IYATSIVisitor;
 

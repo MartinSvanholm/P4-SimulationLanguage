@@ -198,8 +198,8 @@ public class BuildAstVisitor extends CFGBaseVisitor<Node> {
         node.condition = (ExpressionNode) visit(ctx.expr());
         node.Body = (BodyNode) visit(ctx.codeBlock());
 
-        if(ctx.right != null)
-            node.ElseIf = (ElseIfNode) visitElseIfStmt(ctx.right);
+        if(ctx.elseIfStmt() != null)
+            node.ElseIf = (ElseIfNode) visit(ctx.elseIfStmt());
 
         return node;
     }
@@ -213,8 +213,8 @@ public class BuildAstVisitor extends CFGBaseVisitor<Node> {
         } else {
             node.condition = (ExpressionNode) visit(ctx.expr());
             node.Body = (BodyNode) visit(ctx.codeBlock());
-            if(ctx.left != null)
-                node.ElseIf = (ElseIfNode) visitElseIfStmt(ctx.right);
+            if(ctx.elseIfStmt() != null)
+                node.ElseIf = (ElseIfNode) visitElseIfStmt(ctx.elseIfStmt());
         }
 
         return node;
@@ -239,8 +239,24 @@ public class BuildAstVisitor extends CFGBaseVisitor<Node> {
         node.Name = "cases";
         node.Line = ctx.getStart().getLine();
 
+        int i = 0;
         for(var switchCase : ctx.switchcase()) {
-            node.cases.add(visit(switchCase));
+            CaseNode caseNode = new CaseNode();
+            caseNode.CaseBody = (BodyNode) visit(ctx.codeBlock(i));
+            caseNode.switchValue = visit(switchCase);
+            caseNode.Name = visit(switchCase).Name;
+            node.cases.add(caseNode);
+            i++;
+        }
+
+        if(ctx.defaultCode != null) {
+            CaseNode Default = new CaseNode();
+            Default.CaseBody = (BodyNode) visit(ctx.defaultCode);
+            StringNode value = new StringNode();
+            value.Name = "default";
+            Default.switchValue = value;
+            Default.Name = "default";
+            node.cases.add(Default);
         }
 
         return node;

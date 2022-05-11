@@ -214,6 +214,7 @@ Simulation Update {
         }
         default {
             //Default case. This should in theory never be triggered
+            number test;
         }
     }
 }
