@@ -10,6 +10,7 @@ import ASTNodes.ValueNodes.OpNode;
 import ASTNodes.ValueNodes.StringNode;
 import ASTVisitors.BaseVisitor;
 import Main.CodeGenIO;
+import VisitorHelpers.TypeCheckHelper;
 import hu.webarticum.treeprinter.SimpleTreeNode;
 
 import java.util.ArrayList;
@@ -201,9 +202,33 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
 
     @Override
     public String visitListNode(ListDclNode listDclNode) {
-        //<---------------Den her venter lige til senere--------------->
+        String output = "";
+        String type;
 
-        return "ListDcl; ";
+        if (visit(listDclNode.Type).equals("number")){
+            type = "float";
+        } else{
+            type = visit(listDclNode.Type);
+        }
+
+        output += type + "[] ";
+        output += visit(listDclNode.Identifier) + " = new " + type + "[] ";
+
+
+        int parAmount = listDclNode.Parameters.size();
+        int currPar = 1;
+
+        output += "{";
+        for (Node params : listDclNode.Parameters) {
+            output += visit(params);
+            if (currPar < parAmount) {
+                output += ",";
+            }
+
+            currPar++;
+        }
+
+        return output + "};";
     }
 
     @Override
@@ -371,7 +396,22 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
 
     @Override
     public String visitFunctionCallNode(FunctionCallNode functionCallNode) {
-        String output = visit(functionCallNode.Identifier) + "(";
+        String output = "";
+
+        if (visit(functionCallNode.Identifier).contains(".")) {
+            String[] strs = visit(functionCallNode.Identifier).split("\\.");
+
+            switch (strs[strs.length - 1]) {
+                case "Add":
+                    output += AddToList(functionCallNode, strs[0]);
+                    break;
+                default:
+            }
+
+            return output;
+        }
+
+        output = visit(functionCallNode.Identifier) + "(";
 
         int parAmount = functionCallNode.Parameters.size();
         int currPar = 1;
@@ -537,6 +577,16 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
                 break;
         }
         return false;
+    }
+
+    public String AddToList(FunctionCallNode functionCallNode, String name){
+        String output = "";
+
+        output += name + " = " + name + ".Concat(new ";
+
+
+
+        return output;
     }
 
 }

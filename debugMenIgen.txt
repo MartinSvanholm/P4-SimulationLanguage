@@ -94,6 +94,7 @@ Simulation Behavior {
 
         function void IndexTest() {
             List<number> numList {1,2,3};
+            numlist.Add(4);
 
             number x = numList[1];
         }
