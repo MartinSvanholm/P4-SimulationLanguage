@@ -12,13 +12,13 @@ Simulation Behavior {
             switch(vehicle.Type) {
                 case "Car" {
                     //Checks if the agent is clear to drive, with the function "IsClearToDrive"
-                    if (vehicle.IsClearToDrive()) {
+                    if (IsClearToDrive()) {
                         //Tells the agent to drive, with the function "Drive"
                         vehicle.Drive();
                         string x = "case1";
                     } else if(true) {
                         //Tells the agent to break, with the function "Break"
-                        vehicle.Break();
+                        Break();
                     } else {
                         string hej = "hej";
                     }
@@ -28,6 +28,14 @@ Simulation Behavior {
                     number test;
                 }
             }
+        }
+
+        function bool IsClearToDrive() {
+
+        }
+
+        function bool Break() {
+
         }
     }
 }

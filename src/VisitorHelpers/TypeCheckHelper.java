@@ -85,6 +85,10 @@ public class TypeCheckHelper extends BaseHelper{
         if(var != null)
             return var.Type;
 
+        var = GetFromClass(varName, scopeName);
+        if(var != null)
+            return var.Type;
+
         SymbolTable func = GetFunc(scopeName, varName);
         if(func != null)
             return func.Type;
@@ -189,5 +193,15 @@ public class TypeCheckHelper extends BaseHelper{
                 return func;
         }
         return null;
+    }
+
+    private Symbol GetFromClass(String varName, String scopeName) {
+        SymbolTable scope = FindTableByName(GlobalSymbolTable, scopeName, 0);
+
+        if(scope.Attribute.equals("Function")) {
+            scope = scope.Parent;
+        }
+
+        return GetSymbolByScopeName(varName, scope.Name);
     }
 }

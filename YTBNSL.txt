@@ -47,6 +47,7 @@ Simulation Behavior {
         number weight;
         number breakDistance = 10;
         number breakPower = 3;
+
         string direction;
         Road road = Create<Road1>();
 
@@ -78,14 +79,15 @@ Simulation Behavior {
 
             //Determines the driving direction for the car.
             if (nodes.GetIndex(path[0]) < nodes.GetIndex(path[1])) {
-                this.direction = true;
+                this.direction = "gg";
             } else {
-                this.direction = false;
+                this.direction = "gg";
             }
         }
 
         //Function to check if the car should be able to move
         function bool IsClearToDrive() {
+            this.position = 5;
             bool isCarInfront;
             List<Vehicle> tempList;
 
@@ -97,7 +99,7 @@ Simulation Behavior {
             }
 
             //Sorting the temporary list based on the position of the cars
-            tempList.Sort(Car.position);
+            //tempList.Sort(Car.position);
 
             /*
             //Checking if a car exists infront of the agent. If this is the case, that car is saved in a variable
@@ -114,7 +116,7 @@ Simulation Behavior {
 
         //Accelerates the car, if appropriate, and propells the car forward
         function void Drive() {
-            if(this.road.speedLimit < this.speed) {
+            if(road.speedLimit < speed) {
                 this.speed = this.speed + this.acceleration;
             }
 
@@ -188,9 +190,6 @@ Simulation Behavior {
                     lightState1 = "yellowStop";
                     lightState2 = "red";
                 }
-                default {
-
-                }
             }
         }
     }
@@ -214,7 +213,6 @@ Simulation Update {
         }
         default {
             //Default case. This should in theory never be triggered
-            number test;
         }
     }
 }
@@ -223,5 +221,5 @@ Simulation Update {
 //Here the user defines what and how data is extracted from the simulation
 Simulation Output {
     //Outputs the travel time for each agent. "Output.LogAgentTravelTime" is a predefined function in the language
-    Output.LogAgentTravelTime();
+    //Output.LogAgentTravelTime();
 }

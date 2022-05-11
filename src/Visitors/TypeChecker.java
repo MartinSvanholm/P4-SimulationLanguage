@@ -150,6 +150,7 @@ public class TypeChecker extends BaseVisitor<String> {
     @Override
     public String visitIfElseNode(IfElseNode ifElseNode) {
         if(visit(ifElseNode.condition).strip().equals("bool")) {
+            visit(ifElseNode.Body);
             if(ifElseNode.ElseIf != null)
                 visit(ifElseNode.ElseIf);
         } else {
@@ -162,6 +163,7 @@ public class TypeChecker extends BaseVisitor<String> {
     public String visitElseIfNode(ElseIfNode elseIfNode) {
         if(elseIfNode.condition != null) {
             if(visit(elseIfNode.condition).strip().equals("bool")) {
+                visit(elseIfNode.Body);
                 if(elseIfNode.ElseIf != null)
                     visit(elseIfNode.ElseIf);
             } else {
@@ -179,6 +181,11 @@ public class TypeChecker extends BaseVisitor<String> {
         }
 
         for(Node switchCase : switchNode.Body.GetChildren()) {
+            if(switchCase.Name.equals("default")) {
+                visit(switchCase);
+                continue;
+            }
+
             if(!visit(switchNode.switchValue).strip().equals(visit(switchCase))) {
                 helper.AddError(switchCase, "case must be of type " + visit(switchNode.switchValue).strip());
             }
@@ -194,6 +201,7 @@ public class TypeChecker extends BaseVisitor<String> {
 
     @Override
     public String visitCaseNode(CaseNode caseNode) {
+        visit(caseNode.CaseBody);
         return visit(caseNode.switchValue);
     }
 
