@@ -1,6 +1,7 @@
 package SymbolTable;
 
 import ASTNodes.*;
+import ASTNodes.ControlStructures.ForLoopNode;
 import ASTNodes.Node;
 import ASTNodes.DclNodes.*;
 import Main.Error;
@@ -14,11 +15,11 @@ import java.util.List;
 public class GlobalSymbolTable extends SymbolTable {
     public ErrorHandler ErrorHandler;
 
-    public SymbolTable Vehicle = new SymbolTable("Vehicle", 0, null, "Vehicle");
-    public SymbolTable Node = new SymbolTable("Node", 0, null, "Node");
-    public SymbolTable Road = new SymbolTable("Road", 0, null, "Road");
-    public SymbolTable Simulation = new SymbolTable("Simulation", 0, null, "Simulation");
-    public SymbolTable List = new SymbolTable("List", 0, null, "List");
+    public SymbolTable Vehicle = new SymbolTable("Vehicle", 0, null, "Vehicle", "Class");
+    public SymbolTable Node = new SymbolTable("Node", 0, null, "Node", "Class");
+    public SymbolTable Road = new SymbolTable("Road", 0, null, "Road", "Class");
+    public SymbolTable Simulation = new SymbolTable("Simulation", 0, null, "Simulation", "Class");
+    public SymbolTable List = new SymbolTable("List", 0, null, "List", "Class");
 
     public List<SymbolTable> PredifindValues = new ArrayList<SymbolTable>(
             java.util.List.of(Vehicle, Node, Road, Simulation, List)
@@ -47,7 +48,7 @@ public class GlobalSymbolTable extends SymbolTable {
     private void ProcessNode(Node node) {
         if(node instanceof SectionNode || node instanceof FunctionDclNode || node instanceof ClassNode) {
             OpenScope(node);
-        } else if(node instanceof ObjDclNode || node instanceof ListDclNode || node instanceof ConstructorDclNode) {
+        } else if(node instanceof ObjDclNode || node instanceof ListDclNode || node instanceof ConstructorDclNode || node instanceof ForLoopNode) {
             InsertSymbol(node);
         }
 
@@ -87,15 +88,15 @@ public class GlobalSymbolTable extends SymbolTable {
 
         tempLvl ++;
         if(node instanceof FunctionDclNode) {
-            Scope = new SymbolTable(((DclNode) node).Identifier.Name, tempLvl, Scope, ((FunctionDclNode) node).Type.Name);
+            Scope = new SymbolTable(((DclNode) node).Identifier.Name, tempLvl, Scope, ((FunctionDclNode) node).Type.Name, "Function");
             for(Node param : ((FunctionDclNode) node).Parameters) {
                 InsertSymbol(param);
             }
         }
         else if (node instanceof ClassNode)
-            Scope = new SymbolTable(((ClassNode) node).Identifier.Name, tempLvl, Scope, ((ClassNode) node).Type.Name);
+            Scope = new SymbolTable(((ClassNode) node).Identifier.Name, tempLvl, Scope, ((ClassNode) node).Type.Name, "Class");
         else
-            Scope = new SymbolTable(node.Name, tempLvl, this, "Simulation");
+            Scope = new SymbolTable(node.Name, tempLvl, this, "Simulation", "Class");
     }
 
     private void CloseScope(Node node) {
@@ -151,6 +152,14 @@ public class GlobalSymbolTable extends SymbolTable {
             return;
         }
 
+        if(node instanceof ForLoopNode) {
+            Scope.Symbols.put(((ForLoopNode) node).identifier.Name, new Symbol(
+                    ((ForLoopNode) node).identifier.Name,
+                    "Vehicle", "Car"
+            ));
+            return;
+        }
+
         if(DclAllreadyExist(((DclNode) node))) {
             ErrorHandler.HasErrors = true;
             ErrorHandler.Errors.add(new Error(node.Line, ((DclNode) node).Identifier.Name + " has already been declared"));
@@ -158,7 +167,10 @@ public class GlobalSymbolTable extends SymbolTable {
         }
 
         if(node instanceof ObjDclNode) {
-            String Attribute = "Standard";
+            String Attribute = GetInheritance(((ObjDclNode) node));
+
+            if(Attribute == null)
+                Attribute = "Standard";
 
             if(((ObjDclNode) node).ObjValue instanceof ConstructorCallNode) {
                 Attribute = ((ConstructorCallNode) ((ObjDclNode) node).ObjValue).Type.Name;
@@ -187,7 +199,7 @@ public class GlobalSymbolTable extends SymbolTable {
 
     private void PrintTable(SymbolTable symbolTable) {
         System.out.println("");
-        System.out.println(symbolTable.Name + " : " + symbolTable.Type + " " + symbolTable.Level);
+        System.out.println(symbolTable.Name + " : " + symbolTable.Type + " " + symbolTable.Attribute + " " + symbolTable.Level);
 
         Enumeration<String> keys = symbolTable.Symbols.keys();
 
@@ -204,38 +216,51 @@ public class GlobalSymbolTable extends SymbolTable {
     }
 
     private void InittializeTables() {
-        Vehicle.Symbols.put("Length" , new Symbol("Length", "number"));
-        Vehicle.Symbols.put("Acceleration", new Symbol("Acceleration", "number"));
-        Vehicle.Symbols.put("Path", new Symbol("Path", "Node", "List"));
-        SymbolTable Pathfinding = new SymbolTable("Pathfinding", 0, Vehicle, "Node");
+        Vehicle.Symbols.put("length" , new Symbol("length", "number"));
+        Vehicle.Symbols.put("acceleration", new Symbol("acceleration", "number"));
+        Vehicle.Symbols.put("speed" , new Symbol("speed", "number"));
+        Vehicle.Symbols.put("position" , new Symbol("position", "number"));
+        Vehicle.Symbols.put("path", new Symbol("path", "Node", "List"));
+        SymbolTable Pathfinding = new SymbolTable("PathFinding", 0, Vehicle, "Node", "Function");
         Vehicle.Children.add(Pathfinding);
 
         Node.Symbols.put("Connections" , new Symbol("Connections", "Node", "List"));
 
-        Road.Symbols.put("Length" , new Symbol("Length", "Number"));
+        Road.Symbols.put("speedLimit", new Symbol("speedLimit", "number"));
+        Road.Symbols.put("length" , new Symbol("length", "number"));
         Road.Symbols.put("startNode", new Symbol("startNode", "Node"));
         Road.Symbols.put("endNode", new Symbol("endNode", "endNode"));
 
-        SymbolTable Add = new SymbolTable("Add", 0, List, "void");
+        SymbolTable Add = new SymbolTable("Add", 0, List, "void", "Function");
         Add.Symbols.put("value", new Symbol("value", "Generic", "Parameter"));
 
-        SymbolTable Remove = new SymbolTable("Remove", 0, List, "void");
+        SymbolTable Remove = new SymbolTable("Remove", 0, List, "void", "Function");
         Remove.Symbols.put("value", new Symbol("index", "number", "Parameter"));
 
-        SymbolTable GetIndex = new SymbolTable("GetIndex", 0, List, "number");
+        SymbolTable GetIndex = new SymbolTable("GetIndex", 0, List, "number", "Function");
         GetIndex.Symbols.put("value", new Symbol("value", "Generic", "Parameter"));
 
         List.Children.add(Add);
         List.Children.add(Remove);
         List.Children.add(GetIndex);
 
-        SymbolTable Print = new SymbolTable("Print", 0, null, "void");
-        Print.Symbols.put("line", new Symbol("line", "string", "parameter"));
+        SymbolTable Print = new SymbolTable("Print", 0, null, "void", "Function");
+        Print.Symbols.put("line", new Symbol("line", "string", "Parameter"));
         this.Children.add(Print);
 
-        SymbolTable Type = new SymbolTable("Type", 0, null, "string");
+        SymbolTable Random = new SymbolTable("Random", 0, null, "number", "Function");
+        Random.Symbols.put("from", new Symbol("from", "number", "Parameter"));
+        Random.Symbols.put("too", new Symbol("too", "number", "Parameter"));
+        this.Children.add(Random);
+
+        SymbolTable Type = new SymbolTable("Type", 0, null, "string", "Function");
         this.Children.add(Type);
 
         Simulation.Symbols.put("CurrentTick", new Symbol("CurrentTick", "number"));
+    }
+
+    private String GetInheritance(ObjDclNode node) {
+
+        return null;
     }
 }

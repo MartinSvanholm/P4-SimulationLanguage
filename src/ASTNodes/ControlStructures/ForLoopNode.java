@@ -1,10 +1,9 @@
 package ASTNodes.ControlStructures;
 
 import ASTNodes.BodyNode;
-import ASTNodes.IdentifierNode;
+import ASTNodes.Identifier.IdentifierNode;
 import ASTNodes.Node;
 import ASTNodes.ValueNodes.NumberNode;
-import ASTNodes.ValueNodes.OpNode;
 import ASTVisitors.IBaseVisitor;
 import ASTVisitors.IYATSIVisitor;
 

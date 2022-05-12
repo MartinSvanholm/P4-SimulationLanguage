@@ -2,29 +2,17 @@
 //This functions as the setup for the simulation
 Simulation Environment {
     //Initializing nodes and intersections
-    IONode startNode = Create<IONode>();
-    IONode endNode = Create<IONode>();
-    List<IONode> IONodes {startNode, endNode};
+    Node startNode = Create<IONode>();
+    Node endNode = Create<IONode>();
+    Road road1 = Create<Road1>();
+    Road road2 = Create<Road2>();
+
+    List<Node> IONodes {startNode, endNode};
     List<Node> intersectionConnections {startNode, endNode};
-    Ligthregulation intersection = Create<Ligthregulation>(intersectionConnections);
-
-    //Initializing roads
-    Road Road1 {
-        speedLimit = 50;
-        length = 1000;
-        startNode = SimStartnode;
-        endNode = Trafficlight1;
-    }
-
-    Road Road2 {
-        speedLimit = 50;
-        length = 1000;
-        startNode = Trafficlight1;
-        endNode = SimEndnode;
-    }
+    //Node intersection = Create<Ligthregulation>(intersectionConnections);
 
     //Putting the roads in a list
-    List<Road> roadList {Road1, Road2};
+    List<Road> roadList {road1, road2};
 
     //Defining the condition for when to initialize a new car
     InitCondition<Car> {
@@ -43,11 +31,25 @@ Simulation Environment {
 //Mandatory "behavior" section
 //Here the user defines the classes and their behavior
 Simulation Behavior {
+    //Initializing roads
+    Road Road1 {
+        speedLimit = 50;
+        length = 1000;
+    }
+
+    Road Road2 {
+        speedLimit = 50;
+        length = 1000;
+    }
+
     //Defining the "Car" class
     Vehicle Car {
         number weight;
         number breakDistance = 10;
         number breakPower = 3;
+
+        string direction;
+        Road road = Create<Road1>();
 
         //The constructor for the class
         constructor Create<Car>() {
@@ -59,57 +61,62 @@ Simulation Behavior {
 
             //Creates a random start- and end-node for the car
             List<Node> tempNodes;
-            tempNodes.Add(Nodes[RandomInt(0, IONodes.length)]);
+            //tempNodes.Add(Nodes[RandomInt(0, IONodes.length)]);
             bool Sentinal = true;
+
+            /*
             while(Sentinal) {
-                Node node = Nodes[RandomInt(0, IONode.length)];
+                Node node;
                 if(node != this.tempNodes[0]) {
                     this.tempNodes.Add(Nodes[RandomInt(0, IONodes.length)]);
                     Sentinal = false;
                 }
             }
+            */
 
             //Generates the optimal path between the start- and end-node
-            this.path = this.PathFinding(tempNodes);
+            //this.path = this.PathFinding();
 
             //Determines the driving direction for the car.
             if (nodes.GetIndex(path[0]) < nodes.GetIndex(path[1])) {
-                this.direction = true;
+                this.direction = "gg";
             } else {
-                this.direction = false;
+                this.direction = "gg";
             }
         }
 
         //Function to check if the car should be able to move
         function bool IsClearToDrive() {
+            this.position = 5;
             bool isCarInfront;
-            List<Car> tempList;
+            List<Vehicle> tempList;
 
             //Adds all cars on the same road, and going in the same direction, to a temporary list
-            for car in range (this.road.carList) {
+            for (car in range this.road.carList) {
                 if(car.direction == this.direction) {
                     tempList.Add(car);
                 }
             }
 
             //Sorting the temporary list based on the position of the cars
-            tempList.Sort(Car.position);
+            //tempList.Sort(Car.position);
 
+            /*
             //Checking if a car exists infront of the agent. If this is the case, that car is saved in a variable
             if(tempList.GetIndex(this) == (tempList.length - 1)) {
                 isCarInfront = false;
             } else {
                 isCarInfront = true;
-                Car carInFront = tempList[tempList.GetIndex(this) + 1];
-            }
+                Vehicle carInFront = tempList[tempList.GetIndex(this) + 1];
+            }*/
 
             //Returns true if the car has appropriate distance to drive, and false if it should start to break.
-            return carInFront.position - this.position > this.breakDistance;
+            return true;
         }
 
         //Accelerates the car, if appropriate, and propells the car forward
-        function Drive() {
-            if(this.road.speedLimit < this.speed) {
+        function void Drive() {
+            if(road.speedLimit < speed) {
                 this.speed = this.speed + this.acceleration;
             }
 
@@ -117,7 +124,7 @@ Simulation Behavior {
         }
 
         //Deaccelerated the car, and propells the car forward
-        function Break() {
+        function void Break() {
             this.speed = this.speed + this.breakPower;
 
             if (this.speed <= 0) {
@@ -131,13 +138,8 @@ Simulation Behavior {
     //Defining the "IONode" class
     Node IONode {
         //The constructor for the class
-        constructor Create<IONode>(List<Node> connections) {
-            this.connections = connections;
+        constructor Create<IONode>() {
         }
-
-        //Another constructor for the class
-        //This is needed when creating the first node
-        constructor Create<IONode>() {}
     }
 
     //Defining the "Lightregulation" class
@@ -152,36 +154,42 @@ Simulation Behavior {
         }
 
         //Function changing the state of the traffic light, based on time
-        function ChangeLigth() {
+        function void ChangeLigth() {
             this.timer = Simulation.CurrentTick % 740;
 
-            switch(currTick) {
-                case 0:
+            switch(Simulation.CurrentTick) {
+                case 0 {
                     lightState1 = "red";
                     lightState2 = "red";
-                case 10:
+                }
+                case 10 {
                     lightState1 = "red";
                     lightState2 = "yellowStart";
-                case 30:
+                }
+                case 30 {
                     lightState1 = "red";
                     lightState2 = "green";
-                case 330:
+                }
+                case 330 {
                     lightState1 = "red";
                     lightState2 = "yellowStop";
-                case 370:
+                }
+                case 370 {
                     lightState1 = "red";
                     lightState2 = "red";
-                case 380:
+                }
+                case 380 {
                     lightState1 = "yellowStart";
                     lightState2 = "red";
-                case 400:
+                }
+                case 400 {
                     lightState1 = "green";
                     lightState2 = "red";
-                case 700:
+                }
+                case 700 {
                     lightState1 = "yellowStop";
                     lightState2 = "red";
-                default:
-                    //Default case
+                }
             }
         }
     }
@@ -192,8 +200,8 @@ Simulation Behavior {
 Simulation Update {
 
     //Switches based on the type of the vehicle the simulation is currently looking at
-    switch(vehicle.type) {
-        case Car:
+    switch(vehicle.Type) {
+        case "Car" {
             //Checks if the agent is clear to drive, with the function "IsClearToDrive"
             if (vehicle.IsClearToDrive()) {
                 //Tells the agent to drive, with the function "Drive"
@@ -202,8 +210,10 @@ Simulation Update {
                 //Tells the agent to break, with the function "Break"
                 vehicle.Break();
             }
-        default:
+        }
+        default {
             //Default case. This should in theory never be triggered
+        }
     }
 }
 
@@ -211,5 +221,5 @@ Simulation Update {
 //Here the user defines what and how data is extracted from the simulation
 Simulation Output {
     //Outputs the travel time for each agent. "Output.LogAgentTravelTime" is a predefined function in the language
-    Output.LogAgentTravelTime();
+    //Output.LogAgentTravelTime();
 }

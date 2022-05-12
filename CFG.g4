@@ -80,7 +80,7 @@ switchStmt: 'switch' '(' expr ')' switchBody;
             x = 0;
     }
 */
-switchBody: '{' ('case' switchcase codeBlock )+ ('default' codeBlock)? '}';
+switchBody: '{' ('case ' switchcase codeBlock )+ ('default' defaultCode=codeBlock)? '}';
 
 switchcase: expr;
 
@@ -107,8 +107,6 @@ expr: functionCall                                         # funcExpr
     | identifier                                           #identifierExpr
     ;
 
-functionCall: identifier '(' (params (Comma params)*)? ')';
-
 params: (expr | constructorCall);
 
 dclParams: (type identifier);
@@ -120,7 +118,15 @@ primType: 'number ' | 'string ' | 'bool ';
 // Node node = Nodes[RandomInt(0, IONode.length)];
 complexType: 'Vehicle' | 'Node' | listType='List<' type '>';
 
-identifier: Letter (Letter | Number*) ('.' identifier)*;
+identifier: objIdentifier | thisIdentifier | simpleIdentifier;
+
+objIdentifier: objName=simpleIdentifier '.' id=simpleIdentifier;
+
+thisIdentifier: 'this' '.' (objIdentifier | simpleIdentifier);
+
+simpleIdentifier: Letter (Letter | Number*);
+
+functionCall: identifier '(' (params (Comma params)*)? ')';
 
 literal: numberLiteral
        | stringLiteral
