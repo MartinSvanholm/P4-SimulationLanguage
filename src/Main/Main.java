@@ -32,15 +32,15 @@ public class Main {
         astBuilder.BuildAST();
 
         if(!errorHandler.HasErrors) {
-            ASTPrinter astPrinter = new ASTPrinter((ProgramNode) astBuilder.AST);
-            astPrinter.PrintAST();
-
-            CodeGenerator codeGenerator = new CodeGenerator((ProgramNode) astBuilder.AST);
-            codeGenerator.GenerateCode();
+            globalSymbolTable.BuildSymbolTable(astBuilder.AST);
         }
 
         if(!errorHandler.HasErrors) {
-            globalSymbolTable.BuildSymbolTable(astBuilder.AST);
+            ASTPrinter astPrinter = new ASTPrinter((ProgramNode) astBuilder.AST);
+            astPrinter.PrintAST();
+
+            CodeGenerator codeGenerator = new CodeGenerator((ProgramNode) astBuilder.AST, errorHandler, globalSymbolTable);
+            codeGenerator.GenerateCode();
         }
 
         if(!errorHandler.HasErrors) {

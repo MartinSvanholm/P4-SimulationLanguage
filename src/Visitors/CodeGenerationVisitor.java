@@ -10,6 +10,10 @@ import ASTNodes.ValueNodes.OpNode;
 import ASTNodes.ValueNodes.StringNode;
 import ASTVisitors.BaseVisitor;
 import Main.CodeGenIO;
+import Main.Error;
+import Main.ErrorHandler;
+import SymbolTable.GlobalSymbolTable;
+import SymbolTable.Symbol;
 import VisitorHelpers.TypeCheckHelper;
 import hu.webarticum.treeprinter.SimpleTreeNode;
 
@@ -17,23 +21,34 @@ import java.util.ArrayList;
 
 public class CodeGenerationVisitor extends BaseVisitor<String> {
     /* ---------------------------List af ting der mangler---------------------------
-    - Lister er ikke lavet endnu
+    - Lister er basically færdige
+
     - Environment delen er jeg igang med.
         - Det er ret cancer at splitte op i typer atm, siden der ikke er dedikeret sections til dem.
+            - ListDcl bliver nu splittet rigtigt op.
+            - Der er mange semicoloner, fordi at den checker igennem HELE behaivour hver gang vi visiter den... sjovt nok
             - Jeg har splittet dem op i Declarations, men ved ikke rigtigt om det er muligt at gøre med assignment
             og functionskald som vi gør det nu...
-            - Derudover har jeg ikk fucket med lister endnu, siden de ikke er implementeret endnu.
-            - Honestly tror jeg det er lettest at lave nye sections til init af nodes og roads (lidt som end- og initcondition)
     - Har ikke testet Update delen endnu, siden vi har en lidt gamle version af type checker osv.
     - Eller virker resten overraskende godt xd.
      */
 
+    private GlobalSymbolTable globalSymbolTable;
+
+    private TypeCheckHelper helper;
     private String currSection = "";
     private String currEnviCheck = "";
+    private String scopeName = "Global";
+    private  String prevScopeName = "";
 
     private ArrayList<String> nodeTypes = new ArrayList<>();
     private ArrayList<String> roadTypes = new ArrayList<>();
     private ArrayList<String> vehicleTypes = new ArrayList<>();
+
+    public CodeGenerationVisitor(ErrorHandler errorHandler, GlobalSymbolTable globalSymbolTable) {
+        this.globalSymbolTable = globalSymbolTable;
+        this.helper = new TypeCheckHelper(errorHandler, globalSymbolTable);
+    }
     @Override
     public String visitProgramNode(ProgramNode programNode) {
         CodeGenIO io = new CodeGenIO();
@@ -121,6 +136,10 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
 
     @Override
     public String visitSectionNode(SectionNode sectionNode){
+        prevScopeName = scopeName;
+        scopeName = sectionNode.Name;
+        System.out.println("Curr Scope: " + scopeName);
+
         String output = "";
         System.out.println("Section:) : " + sectionNode.Name);
         currSection = sectionNode.Name;
@@ -140,7 +159,8 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
                         break;
                     default:
                         if (!(line.getClass() == InitConditionNode.class || line.getClass() == EndConditionNode.class)){
-                            output += visit(line);
+                            //Det her virker teknisk set... Hvis vi får tid skal det fixes så det er turbo ulovligt!!!!!
+                            output += visit(line) + ";";
                         }
                         break;
                 }
@@ -152,6 +172,8 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
                 }
             }
         }
+
+        scopeName = prevScopeName;
         return output;
     }
 
@@ -167,6 +189,10 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
 
     @Override
     public String visitFunctionNode(FunctionDclNode functionDclNode) {
+        prevScopeName = scopeName;
+        scopeName = functionDclNode.Identifier.Name;
+        System.out.println("Curr Scope: " + scopeName);
+
         String output = "public ";
 
         if(functionDclNode.Type == null) {
@@ -197,6 +223,7 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
 
         output += visit(functionDclNode.Body) + "}";
 
+        scopeName = prevScopeName;
         return output;
     }
 
@@ -204,6 +231,42 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
     public String visitListNode(ListDclNode listDclNode) {
         String output = "";
         String type;
+
+        if(currSection.equals("Environment")) {
+
+            System.out.println("Jeg tester lige ting");
+            type = helper.GetSymbolByScopeName(visit(listDclNode.Identifier), scopeName).Type;
+            System.out.println(type);
+            System.out.println(CheckType(type));
+
+            if (CheckType(type)) {
+                if (visit(listDclNode.Type).equals("number")){
+                    type = "float";
+                } else{
+                    type = visit(listDclNode.Type);
+                }
+
+                output += type + "[] ";
+                output += visit(listDclNode.Identifier) + " = new " + type + "[] ";
+
+
+                int parAmount = listDclNode.Parameters.size();
+                int currPar = 1;
+
+                output += "{";
+                for (Node params : listDclNode.Parameters) {
+                    output += visit(params);
+                    if (currPar < parAmount) {
+                        output += ",";
+                    }
+
+                    currPar++;
+                }
+
+                return output + "};";
+            }
+            return "";
+        }
 
         if (visit(listDclNode.Type).equals("number")){
             type = "float";
@@ -233,6 +296,10 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
 
     @Override
     public String visitClassNode(ClassNode classNode) {
+        prevScopeName = scopeName;
+        scopeName = classNode.Identifier.Name;
+        System.out.println("Curr Scope: " + scopeName);
+
         switch (visit(classNode.Type)) {
             case "Road":
                 roadTypes.add(visit(classNode.Identifier));
@@ -255,6 +322,7 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
         System.out.println(visit(classNode.Type) + " " + visit(classNode.Identifier) + " Class body start");
         output += visit(classNode.Body);
 
+        scopeName = prevScopeName;
         return output + "}";
     }
 
@@ -285,14 +353,14 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
     public String visitObjDcl(ObjDclNode objDclNode) {
         String output = "";
         if(currSection.equals("Environment")) {
-            if (CheckType(objDclNode)) {
+            if (CheckType(visit(objDclNode.Type))) {
                 output += visit(objDclNode.Type) + " " + visit(objDclNode.Identifier);
 
                 if (objDclNode.ObjValue != null) {
                     output += " = " + visit(objDclNode.ObjValue);
                 }
             }
-            return output;
+            return output + ";";
         }
 
         if (visit(objDclNode.Type).equals("number")) {
@@ -401,15 +469,18 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
         if (visit(functionCallNode.Identifier).contains(".")) {
             String[] strs = visit(functionCallNode.Identifier).split("\\.");
 
-            switch (strs[strs.length - 1]) {
-                case "Add":
-                    output += AddToList(functionCallNode, strs[0]);
-                    break;
-                default:
-            }
+            if(!functionCallNode.Identifier.Name.contains("Simulation")) {
+                switch (strs[strs.length - 1]) {
+                    case "Add":
+                        output += AddToList(functionCallNode, strs[0]);
+                        break;
+                    default:
+                }
 
-            return output;
+                return output;
+            }
         }
+
 
         output = visit(functionCallNode.Identifier) + "(";
 
@@ -534,7 +605,7 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
     @Override
     public String visitIdentifierNode(IdentifierNode identifierNode) {
         if (identifierNode.Name.contains("Simulation.")) {
-            identifierNode.Name = identifierNode.Name.split("Simulation.")[1];
+            return identifierNode.Name.split("Simulation.")[1];
         }
 
         return identifierNode.Name;
@@ -565,13 +636,13 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
         return opNode.Name;
     }
 
-    public boolean CheckType(DclNode node) {
+    public boolean CheckType(String name) {
         switch (currEnviCheck) {
             case "Node":
-                if (nodeTypes.contains(visit(node.Type))) return true;
+                if (nodeTypes.contains(name)) return true;
                 break;
             case "Road":
-                if (roadTypes.contains(visit(node.Type))) return true;
+                if (roadTypes.contains(name)) return true;
                 break;
             default:
                 break;
@@ -582,11 +653,28 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
     public String AddToList(FunctionCallNode functionCallNode, String name){
         String output = "";
 
+        System.out.println(scopeName);
+        System.out.println(name);
+        System.out.println("big smile " + helper.GetSymbolByScopeName(name, scopeName).Type);
+
         output += name + " = " + name + ".Concat(new ";
+        output += helper.GetSymbolByScopeName(name, scopeName).Type.equals("number") ? "float" : helper.GetSymbolByScopeName(name, scopeName).Type;
+        output += "[]{";
 
+        int parAmount = functionCallNode.Parameters.size();
+        int currPar = 1;
 
+        for (Node params : functionCallNode.Parameters) {
+            output += visit(params);
+            if (currPar < parAmount) {
+                output += ",";
+            }
 
-        return output;
+            currPar++;
+        }
+
+        return output + "}).ToArray()";
+
     }
 
 }
