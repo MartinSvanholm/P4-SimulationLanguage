@@ -233,70 +233,43 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
     @Override
     public String visitListNode(ListDclNode listDclNode) {
         String output = "";
-        String type;
+        String type = helper.GetSymbolByScopeName(visit(listDclNode.Identifier), scopeName).Type;
 
-        if(currSection.equals("Environment")) {
+        if(!currSection.equals("Environment") || CheckType(type)) {
 
             System.out.println("Jeg tester lige ting");
             System.out.println(listDclNode.Identifier.getClass());
-            type = helper.GetSymbolByScopeName(visit(listDclNode.Identifier), scopeName).Type;
             System.out.println(type);
             System.out.println(CheckType(type));
 
-            if (CheckType(type)) {
-                if (visit(listDclNode.Type).equals("number")){
-                    type = "float";
-                } else{
-                    type = visit(listDclNode.Type);
-                }
-
-                output += type + "[] ";
-                output += visit(listDclNode.Identifier) + " = new " + type + "[] ";
-
-
-                int parAmount = listDclNode.Parameters.size();
-                int currPar = 1;
-
-                output += "{";
-                for (Node params : listDclNode.Parameters) {
-                    output += visit(params);
-                    if (currPar < parAmount) {
-                        output += ",";
-                    }
-
-                    currPar++;
-                }
-
-                return output + "};";
-            }
-            return "";
-        }
-
-        if (visit(listDclNode.Type).equals("number")){
-            type = "float";
-        } else{
-            type = visit(listDclNode.Type);
-        }
-
-        output += type + "[] ";
-        output += visit(listDclNode.Identifier) + " = new " + type + "[] ";
-
-
-        int parAmount = listDclNode.Parameters.size();
-        int currPar = 1;
-
-        output += "{";
-        for (Node params : listDclNode.Parameters) {
-            output += visit(params);
-            if (currPar < parAmount) {
-                output += ",";
+            if (visit(listDclNode.Type).equals("number")){
+                type = "float";
+            } else{
+                type = visit(listDclNode.Type);
             }
 
-            currPar++;
+            output += type + "[] ";
+            output += visit(listDclNode.Identifier) + " = new " + type + "[] ";
+
+
+            int parAmount = listDclNode.Parameters.size();
+            int currPar = 1;
+
+            output += "{";
+            for (Node params : listDclNode.Parameters) {
+                output += visit(params);
+                if (currPar < parAmount) {
+                    output += ",";
+                }
+
+                currPar++;
+            }
+
+            return output + "};";
         }
 
-        return output + "};";
-    }
+        return "";
+        }
 
     @Override
     public String visitClassNode(ClassNode classNode) {
@@ -353,6 +326,7 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
         return output + "}";
     }
 
+    //Environment delen af den her kan godt optimeres lidt, så der ikke er redundant kode (lidt som det er gjort i ListDcl).
     @Override
     public String visitObjDcl(ObjDclNode objDclNode) {
         String output = "";
