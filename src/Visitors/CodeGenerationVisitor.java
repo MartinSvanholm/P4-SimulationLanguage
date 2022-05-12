@@ -4,6 +4,9 @@ import ASTNodes.*;
 import ASTNodes.ControlStructures.*;
 import ASTNodes.DclNodes.*;
 import ASTNodes.ExprNodes.*;
+import ASTNodes.Identifier.ObjIdNode;
+import ASTNodes.Identifier.SimpleIdNode;
+import ASTNodes.Identifier.ThisIdNode;
 import ASTNodes.ValueNodes.BoolNode;
 import ASTNodes.ValueNodes.NumberNode;
 import ASTNodes.ValueNodes.OpNode;
@@ -235,6 +238,7 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
         if(currSection.equals("Environment")) {
 
             System.out.println("Jeg tester lige ting");
+            System.out.println(listDclNode.Identifier.getClass());
             type = helper.GetSymbolByScopeName(visit(listDclNode.Identifier), scopeName).Type;
             System.out.println(type);
             System.out.println(CheckType(type));
@@ -602,6 +606,8 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
     @Override
     public String visitConstructorBodyNode(ConstructorBodyNode constructorBodyNode) { return null; }
 
+    //Den her eksistere ikke mere smile
+    /*
     @Override
     public String visitIdentifierNode(IdentifierNode identifierNode) {
         if (identifierNode.Name.contains("Simulation.")) {
@@ -609,6 +615,31 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
         }
 
         return identifierNode.Name;
+    } */
+
+    @Override
+    public String visitObjIdNode(ObjIdNode objIdNode) {
+        //Not implemented
+
+        return "ObjIdNode";
+    }
+
+    @Override
+    public String visitThisIdNode(ThisIdNode thisIdNode) {
+        //Not implemented
+
+        return "ThisIdNode";
+    }
+
+    @Override
+    public String visitSimpleIdNode(SimpleIdNode simpleIdNode) {
+        //Not implemented (Midlertidigt den gamle identifier)
+
+        if (simpleIdNode.Name.contains("Simulation.")) {
+            return simpleIdNode.Name.split("Simulation.")[1];
+        }
+
+        return simpleIdNode.Name;
     }
 
     @Override

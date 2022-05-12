@@ -21,7 +21,7 @@ namespace CodeGenTest {
         public Node startNode;
         public Node endNode;
     }
-public class Car:Vehicle{float x = 1f;float y;public float Square(float x){return x*x;}public float DinMor(){return 3;}public float InLineFunc(float x){float y = 2f;Square(x)+y;x+y;y = Square(x)+y;return Square(x)+x;}public void IfElseTest(){bool testBool = true;bool testBool2 = true;string str;if(testBool==true){str = "If";}else if(testBool2==true){str = "Else";}}public void SwitchTest(){float testNum = 2f;string str;switch(testNum){case 1:  break;case 2:  break;}}public void WhileTest(){bool testBool = true;while(testBool==true){Print("xd");}}public void IndexTest(){float[] numList = new float[] {1,2,3};numList = numList.Concat(new float[]{4}).ToArray();float x = numList[1];}public Car(){this.length = 10;this.acceleration = 200;}}public class Truck:Vehicle{string name;public Truck(string name){this.length = 30;this.acceleration = 100;this.name = name;}}public class IONode:Node{public IONode(){}}public class TownRoad:Road{float speedLimit;public TownRoad(float speedLimit,float length,Node startNode,Node endNode){this.speedLimit = speedLimit;this.length = length;this.startNode = startNode;this.endNode = endNode;}}
+public class Car:Vehicle{float x = 1f;float y;public float Square(float x){return x*x;}public float DinMor(){return 3;}public float InLineFunc(float x){float y = 2f;Square(x)+y;x+y;y = Square(x)+y;return Square(x)+x;}public void IfElseTest(){bool testBool = true;bool testBool2 = true;string str;if(testBool==true){str = "If";}else if(testBool2==true){str = "Else";}else{str = "Else";}}public void SwitchTest(){float testNum = 2f;string str;switch(testNum){case :  break;case :  break;case :  break;}}public void WhileTest(){bool testBool = true;while(testBool==true){Print("xd");}}public void IndexTest(){float[] numList = new float[] {1,2,3};ObjIdNode(4);float x = numList[1];}public Car(){ThisIdNode = 10;ThisIdNode = 200;}}public class Truck:Vehicle{string name;public Truck(string name){ThisIdNode = 30;ThisIdNode = 100;ThisIdNode = name;}}public class IONode:Node{public IONode(){}}public class TownRoad:Road{float speedLimit;public TownRoad(float speedLimit,float length,Node startNode,Node endNode){ThisIdNode = speedLimit;ThisIdNode = length;ThisIdNode = startNode;ThisIdNode = endNode;}}
     class Program {
         static void Main(string[] args) {
             List<Vehicle> vehicleList = new List<Vehicle>();
@@ -39,14 +39,14 @@ public class Car:Vehicle{float x = 1f;float y;public float Square(float x){retur
                 CurrentTick++;
             }
             output.LogToFile();
-            List<Node> InitNodes() {IONode NodeOne = new IONode();;IONode[] tempConnections = new IONode[] {NodeOne};;IONode NodeTwo = new IONode();;NodeTwo.connections = tempConnections;;;tempConnections = tempConnections.Concat(new IONode[]{NodeTwo}).ToArray();NodeOne.connections = tempConnections;;NodeTwo = NodeOne;;;;            }
+            List<Node> InitNodes() {IONode NodeOne = new IONode();;IONode[] tempConnections = new IONode[] {NodeOne};;IONode NodeTwo = new IONode();;ObjIdNode = tempConnections;;ObjIdNode(0);ObjIdNode(NodeTwo);ObjIdNode = tempConnections;;NodeTwo = NodeOne;;;;            }
             
-            List<Road> InitRoads() {;;;;;NodeTwo.connections = tempConnections;;;tempConnections = tempConnections.Concat(new IONode[]{NodeTwo}).ToArray();NodeOne.connections = tempConnections;;NodeTwo = NodeOne;;TownRoad RoadOne = new TownRoad(50,500,NodeOne,NodeTwo);;            }
+            List<Road> InitRoads() {;;;;;ObjIdNode = tempConnections;;ObjIdNode(0);ObjIdNode(NodeTwo);ObjIdNode = tempConnections;;NodeTwo = NodeOne;;TownRoad RoadOne = new TownRoad(50,500,NodeOne,NodeTwo);;            }
 
-            List<Vehicle> InitVehicles(List<Vehicle> Vehicles) {if(CurrentTick%5==0){Vehicles.Add(new Car());}if(CurrentTick%10==0){Vehicles.Add(new Truck("Tonni"));}                return vehicleList;
+            List<Vehicle> InitVehicles(List<Vehicle> Vehicles) {if(ObjIdNode%5==0){}if(ObjIdNode%10==0){}                return vehicleList;
             }
 
-            bool EndCondition() {return CurrentTick>100;            }
+            bool EndCondition() {return ObjIdNode>100;            }
         }
         
         public class Output {
@@ -54,7 +54,7 @@ public class Car:Vehicle{float x = 1f;float y;public float Square(float x){retur
             public List<string> dataList = new();
 
             public void Run() {
-                string data = "";;                dataList.Add(data);
+                string data = "";ObjIdNode("EKS");                dataList.Add(data);
         }
 
             public void LogToFile() {

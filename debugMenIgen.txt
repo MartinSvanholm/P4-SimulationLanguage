@@ -14,13 +14,13 @@ Simulation Environment {
 
     InitCondition<Car>{
         if(Simulation.CurrentTick % 5 == 0){
-            Simulation.Vehicles.Add(Create<Car>());
+            //Simulation.Vehicles.Add(Create<Car>());
         }
     }
 
     InitCondition<Truck>{
         if(Simulation.CurrentTick % 10 == 0){
-            Simulation.Vehicles.Add(Create<Truck>("Tonni"));
+            //Simulation.Vehicles.Add(Create<Truck>("Tonni"));
         }
     }
 
