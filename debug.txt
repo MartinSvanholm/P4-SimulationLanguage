@@ -8,35 +8,23 @@ Simulation Environment {
 //Here the user defines the classes and their behavior
 Simulation Behavior {
     Vehicle Car {
+        Node startNode = Create<INode>();
+
+        function void Random(string h) {
+
+        }
+
         function void Drive() {
-            switch(vehicle.Type) {
-                case "Car" {
-                    //Checks if the agent is clear to drive, with the function "IsClearToDrive"
-                    if (IsClearToDrive()) {
-                        //Tells the agent to drive, with the function "Drive"
-                        vehicle.Drive();
-                        string x = "case1";
-                    } else if(true) {
-                        //Tells the agent to break, with the function "Break"
-                        Break();
-                    } else {
-                        string hej = "hej";
-                    }
-                }
-                default {
-                    //Default case. This should in theory never be triggered
-                    number test;
-                }
-            }
+            this.position = 5;
         }
 
         function bool IsClearToDrive() {
 
         }
+    }
 
-        function bool Break() {
-
-        }
+    Node INode {
+        number x;
     }
 }
 

@@ -374,16 +374,6 @@ public interface CFGListener extends ParseTreeListener {
 	 */
 	void exitCompareExpr(CFGParser.CompareExprContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link CFGParser#functionCall}.
-	 * @param ctx the parse tree
-	 */
-	void enterFunctionCall(CFGParser.FunctionCallContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link CFGParser#functionCall}.
-	 * @param ctx the parse tree
-	 */
-	void exitFunctionCall(CFGParser.FunctionCallContext ctx);
-	/**
 	 * Enter a parse tree produced by {@link CFGParser#params}.
 	 * @param ctx the parse tree
 	 */
@@ -443,6 +433,46 @@ public interface CFGListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitIdentifier(CFGParser.IdentifierContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link CFGParser#objIdentifier}.
+	 * @param ctx the parse tree
+	 */
+	void enterObjIdentifier(CFGParser.ObjIdentifierContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link CFGParser#objIdentifier}.
+	 * @param ctx the parse tree
+	 */
+	void exitObjIdentifier(CFGParser.ObjIdentifierContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link CFGParser#thisIdentifier}.
+	 * @param ctx the parse tree
+	 */
+	void enterThisIdentifier(CFGParser.ThisIdentifierContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link CFGParser#thisIdentifier}.
+	 * @param ctx the parse tree
+	 */
+	void exitThisIdentifier(CFGParser.ThisIdentifierContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link CFGParser#simpleIdentifier}.
+	 * @param ctx the parse tree
+	 */
+	void enterSimpleIdentifier(CFGParser.SimpleIdentifierContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link CFGParser#simpleIdentifier}.
+	 * @param ctx the parse tree
+	 */
+	void exitSimpleIdentifier(CFGParser.SimpleIdentifierContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link CFGParser#functionCall}.
+	 * @param ctx the parse tree
+	 */
+	void enterFunctionCall(CFGParser.FunctionCallContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link CFGParser#functionCall}.
+	 * @param ctx the parse tree
+	 */
+	void exitFunctionCall(CFGParser.FunctionCallContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link CFGParser#literal}.
 	 * @param ctx the parse tree
