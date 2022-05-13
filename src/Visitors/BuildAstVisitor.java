@@ -507,7 +507,7 @@ public class BuildAstVisitor extends CFGBaseVisitor<Node> {
     @Override public Node visitType(CFGParser.TypeContext ctx) { return visitChildren(ctx); }
 
     @Override public Node visitPrimType(CFGParser.PrimTypeContext ctx) {
-        IdentifierNode node = new IdentifierNode();
+        TypeNode node = new TypeNode();
         node.Line = ctx.getStart().getLine();
 
         node.Name = ctx.getText().strip();
@@ -516,7 +516,7 @@ public class BuildAstVisitor extends CFGBaseVisitor<Node> {
     }
 
     @Override public Node visitComplexType(CFGParser.ComplexTypeContext ctx) {
-        IdentifierNode node = new IdentifierNode();
+        TypeNode node = new TypeNode();
         node.Line = ctx.getStart().getLine();
 
         if(ctx.listType != null) {

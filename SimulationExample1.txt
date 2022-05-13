@@ -10,7 +10,7 @@ Simulation Environment {
 
     InitCondition<Car> {
         if(Simulation.CurrentTick % 5 == 0) {
-            Simulation.Vehicles.Add(Create<Car>());
+            //Simulation.Vehicles.Add(Create<Car>());
         }
     }
 
@@ -28,7 +28,7 @@ Simulation Behavior {
         number direction;
         number brakeDistance = 10;
         number speed;
-        Road road;
+        Road road = Create<TownRoad>();
         Road previousRoad;
 
         constructor Create<Car>() {
@@ -50,8 +50,7 @@ Simulation Behavior {
         }
 
         function void Brake() {
-            Vehicle car123 = Create<Car>();
-            car123.speed = 0;
+            this.speed = 0;
         }
 
         function bool isClearToDrive() {
@@ -66,8 +65,8 @@ Simulation Behavior {
             return result;
         }
 
-        function bool isCarInFront(Car car1, Car car2) {
-            number positionDiff = car2.position - car1.position;
+        function bool isCarInFront(Car otherCar) {
+            number positionDiff = otherCar.position - this.position;
             if(positionDiff > 0 && positionDiff < 5) {
                 return true;
             }

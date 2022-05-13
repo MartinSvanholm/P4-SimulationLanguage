@@ -291,6 +291,7 @@ public class TypeChecker extends BaseVisitor<String> {
 
     @Override
     public String visitObjIdNode(ObjIdNode objIdNode) {
+        System.out.println(objIdNode.Line);
         SymbolTable classTable = null;
         Symbol property = null;
 
