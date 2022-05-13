@@ -246,15 +246,15 @@ public class GlobalSymbolTable extends SymbolTable {
 
         SymbolTable Print = new SymbolTable("Print", 0, null, "void", "Function");
         Print.Symbols.put("line", new Symbol("line", "string", "Parameter"));
-        this.Children.add(Print);
+        Simulation.Children.add(Print);
 
         SymbolTable Random = new SymbolTable("Random", 0, null, "number", "Function");
         Random.Symbols.put("from", new Symbol("from", "number", "Parameter"));
         Random.Symbols.put("too", new Symbol("too", "number", "Parameter"));
-        this.Children.add(Random);
+        Simulation.Children.add(Random);
 
         SymbolTable Type = new SymbolTable("Type", 0, null, "string", "Function");
-        this.Children.add(Type);
+        Simulation.Children.add(Type);
 
         Simulation.Symbols.put("CurrentTick", new Symbol("CurrentTick", "number"));
     }

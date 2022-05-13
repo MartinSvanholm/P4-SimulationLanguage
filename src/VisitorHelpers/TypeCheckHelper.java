@@ -1,11 +1,14 @@
 package VisitorHelpers;
 
-import ASTNodes.Identifier.IdentifierNode;
-import ASTNodes.Identifier.ObjIdNode;
+import ASTNodes.Identifier.SimpleIdNode;
 import SymbolTable.Symbol;
 import SymbolTable.SymbolTable;
 import SymbolTable.GlobalSymbolTable;
-import java.util.Enumeration;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
 public class TypeCheckHelper extends BaseHelper{
 
@@ -23,15 +26,12 @@ public class TypeCheckHelper extends BaseHelper{
     public Symbol GetSymbolByScopeName(String name, String scopeName) {
         SymbolTable symbolTable = FindTableByName(GlobalSymbolTable, scopeName, 0);
 
-        Enumeration<String> keys = null;
+        ArrayList<Symbol> symbols = null;
         if(symbolTable != null)
-            keys = symbolTable.Symbols.keys();
+           symbols = (ArrayList<Symbol>) symbolTable.Symbols.values();
 
-        if(keys != null) {
-            while(keys.hasMoreElements()) {
-                Symbol symbol;
-                symbol = symbolTable.Symbols.get(keys.nextElement());
-
+        if(symbols != null) {
+            for(Symbol symbol : symbols) {
                 if(symbol.Identifier.equals(name))
                     return symbol;
             }
@@ -64,5 +64,10 @@ public class TypeCheckHelper extends BaseHelper{
         }
 
         return null;
+    }
+
+    public Symbol CheckInheritance(SimpleIdNode simpleIdNode, String scopeName) {
+        SymbolTable classTable = FindTableByName(GlobalSymbolTable, scopeName, 0);
+        return GetSymbolByScopeName(simpleIdNode.Name, classTable.Type);
     }
 }

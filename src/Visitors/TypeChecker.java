@@ -25,7 +25,7 @@ public class TypeChecker extends BaseVisitor<String> {
     String scopeName = "Global";
     String prevScopeName;
     String typeError = "error";
-    int CheckForPredifinedValues = 0;
+    int CheckForPredifinedValues = 1;
     private final TypeCheckHelper helper;
 
     public TypeChecker(ErrorHandler errorHandler, GlobalSymbolTable globalSymbolTable) {
@@ -248,8 +248,6 @@ public class TypeChecker extends BaseVisitor<String> {
 
     @Override
     public String visitCompareNode(CompareNode compareNode) {
-        String test1 = visit(compareNode.Left);
-        String test2 = visit(compareNode.Right);
         if(visit(compareNode.Left).equals(visit(compareNode.Right)))
             return "bool";
         else
@@ -259,14 +257,16 @@ public class TypeChecker extends BaseVisitor<String> {
     @Override
     public String visitFunctionCallNode(FunctionCallNode functionCallNode) {
         String funcType = visit(functionCallNode.Identifier);
-        if(!funcType.equals(typeError)) {
+        if(!funcType.equals(typeError) && !funcType.equals(typeError+"obj")) {
             CheckFuncParameters(functionCallNode);
             return funcType;
+        } else if(funcType.equals(typeError)) {
+            helper.AddError(functionCallNode, functionCallNode.Identifier.GetName("") + " has never been declared");
+            return funcType;
         } else {
-            helper.AddError(functionCallNode, functionCallNode.Identifier.Name + " has never been declared");
+            helper.AddError(functionCallNode, functionCallNode.Identifier.GetName("obj") + " has never been declared");
             return funcType;
         }
-
     }
 
     @Override
@@ -316,7 +316,7 @@ public class TypeChecker extends BaseVisitor<String> {
 
     @Override
     public String visitThisIdNode(ThisIdNode thisIdNode) {
-        CheckForPredifinedValues = 1;
+        CheckForPredifinedValues = 0;
         prevScopeName = scopeName;
         scopeName = thisIdNode.ClassName;
 
@@ -328,7 +328,7 @@ public class TypeChecker extends BaseVisitor<String> {
             error = visit(thisIdNode.Identifier);
 
         scopeName = prevScopeName;
-        CheckForPredifinedValues = 0;
+        CheckForPredifinedValues = 1;
 
         return error;
     }
@@ -336,11 +336,19 @@ public class TypeChecker extends BaseVisitor<String> {
     @Override
     public String visitSimpleIdNode(SimpleIdNode simpleIdNode) {
         Symbol var = helper.GetSymbolByScopeName(simpleIdNode.Name, scopeName);
-        SymbolTable table = helper.FindTableByName(GlobalSymbolTable, simpleIdNode.Name, CheckForPredifinedValues);
         if(var != null)
             return var.Type;
-        else if(table != null)
-            return table.Type;
+
+        SymbolTable scope = helper.FindTableByName(GlobalSymbolTable, scopeName, CheckForPredifinedValues);
+        if(scope != null) {
+            SymbolTable table = helper.FindTableByName(scope, simpleIdNode.Name, CheckForPredifinedValues);
+            if(table != null)
+                return table.Type;
+        }
+
+        var = helper.CheckInheritance(simpleIdNode, scopeName);
+        if(var != null)
+            return var.Type;
 
         return typeError;
     }
@@ -427,32 +435,31 @@ public class TypeChecker extends BaseVisitor<String> {
 
     //This function checks if the parameters passed when calling the function is the same type as the formal parameters.
     private void CheckFuncParameters(FunctionCallNode node) {
-        if(node.Identifier instanceof SimpleIdNode) {
-            //Symbol table for the function
-            SymbolTable funcTable = helper.FindTableByName(GlobalSymbolTable, node.Identifier.Name, 0);
 
-            //Iterator of the formal parameters of the function
-            Iterator<Symbol> formalParams = helper.MapToList(funcTable.Symbols).iterator();
+        //Symbol table for the function
+        SymbolTable funcTable = helper.FindTableByName(GlobalSymbolTable, node.Identifier.GetName(""), 0);
 
-            for(ParamNode param : node.Parameters) {
+        //Iterator of the formal parameters of the function
+        Iterator<Symbol> formalParams = helper.MapToList(funcTable.Symbols).iterator();
 
-                //Check if there are any formal parameters left, if not then there has been provided too many arguments
-                if(!formalParams.hasNext())
-                    helper.AddError(node, "too many arguments");
+        for(ParamNode param : node.Parameters) {
 
-                while (formalParams.hasNext()) {
-                    Symbol formalParam = formalParams.next();
+            //Check if there are any formal parameters left, if not then there has been provided too many arguments
+            if(!formalParams.hasNext())
+                helper.AddError(node, "too many arguments");
 
-                    if(!formalParam.Type.equals("Generic") && !formalParam.Type.equals(visit(param)))
-                        helper.AddError(node, param.Identifier.Name + " must be of type " + formalParam.Type);
+            while (formalParams.hasNext()) {
+                Symbol formalParam = formalParams.next();
 
-                    break;
-                }
+                if(!formalParam.Type.equals("Generic") && !formalParam.Type.equals(visit(param)))
+                    helper.AddError(node, param.Identifier.Name + " must be of type " + formalParam.Type);
+
+                break;
             }
+        }
 
-            if(formalParams.hasNext() && formalParams.next().Attribute.equals("Parameter")) {
-                helper.AddError(node, "too few arguments");
-            }
+        if(formalParams.hasNext() && formalParams.next().Attribute.equals("Parameter")) {
+            helper.AddError(node, "too few arguments");
         }
     }
 
@@ -465,10 +472,15 @@ public class TypeChecker extends BaseVisitor<String> {
         Iterator<Symbol> formalParams = helper.MapToList(funcTable.Symbols).iterator();
 
         for(ParamNode param : node.Parameters) {
+
+            //Check if there are any formal parameters left, if not then there has been provided too many arguments
+            if(!formalParams.hasNext())
+                helper.AddError(node, "too many arguments");
+
             while (formalParams.hasNext()) {
                 Symbol formalParam = formalParams.next();
 
-                if(formalParam.Identifier.equals("constructor"))
+                if(!formalParam.Attribute.equals("Parameter"))
                     continue;
 
                 if(!formalParam.Type.equals(visit(param)))
@@ -476,10 +488,6 @@ public class TypeChecker extends BaseVisitor<String> {
 
                 break;
             }
-
-            //Check if there are any formal parameters left, if not then there has been provided too many arguments
-            if(!formalParams.hasNext())
-                helper.AddError(node, "too many arguments");
         }
 
         if(formalParams.hasNext() && formalParams.next().Attribute.equals("Parameter")) {

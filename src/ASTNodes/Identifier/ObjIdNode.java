@@ -24,6 +24,9 @@ public class ObjIdNode extends IdentifierNode {
 
     @Override
     public String GetName(String obj) {
-        return ObjectNode.Name;
+        if(obj.equals("obj"))
+            return ObjectNode.Name;
+
+        return Identifier.Name;
     }
 }

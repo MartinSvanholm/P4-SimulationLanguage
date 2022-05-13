@@ -8,14 +8,11 @@ Simulation Environment {
 //Here the user defines the classes and their behavior
 Simulation Behavior {
     Vehicle Car {
-        Node startNode = Create<INode>();
-
-        function void Random(string h) {
-
-        }
+        Node startNode = Create<INode>("fdfd", 5);
 
         function void Drive() {
-            this.position = 5;
+            Node startNode = Create<INode>();
+            startNode.try("dfdfdf", 5);
         }
 
         function bool IsClearToDrive() {
@@ -25,6 +22,14 @@ Simulation Behavior {
 
     Node INode {
         number x;
+
+        constructor Create<INode>(string k, number l) {
+
+        }
+
+        function void try(string k, number j) {
+
+        }
     }
 }
 
