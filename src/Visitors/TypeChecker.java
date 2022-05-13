@@ -232,8 +232,6 @@ public class TypeChecker extends BaseVisitor<String> {
 
     @Override
     public String visitCompareNode(CompareNode compareNode) {
-        String test1 = visit(compareNode.Left);
-        String test2 = visit(compareNode.Right);
         if(visit(compareNode.Left).equals(visit(compareNode.Right)))
             return "bool";
         else
