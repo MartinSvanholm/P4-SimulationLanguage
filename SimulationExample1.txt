@@ -1,0 +1,116 @@
+Simulation Environment {
+    Node startNode = Create<IONode>();
+    Node endNode = Create<IONode>();
+    Road townRoad = Create<TownRoad>(50, 1000, startNode, endNode);
+    Road countryRoad = Create<LandevejRoad>(80, 1000, startNode, endNode);
+
+    List<Node> IONodes {startNode, endNode};
+
+    List<Road> roads {townRoad, countryRoad};
+
+    InitCondition<Car> {
+        if(Simulation.CurrentTick % 5 == 0) {
+            Simulation.Vehicles.Add(Create<Car>());
+        }
+    }
+
+    EndCondition{
+        return Simulation.CurrentTick > 100;
+    }
+}
+
+Simulation Behavior {
+    Node IONode {
+
+    }
+
+    Vehicle Car {
+        number direction;
+        number brakeDistance = 10;
+        number speed;
+        Road road;
+        Road previousRoad;
+
+        constructor Create<Car>() {
+            direction = Random(0, 1);
+            if(Random(0,1) == 0) {
+                road = townRoad;
+                previousRoad = townRoad;
+                speed = 50;
+            } else {
+                road = countryRoad;
+                previousRoad = countryRoad;
+                speed = 80;
+            }
+        }
+
+        function void Drive() {
+            this.speed = this.road.speedLimit;
+            this.position = this.position + this.speed;
+        }
+
+        function void Brake() {
+            Vehicle car123 = Create<Car>();
+            car123.speed = 0;
+        }
+
+        function bool isClearToDrive() {
+            bool result = true;
+            for(car in range this.road.carList) {
+                if(car.direction == this.direction) {
+                    if(isCarInFront() == true) {
+                        result = false;
+                    }
+                }
+            }
+            return result;
+        }
+
+        function bool isCarInFront(Car car1, Car car2) {
+            number positionDiff = car2.position - car1.position;
+            if(positionDiff > 0 && positionDiff < 5) {
+                return true;
+            }
+            return false;
+        }
+
+        function void newSpeedLimit() {
+            if(this.road.speedLimit < this.previousRoad.speedLimit && this.speed > this.road.speedLimit) {
+                this.speed = this.road.speedLimit;
+            }
+        }
+    }
+
+    Road TownRoad {
+        number speedLimit;
+        constructor Create<TownRoad>(number speedLimit, number length, Node startNode, Node endNode) {
+            this.speedLimit = speedLimit;
+            this.length = length;
+            this.startNode = startNode;
+            this.endNode = endNode;
+        }
+    }
+
+    Road LandevejRoad {
+        number speedLimit;
+        constructor Create<LandevejRoad>(number speedLimit, number length, Node startNode, Node endNode) {
+            this.speedLimit = speedLimit;
+            this.length = length;
+            this.startNode = startNode;
+            this.endNode = endNode;
+        }
+    }
+}
+
+Simulation Update {
+    if(vehicle.isClearToDrive()) {
+        vehicle.Drive();
+    } else {
+        vehicle.Brake();
+    }
+}
+
+Simulation Output {
+
+}
+
