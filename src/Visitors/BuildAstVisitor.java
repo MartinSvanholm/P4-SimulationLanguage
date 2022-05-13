@@ -313,7 +313,7 @@ public class BuildAstVisitor extends CFGBaseVisitor<Node> {
     }
 
     @Override public Node visitInfixExpr(CFGParser.InfixExprContext ctx) {
-        InfixExpressionNode node = new InfixExpressionNode();
+        MathExpressionNode node = new MathExpressionNode();
         node.Line = ctx.getStart().getLine();
 
         switch (ctx.op.getType()) {

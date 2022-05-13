@@ -201,10 +201,7 @@ public class GlobalSymbolTable extends SymbolTable {
         System.out.println("");
         System.out.println(symbolTable.Name + " : " + symbolTable.Type + " " + symbolTable.Attribute + " " + symbolTable.Level);
 
-        Enumeration<String> keys = symbolTable.Symbols.keys();
-
-        while (keys.hasMoreElements()) {
-            Symbol symbol = symbolTable.Symbols.get(keys.nextElement());
+        for(Symbol symbol : symbolTable.Symbols.values()) {
             System.out.println("    " + symbol.Identifier + " " + symbol.Type+" "+symbol.Attribute);
         }
 

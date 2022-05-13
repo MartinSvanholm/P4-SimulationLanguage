@@ -73,9 +73,10 @@ public class TypeChecker extends BaseVisitor<String> {
         SymbolTable table = helper.FindTableByName(GlobalSymbolTable, initConditionNode.type.Name.strip(), 0);
 
         if(table != null)
-            return null;
+            visit(initConditionNode.Body);
         else
             helper.AddError(initConditionNode, initConditionNode.type.Name.strip() + " has not been declared");
+
         return null;
     }
 
@@ -290,16 +291,23 @@ public class TypeChecker extends BaseVisitor<String> {
 
     @Override
     public String visitObjIdNode(ObjIdNode objIdNode) {
-        //Gets the property of the objNode, return an error if it does not exist.
-        Symbol property = helper.GetSymbolByScopeName(objIdNode.ObjectNode.Name, scopeName);
-        if(property == null)
-            return typeError + "obj";
+        SymbolTable classTable = null;
+        Symbol property = null;
 
-        //Gets the table of the property's class.
-        SymbolTable classTable = helper.FindTableByName(GlobalSymbolTable, property.Attribute, 0);
+        if(objIdNode.ObjectNode.Name.equals("Simulation")) {
+            classTable = helper.FindTableByName(GlobalSymbolTable, "Simulation", 0);
+        } else {
+            //Gets the property of the objNode, return an error if it does not exist.
+            property = helper.GetSymbolByScopeName(objIdNode.ObjectNode.Name, scopeName);
+            if(property == null)
+                return typeError + "obj";
+
+            //Gets the table of the property's class.
+            classTable = helper.FindTableByName(GlobalSymbolTable, property.Attribute, 0);
+        }
 
         //Checks if there is a property from the class that matches the identifier.
-        ArrayList<Symbol> symbols = helper.MapToList(classTable.Symbols);
+        ArrayList<Symbol> symbols = new ArrayList<>(classTable.Symbols.values());
         for(Symbol symbol: symbols) {
             if(symbol.Identifier.equals(objIdNode.Identifier.Name))
                 return symbol.Type;
@@ -351,16 +359,6 @@ public class TypeChecker extends BaseVisitor<String> {
             return var.Type;
 
         return typeError;
-    }
-
-    @Override
-    public String visitInfixExpressionNode(InfixExpressionNode infixExpressionNode) {
-        String Left = visit(infixExpressionNode.Left);
-        String Right = visit(infixExpressionNode.Right);
-        if(Left.strip().equals(Right.strip()))
-            return Left;
-        else
-            return "error";
     }
 
     @Override
@@ -440,7 +438,7 @@ public class TypeChecker extends BaseVisitor<String> {
         SymbolTable funcTable = helper.FindTableByName(GlobalSymbolTable, node.Identifier.GetName(""), 0);
 
         //Iterator of the formal parameters of the function
-        Iterator<Symbol> formalParams = helper.MapToList(funcTable.Symbols).iterator();
+        Iterator<Symbol> formalParams = funcTable.Symbols.values().iterator();
 
         for(ParamNode param : node.Parameters) {
 
@@ -448,13 +446,11 @@ public class TypeChecker extends BaseVisitor<String> {
             if(!formalParams.hasNext())
                 helper.AddError(node, "too many arguments");
 
-            while (formalParams.hasNext()) {
+            if(formalParams.hasNext()) {
                 Symbol formalParam = formalParams.next();
 
                 if(!formalParam.Type.equals("Generic") && !formalParam.Type.equals(visit(param)))
                     helper.AddError(node, param.Identifier.Name + " must be of type " + formalParam.Type);
-
-                break;
             }
         }
 
@@ -469,7 +465,7 @@ public class TypeChecker extends BaseVisitor<String> {
         SymbolTable funcTable = helper.FindTableByName(GlobalSymbolTable, node.Type.Name, 0);
 
         //Iterator of the formal parameters of the ConstructorCall
-        Iterator<Symbol> formalParams = helper.MapToList(funcTable.Symbols).iterator();
+        Iterator<Symbol> formalParams = funcTable.Symbols.values().iterator();
 
         for(ParamNode param : node.Parameters) {
 

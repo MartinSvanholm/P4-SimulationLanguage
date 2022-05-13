@@ -26,11 +26,12 @@ public class TypeCheckHelper extends BaseHelper{
     public Symbol GetSymbolByScopeName(String name, String scopeName) {
         SymbolTable symbolTable = FindTableByName(GlobalSymbolTable, scopeName, 0);
 
-        ArrayList<Symbol> symbols = null;
-        if(symbolTable != null)
-           symbols = (ArrayList<Symbol>) symbolTable.Symbols.values();
+        if(symbolTable == null)
+            return null;
 
-        if(symbols != null) {
+        ArrayList<Symbol> symbols = new ArrayList<>(symbolTable.Symbols.values());
+
+        if(!symbols.isEmpty()) {
             for(Symbol symbol : symbols) {
                 if(symbol.Identifier.equals(name))
                     return symbol;
