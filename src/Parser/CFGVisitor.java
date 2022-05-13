@@ -229,12 +229,6 @@ public interface CFGVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitCompareExpr(CFGParser.CompareExprContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link CFGParser#functionCall}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitFunctionCall(CFGParser.FunctionCallContext ctx);
-	/**
 	 * Visit a parse tree produced by {@link CFGParser#params}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -270,6 +264,30 @@ public interface CFGVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitIdentifier(CFGParser.IdentifierContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link CFGParser#objIdentifier}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitObjIdentifier(CFGParser.ObjIdentifierContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link CFGParser#thisIdentifier}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitThisIdentifier(CFGParser.ThisIdentifierContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link CFGParser#simpleIdentifier}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitSimpleIdentifier(CFGParser.SimpleIdentifierContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link CFGParser#functionCall}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitFunctionCall(CFGParser.FunctionCallContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link CFGParser#literal}.
 	 * @param ctx the parse tree

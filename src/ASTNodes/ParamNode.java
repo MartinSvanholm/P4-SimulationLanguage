@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 public class ParamNode extends Node {
     public String Name = "Parameter";
-    public IdentifierNode Type;
+    public Node Type;
     public Node Identifier;
 
     @Override

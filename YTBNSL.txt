@@ -18,7 +18,7 @@ Simulation Environment {
     InitCondition<Car> {
         //Creates a car every 5 ticks
         if (Simulation.CurrentTick % 5 == 0) {
-            Simulation.Agents.Add(Create<Car>());
+
         }
     }
 
@@ -47,16 +47,17 @@ Simulation Behavior {
         number weight;
         number breakDistance = 10;
         number breakPower = 3;
+
         string direction;
         Road road = Create<Road1>();
 
         //The constructor for the class
         constructor Create<Car>() {
-            this.length = Random(4, 5);
+            this.length = Simulation.Random(4, 5);
             this.speed = 0;
             this.position = 0;
-            this.acceleration = Random(2, 3);
-            this.weight = Random(900, 1200);
+            this.acceleration = Simulation.Random(2, 3);
+            this.weight = Simulation.Random(900, 1200);
 
             //Creates a random start- and end-node for the car
             List<Node> tempNodes;
@@ -75,17 +76,18 @@ Simulation Behavior {
 
             //Generates the optimal path between the start- and end-node
             //this.path = this.PathFinding();
-
+            List<Node> nodes;
             //Determines the driving direction for the car.
             if (nodes.GetIndex(path[0]) < nodes.GetIndex(path[1])) {
-                this.direction = true;
+                this.direction = "gg";
             } else {
-                this.direction = false;
+                this.direction = "gg";
             }
         }
 
         //Function to check if the car should be able to move
         function bool IsClearToDrive() {
+            this.position = 5;
             bool isCarInfront;
             List<Vehicle> tempList;
 
@@ -97,7 +99,7 @@ Simulation Behavior {
             }
 
             //Sorting the temporary list based on the position of the cars
-            tempList.Sort(Car.position);
+            //tempList.Sort(Car.position);
 
             /*
             //Checking if a car exists infront of the agent. If this is the case, that car is saved in a variable
@@ -157,39 +159,36 @@ Simulation Behavior {
 
             switch(Simulation.CurrentTick) {
                 case 0 {
-                    lightState1 = "red";
-                    lightState2 = "red";
+                    this.lightState1 = "red";
+                    this.lightState2 = "red";
                 }
                 case 10 {
-                    lightState1 = "red";
-                    lightState2 = "yellowStart";
+                    this.lightState1 = "red";
+                    this.lightState2 = "yellowStart";
                 }
                 case 30 {
-                    lightState1 = "red";
-                    lightState2 = "green";
+                    this.lightState1 = "red";
+                    this.lightState2 = "green";
                 }
                 case 330 {
-                    lightState1 = "red";
-                    lightState2 = "yellowStop";
+                    this.lightState1 = "red";
+                    this.lightState2 = "yellowStop";
                 }
                 case 370 {
-                    lightState1 = "red";
-                    lightState2 = "red";
+                    this.lightState1 = "red";
+                    this.lightState2 = "red";
                 }
                 case 380 {
-                    lightState1 = "yellowStart";
-                    lightState2 = "red";
+                    this.lightState1 = "yellowStart";
+                    this.lightState2 = "red";
                 }
                 case 400 {
-                    lightState1 = "green";
-                    lightState2 = "red";
+                    this.lightState1 = "green";
+                    this.lightState2 = "red";
                 }
                 case 700 {
-                    lightState1 = "yellowStop";
-                    lightState2 = "red";
-                }
-                default {
-
+                    this.lightState1 = "yellowStop";
+                    this.lightState2 = "red";
                 }
             }
         }
@@ -214,7 +213,6 @@ Simulation Update {
         }
         default {
             //Default case. This should in theory never be triggered
-            number test;
         }
     }
 }
@@ -223,5 +221,5 @@ Simulation Update {
 //Here the user defines what and how data is extracted from the simulation
 Simulation Output {
     //Outputs the travel time for each agent. "Output.LogAgentTravelTime" is a predefined function in the language
-    Output.LogAgentTravelTime();
+    //Output.LogAgentTravelTime();
 }

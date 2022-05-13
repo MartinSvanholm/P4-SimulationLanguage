@@ -5,6 +5,9 @@ import ASTNodes.ControlStructures.*;
 import ASTNodes.DclNodes.*;
 import ASTNodes.ExprNodes.*;
 import ASTNodes.Identifier.IdentifierNode;
+import ASTNodes.Identifier.ObjIdNode;
+import ASTNodes.Identifier.SimpleIdNode;
+import ASTNodes.Identifier.ThisIdNode;
 import ASTNodes.ValueNodes.BoolNode;
 import ASTNodes.ValueNodes.NumberNode;
 import ASTNodes.ValueNodes.OpNode;
@@ -14,6 +17,7 @@ import VisitorHelpers.TypeCheckHelper;
 import Main.ErrorHandler;
 import SymbolTable.*;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 
 public class TypeChecker extends BaseVisitor<String> {
@@ -21,6 +25,7 @@ public class TypeChecker extends BaseVisitor<String> {
     String scopeName = "Global";
     String prevScopeName;
     String typeError = "error";
+    int CheckForPredifinedValues = 1;
     private final TypeCheckHelper helper;
 
     public TypeChecker(ErrorHandler errorHandler, GlobalSymbolTable globalSymbolTable) {
@@ -68,9 +73,10 @@ public class TypeChecker extends BaseVisitor<String> {
         SymbolTable table = helper.FindTableByName(GlobalSymbolTable, initConditionNode.type.Name.strip(), 0);
 
         if(table != null)
-            return null;
+            visit(initConditionNode.Body);
         else
             helper.AddError(initConditionNode, initConditionNode.type.Name.strip() + " has not been declared");
+
         return null;
     }
 
@@ -150,6 +156,7 @@ public class TypeChecker extends BaseVisitor<String> {
     @Override
     public String visitIfElseNode(IfElseNode ifElseNode) {
         if(visit(ifElseNode.condition).strip().equals("bool")) {
+            visit(ifElseNode.Body);
             if(ifElseNode.ElseIf != null)
                 visit(ifElseNode.ElseIf);
         } else {
@@ -162,6 +169,7 @@ public class TypeChecker extends BaseVisitor<String> {
     public String visitElseIfNode(ElseIfNode elseIfNode) {
         if(elseIfNode.condition != null) {
             if(visit(elseIfNode.condition).strip().equals("bool")) {
+                visit(elseIfNode.Body);
                 if(elseIfNode.ElseIf != null)
                     visit(elseIfNode.ElseIf);
             } else {
@@ -179,6 +187,11 @@ public class TypeChecker extends BaseVisitor<String> {
         }
 
         for(Node switchCase : switchNode.Body.GetChildren()) {
+            if(switchCase.Name.equals("default")) {
+                visit(switchCase);
+                continue;
+            }
+
             if(!visit(switchNode.switchValue).strip().equals(visit(switchCase))) {
                 helper.AddError(switchCase, "case must be of type " + visit(switchNode.switchValue).strip());
             }
@@ -194,6 +207,7 @@ public class TypeChecker extends BaseVisitor<String> {
 
     @Override
     public String visitCaseNode(CaseNode caseNode) {
+        visit(caseNode.CaseBody);
         return visit(caseNode.switchValue);
     }
 
@@ -214,8 +228,11 @@ public class TypeChecker extends BaseVisitor<String> {
 
     @Override
     public String visitAssignmentNode(AssignmentNode assignmentNode) {
-        if(visit(assignmentNode.Identifier).equals(typeError)) {
-            helper.AddError(assignmentNode,assignmentNode.Identifier.Name + " has never been declared");
+        String error = visit(assignmentNode.Identifier);
+        if(error.equals(typeError)) {
+            helper.AddError(assignmentNode,assignmentNode.Identifier.GetName("") + " has never been declared");
+        } else if(error.equals(typeError+"obj")) {
+            helper.AddError(assignmentNode,assignmentNode.Identifier.GetName("obj") + " has never been declared");
         } else if(!visit(assignmentNode.Identifier).strip().equals(visit(assignmentNode.ValueNode))) {
             helper.AddError(assignmentNode, assignmentNode.Identifier.Name + " must be of type " + visit(assignmentNode.Identifier));
         }
@@ -241,14 +258,16 @@ public class TypeChecker extends BaseVisitor<String> {
     @Override
     public String visitFunctionCallNode(FunctionCallNode functionCallNode) {
         String funcType = visit(functionCallNode.Identifier);
-        if(!funcType.equals(typeError)) {
+        if(!funcType.equals(typeError) && !funcType.equals(typeError+"obj")) {
             CheckFuncParameters(functionCallNode);
             return funcType;
+        } else if(funcType.equals(typeError)) {
+            helper.AddError(functionCallNode, functionCallNode.Identifier.GetName("") + " has never been declared");
+            return funcType;
         } else {
-            helper.AddError(functionCallNode, functionCallNode.Identifier.Name + " has never been declared");
+            helper.AddError(functionCallNode, functionCallNode.Identifier.GetName("obj") + " has never been declared");
             return funcType;
         }
-
     }
 
     @Override
@@ -271,13 +290,75 @@ public class TypeChecker extends BaseVisitor<String> {
     }
 
     @Override
-    public String visitInfixExpressionNode(InfixExpressionNode infixExpressionNode) {
-        String Left = visit(infixExpressionNode.Left);
-        String Right = visit(infixExpressionNode.Right);
-        if(Left.strip().equals(Right.strip()))
-            return Left;
+    public String visitObjIdNode(ObjIdNode objIdNode) {
+        SymbolTable classTable = null;
+        Symbol property = null;
+
+        if(objIdNode.ObjectNode.Name.equals("Simulation")) {
+            classTable = helper.FindTableByName(GlobalSymbolTable, "Simulation", 0);
+        } else {
+            //Gets the property of the objNode, return an error if it does not exist.
+            property = helper.GetSymbolByScopeName(objIdNode.ObjectNode.Name, scopeName);
+            if(property == null)
+                return typeError + "obj";
+
+            //Gets the table of the property's class.
+            classTable = helper.FindTableByName(GlobalSymbolTable, property.Attribute, 0);
+        }
+
+        //Checks if there is a property from the class that matches the identifier.
+        ArrayList<Symbol> symbols = new ArrayList<>(classTable.Symbols.values());
+        for(Symbol symbol: symbols) {
+            if(symbol.Identifier.equals(objIdNode.Identifier.Name))
+                return symbol.Type;
+        }
+
+        //checks if there is a function from the class that matches the identifier.
+        for(SymbolTable symbolTable : classTable.Children) {
+            if(symbolTable.Name.equals(objIdNode.Identifier.Name))
+                return symbolTable.Type;
+        }
+
+        return typeError;
+    }
+
+    @Override
+    public String visitThisIdNode(ThisIdNode thisIdNode) {
+        CheckForPredifinedValues = 0;
+        prevScopeName = scopeName;
+        scopeName = thisIdNode.ClassName;
+
+        String error;
+
+        if(thisIdNode.ObjNode != null)
+            error = visit(thisIdNode.ObjNode);
         else
-            return "error";
+            error = visit(thisIdNode.Identifier);
+
+        scopeName = prevScopeName;
+        CheckForPredifinedValues = 1;
+
+        return error;
+    }
+
+    @Override
+    public String visitSimpleIdNode(SimpleIdNode simpleIdNode) {
+        Symbol var = helper.GetSymbolByScopeName(simpleIdNode.Name, scopeName);
+        if(var != null)
+            return var.Type;
+
+        SymbolTable scope = helper.FindTableByName(GlobalSymbolTable, scopeName, CheckForPredifinedValues);
+        if(scope != null) {
+            SymbolTable table = helper.FindTableByName(scope, simpleIdNode.Name, CheckForPredifinedValues);
+            if(table != null)
+                return table.Type;
+        }
+
+        var = helper.CheckInheritance(simpleIdNode, scopeName);
+        if(var != null)
+            return var.Type;
+
+        return typeError;
     }
 
     @Override
@@ -319,19 +400,6 @@ public class TypeChecker extends BaseVisitor<String> {
     }
 
     @Override
-    public String visitIdentifierNode(IdentifierNode identifierNode) {
-        if(identifierNode.Name.equals("this"))
-            return helper.GetTypeofThis(scopeName);
-
-        if(identifierNode.Name.split("\\.").length > 1) {
-            String type = helper.GetTypeOfDotNotation(scopeName, identifierNode, 0);
-            return type;
-        }
-
-        return helper.GetTypeOfIdentifier(scopeName, identifierNode.Name);
-    }
-
-    @Override
     public String visitTypeNode(TypeNode typeNode) {
         return typeNode.Name;
     }
@@ -366,20 +434,11 @@ public class TypeChecker extends BaseVisitor<String> {
     //This function checks if the parameters passed when calling the function is the same type as the formal parameters.
     private void CheckFuncParameters(FunctionCallNode node) {
 
-        //An array of strings holding the different identifiers (car1.test(); => car1, test)
-        String[] identifiers = node.Identifier.Name.split("\\.");
-
-        //The object from which the fucntion is called from (car1.test(); => car1)
-        Symbol object = null;
-        if(node.Identifier.Name.split("\\.").length > 1) {
-            object = helper.GetSymbolByScopeName(identifiers[identifiers.length-2], scopeName);
-        }
-
         //Symbol table for the function
-        SymbolTable funcTable = helper.FindTableByName(GlobalSymbolTable, identifiers[identifiers.length-1], 0);
+        SymbolTable funcTable = helper.FindTableByName(GlobalSymbolTable, node.Identifier.GetName(""), 0);
 
         //Iterator of the formal parameters of the function
-        Iterator<Symbol> formalParams = helper.MapToList(funcTable.Symbols).iterator();
+        Iterator<Symbol> formalParams = funcTable.Symbols.values().iterator();
 
         for(ParamNode param : node.Parameters) {
 
@@ -387,15 +446,11 @@ public class TypeChecker extends BaseVisitor<String> {
             if(!formalParams.hasNext())
                 helper.AddError(node, "too many arguments");
 
-            while (formalParams.hasNext()) {
+            if(formalParams.hasNext()) {
                 Symbol formalParam = formalParams.next();
 
                 if(!formalParam.Type.equals("Generic") && !formalParam.Type.equals(visit(param)))
                     helper.AddError(node, param.Identifier.Name + " must be of type " + formalParam.Type);
-                else if(formalParam.Type.equals("Generic") && object != null && !object.Type.equals(visit(param)))
-                    helper.AddError(node, param.Identifier.Name + " must be of type " + object.Type);
-
-                break;
             }
         }
 
@@ -406,18 +461,22 @@ public class TypeChecker extends BaseVisitor<String> {
 
     //This function checks if the parameters passed when calling the ConstructorCall is the same type as the formal parameters.
     private void CheckConstructorParameters(ConstructorCallNode node) {
-
         //Symbol table for the ConstructorCall
         SymbolTable funcTable = helper.FindTableByName(GlobalSymbolTable, node.Type.Name, 0);
 
         //Iterator of the formal parameters of the ConstructorCall
-        Iterator<Symbol> formalParams = helper.MapToList(funcTable.Symbols).iterator();
+        Iterator<Symbol> formalParams = funcTable.Symbols.values().iterator();
 
         for(ParamNode param : node.Parameters) {
+
+            //Check if there are any formal parameters left, if not then there has been provided too many arguments
+            if(!formalParams.hasNext())
+                helper.AddError(node, "too many arguments");
+
             while (formalParams.hasNext()) {
                 Symbol formalParam = formalParams.next();
 
-                if(formalParam.Identifier.equals("constructor"))
+                if(!formalParam.Attribute.equals("Parameter"))
                     continue;
 
                 if(!formalParam.Type.equals(visit(param)))
@@ -425,10 +484,6 @@ public class TypeChecker extends BaseVisitor<String> {
 
                 break;
             }
-
-            //Check if there are any formal parameters left, if not then there has been provided too many arguments
-            if(!formalParams.hasNext())
-                helper.AddError(node, "too many arguments");
         }
 
         if(formalParams.hasNext() && formalParams.next().Attribute.equals("Parameter")) {

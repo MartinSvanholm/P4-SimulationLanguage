@@ -5,6 +5,9 @@ import ASTNodes.ControlStructures.*;
 import ASTNodes.DclNodes.*;
 import ASTNodes.ExprNodes.*;
 import ASTNodes.Identifier.IdentifierNode;
+import ASTNodes.Identifier.ObjIdNode;
+import ASTNodes.Identifier.SimpleIdNode;
+import ASTNodes.Identifier.ThisIdNode;
 import ASTNodes.ValueNodes.*;
 
 public interface IYATSIVisitor<T> extends IBaseVisitor<T> {
@@ -64,7 +67,11 @@ public interface IYATSIVisitor<T> extends IBaseVisitor<T> {
 
     T visitConstructorBodyNode(ConstructorBodyNode constructorBodyNode);
 
-    T visitIdentifierNode(IdentifierNode identifierNode);
+    T visitObjIdNode(ObjIdNode objIdNode);
+
+    T visitThisIdNode(ThisIdNode thisIdNode);
+
+    T visitSimpleIdNode(SimpleIdNode simpleIdNode);
 
     T visitTypeNode(TypeNode typeNode);
 

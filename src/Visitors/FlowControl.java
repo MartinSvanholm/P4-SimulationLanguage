@@ -302,11 +302,6 @@ public class FlowControl extends BaseVisitor<String> {
     }
 
     @Override
-    public String visitIdentifierNode(IdentifierNode identifierNode) {
-        return identifierNode.Name;
-    }
-
-    @Override
     public String visitTypeNode(TypeNode typeNode) {
         return null;
     }
