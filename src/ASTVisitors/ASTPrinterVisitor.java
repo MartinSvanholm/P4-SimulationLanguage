@@ -12,7 +12,10 @@ import ASTNodes.ValueNodes.BoolNode;
 import ASTNodes.ValueNodes.NumberNode;
 import ASTNodes.ValueNodes.OpNode;
 import ASTNodes.ValueNodes.StringNode;
+import Parser.CFGLexer;
 import hu.webarticum.treeprinter.SimpleTreeNode;
+
+import java.util.ArrayList;
 
 public class ASTPrinterVisitor extends BaseVisitor<SimpleTreeNode>{
     @Override
@@ -335,8 +338,6 @@ public class ASTPrinterVisitor extends BaseVisitor<SimpleTreeNode>{
     @Override
     public SimpleTreeNode visitBodyNode(BodyNode bodyNode) {
         SimpleTreeNode treeNode = new SimpleTreeNode(bodyNode.Name);
-
-        int i = 0;
 
         for(Node line : bodyNode.Lines) {
             treeNode.addChild(visit(line));

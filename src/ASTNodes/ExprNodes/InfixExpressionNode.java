@@ -7,7 +7,7 @@ import ASTVisitors.IYATSIVisitor;
 
 import java.util.ArrayList;
 
-public class InfixExpressionNode extends ExpressionNode {
+public abstract class InfixExpressionNode extends ExpressionNode {
     public Node Left;
 
     public OpNode Operator;

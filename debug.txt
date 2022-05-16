@@ -25,36 +25,35 @@ Simulation Environment {
 //Mandatory "behavior" section
 //Here the user defines the classes and their behavior
 Simulation Behavior {
-    //Initializing roads
-    Road TownRoad {
-        number speedLimit;
-        constructor Create<TownRoad>(number speedLimit, number length, Node startNode, Node endNode){
-            this.speedLimit = speedLimit;
-            this.length = length;
-            this.startNode = startNode;
-            this.endNode = endNode;
-        }
-    }
-
-    //Defining the "Car" class
-    Vehicle Car {
-        Node startNode = Create<INode>();
-
-        function void Random(string h) {
-
-        }
-
-        function void Drive() {
-            this.position = 5;
-        }
-
-        function bool IsClearToDrive() {
-
-        }
-    }
-
     Node INode {
         number x;
+
+        constructor Create<INode>(string k, number l) {
+
+        }
+
+        function void try(string k, number j) {
+
+        }
+    }
+
+    Vehicle Car {
+        Node startNode = Create<INode>("fdfd", 5);
+
+        function void Drive() {
+            Node startNode = Create<INode>();
+            startNode.try("dfdfdf", 5);
+            this.IsClearToDrive(startNode);
+        }
+
+        function bool IsClearToDrive(INode test) {
+            List<Node> nodes;
+            for(INode node in range nodes) {
+                node.try("dfdf", 9);
+            }
+
+            test.try("ddf", 8);
+        }
     }
 }
 

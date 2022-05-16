@@ -4,7 +4,6 @@ import ASTNodes.*;
 import ASTNodes.ControlStructures.*;
 import ASTNodes.DclNodes.*;
 import ASTNodes.ExprNodes.*;
-import ASTNodes.Identifier.IdentifierNode;
 import ASTNodes.Identifier.ObjIdNode;
 import ASTNodes.Identifier.SimpleIdNode;
 import ASTNodes.Identifier.ThisIdNode;
@@ -25,7 +24,7 @@ public class TypeChecker extends BaseVisitor<String> {
     String scopeName = "Global";
     String prevScopeName;
     String typeError = "error";
-    int CheckForPredifinedValues = 0;
+    int CheckForPredifinedValues = 1;
     private final TypeCheckHelper helper;
 
     public TypeChecker(ErrorHandler errorHandler, GlobalSymbolTable globalSymbolTable) {
@@ -73,9 +72,10 @@ public class TypeChecker extends BaseVisitor<String> {
         SymbolTable table = helper.FindTableByName(GlobalSymbolTable, initConditionNode.type.Name.strip(), 0);
 
         if(table != null)
-            return null;
+            visit(initConditionNode.Body);
         else
             helper.AddError(initConditionNode, initConditionNode.type.Name.strip() + " has not been declared");
+
         return null;
     }
 
@@ -104,7 +104,7 @@ public class TypeChecker extends BaseVisitor<String> {
                 String paramtype = visit(node);
                 if(paramtype.equals(typeError)) {
                     helper.AddError(node, node.Identifier.Name + " has never been declared");
-                } else if(!listDclNode.Type.Name.equals(paramtype))
+                } else if(!listDclNode.Type.Name.equals(helper.GetInheritedType(paramtype)))
                     helper.AddError(node, node.Identifier.Name + " must be of type " + listDclNode.Type.Name);
             }
         } else {
@@ -230,7 +230,10 @@ public class TypeChecker extends BaseVisitor<String> {
         String error = visit(assignmentNode.Identifier);
         if(error.equals(typeError)) {
             helper.AddError(assignmentNode,assignmentNode.Identifier.GetName("") + " has never been declared");
-        } else if(error.equals(typeError+"obj")) {
+        } else if(visit(assignmentNode.ValueNode).equals(typeError)){
+            helper.AddError(assignmentNode, assignmentNode.ValueNode.Name + " has never been declared");
+        }
+        else if(error.equals(typeError+"obj")) {
             helper.AddError(assignmentNode,assignmentNode.Identifier.GetName("obj") + " has never been declared");
         } else if(!visit(assignmentNode.Identifier).strip().equals(visit(assignmentNode.ValueNode))) {
             helper.AddError(assignmentNode, assignmentNode.Identifier.Name + " must be of type " + visit(assignmentNode.Identifier));
@@ -248,8 +251,6 @@ public class TypeChecker extends BaseVisitor<String> {
 
     @Override
     public String visitCompareNode(CompareNode compareNode) {
-        String test1 = visit(compareNode.Left);
-        String test2 = visit(compareNode.Right);
         if(visit(compareNode.Left).equals(visit(compareNode.Right)))
             return "bool";
         else
@@ -259,14 +260,16 @@ public class TypeChecker extends BaseVisitor<String> {
     @Override
     public String visitFunctionCallNode(FunctionCallNode functionCallNode) {
         String funcType = visit(functionCallNode.Identifier);
-        if(!funcType.equals(typeError)) {
+        if(!funcType.equals(typeError) && !funcType.equals(typeError+"obj")) {
             CheckFuncParameters(functionCallNode);
             return funcType;
+        } else if(funcType.equals(typeError)) {
+            helper.AddError(functionCallNode, functionCallNode.Identifier.GetName("") + " has never been declared");
+            return funcType;
         } else {
-            helper.AddError(functionCallNode, functionCallNode.Identifier.Name + " has never been declared");
+            helper.AddError(functionCallNode, functionCallNode.Identifier.GetName("obj") + " has never been declared");
             return funcType;
         }
-
     }
 
     @Override
@@ -290,19 +293,34 @@ public class TypeChecker extends BaseVisitor<String> {
 
     @Override
     public String visitObjIdNode(ObjIdNode objIdNode) {
-        //Gets the property of the objNode, return an error if it does not exist.
-        Symbol property = helper.GetSymbolByScopeName(objIdNode.ObjectNode.Name, scopeName);
-        if(property == null)
-            return typeError + "obj";
+        SymbolTable classTable = null;
+        Symbol property = null;
 
-        //Gets the table of the property's class.
-        SymbolTable classTable = helper.FindTableByName(GlobalSymbolTable, property.Attribute, 0);
+        if(objIdNode.ObjectNode.Name.equals("Simulation")) {
+            classTable = helper.FindTableByName(GlobalSymbolTable, "Simulation", 0);
+        } else {
+            //Gets the property of the objNode, return an error if it does not exist.
+            property = helper.GetSymbolByScopeName(objIdNode.ObjectNode.Name, scopeName);
+            if(property == null)
+                return typeError + "obj";
+
+            //Gets the table of the property's class.
+            classTable = helper.FindTableByName(GlobalSymbolTable, property.ActualType, 0);
+        }
 
         //Checks if there is a property from the class that matches the identifier.
-        ArrayList<Symbol> symbols = helper.MapToList(classTable.Symbols);
+        ArrayList<Symbol> symbols = new ArrayList<>(classTable.Symbols.values());
         for(Symbol symbol: symbols) {
             if(symbol.Identifier.equals(objIdNode.Identifier.Name))
-                return symbol.Type;
+                return symbol.ActualType;
+        }
+
+        //Checks if there is a property from the inherited class that matches the identifier.
+        SymbolTable inheritedClassTable = helper.FindTableByName(GlobalSymbolTable, classTable.Type, 0);
+        symbols = new ArrayList<>(inheritedClassTable.Symbols.values());
+        for(Symbol symbol : symbols) {
+            if(symbol.Identifier.equals(objIdNode.Identifier.Name))
+                return symbol.ActualType;
         }
 
         //checks if there is a function from the class that matches the identifier.
@@ -316,7 +334,7 @@ public class TypeChecker extends BaseVisitor<String> {
 
     @Override
     public String visitThisIdNode(ThisIdNode thisIdNode) {
-        CheckForPredifinedValues = 1;
+        CheckForPredifinedValues = 0;
         prevScopeName = scopeName;
         scopeName = thisIdNode.ClassName;
 
@@ -328,7 +346,7 @@ public class TypeChecker extends BaseVisitor<String> {
             error = visit(thisIdNode.Identifier);
 
         scopeName = prevScopeName;
-        CheckForPredifinedValues = 0;
+        CheckForPredifinedValues = 1;
 
         return error;
     }
@@ -336,23 +354,21 @@ public class TypeChecker extends BaseVisitor<String> {
     @Override
     public String visitSimpleIdNode(SimpleIdNode simpleIdNode) {
         Symbol var = helper.GetSymbolByScopeName(simpleIdNode.Name, scopeName);
-        SymbolTable table = helper.FindTableByName(GlobalSymbolTable, simpleIdNode.Name, CheckForPredifinedValues);
         if(var != null)
-            return var.Type;
-        else if(table != null)
-            return table.Type;
+            return var.ActualType;
+
+        SymbolTable scope = helper.FindTableByName(GlobalSymbolTable, scopeName, CheckForPredifinedValues);
+        if(scope != null) {
+            SymbolTable table = helper.FindTableByName(scope, simpleIdNode.Name, CheckForPredifinedValues);
+            if(table != null)
+                return table.Type;
+        }
+
+        var = helper.CheckInheritance(simpleIdNode, scopeName);
+        if(var != null)
+            return var.ActualType;
 
         return typeError;
-    }
-
-    @Override
-    public String visitInfixExpressionNode(InfixExpressionNode infixExpressionNode) {
-        String Left = visit(infixExpressionNode.Left);
-        String Right = visit(infixExpressionNode.Right);
-        if(Left.strip().equals(Right.strip()))
-            return Left;
-        else
-            return "error";
     }
 
     @Override
@@ -427,32 +443,29 @@ public class TypeChecker extends BaseVisitor<String> {
 
     //This function checks if the parameters passed when calling the function is the same type as the formal parameters.
     private void CheckFuncParameters(FunctionCallNode node) {
-        if(node.Identifier instanceof SimpleIdNode) {
-            //Symbol table for the function
-            SymbolTable funcTable = helper.FindTableByName(GlobalSymbolTable, node.Identifier.Name, 0);
 
-            //Iterator of the formal parameters of the function
-            Iterator<Symbol> formalParams = helper.MapToList(funcTable.Symbols).iterator();
+        //Symbol table for the function
+        SymbolTable funcTable = helper.FindTableByName(GlobalSymbolTable, node.Identifier.GetName(""), 0);
 
-            for(ParamNode param : node.Parameters) {
+        //Iterator of the formal parameters of the function
+        Iterator<Symbol> formalParams = funcTable.Symbols.values().iterator();
 
-                //Check if there are any formal parameters left, if not then there has been provided too many arguments
-                if(!formalParams.hasNext())
-                    helper.AddError(node, "too many arguments");
+        for(ParamNode param : node.Parameters) {
 
-                while (formalParams.hasNext()) {
-                    Symbol formalParam = formalParams.next();
+            //Check if there are any formal parameters left, if not then there has been provided too many arguments
+            if(!formalParams.hasNext())
+                helper.AddError(node, "too many arguments");
 
-                    if(!formalParam.Type.equals("Generic") && !formalParam.Type.equals(visit(param)))
-                        helper.AddError(node, param.Identifier.Name + " must be of type " + formalParam.Type);
+            if(formalParams.hasNext()) {
+                Symbol formalParam = formalParams.next();
 
-                    break;
-                }
+                if(!formalParam.InheritedType.equals("Generic") && !formalParam.ActualType.equals(visit(param)))
+                    helper.AddError(node, param.Identifier.Name + " must be of type " + formalParam.ActualType);
             }
+        }
 
-            if(formalParams.hasNext() && formalParams.next().Attribute.equals("Parameter")) {
-                helper.AddError(node, "too few arguments");
-            }
+        if(formalParams.hasNext() && formalParams.next().Attribute.equals("Parameter")) {
+            helper.AddError(node, "too few arguments");
         }
     }
 
@@ -462,24 +475,25 @@ public class TypeChecker extends BaseVisitor<String> {
         SymbolTable funcTable = helper.FindTableByName(GlobalSymbolTable, node.Type.Name, 0);
 
         //Iterator of the formal parameters of the ConstructorCall
-        Iterator<Symbol> formalParams = helper.MapToList(funcTable.Symbols).iterator();
+        Iterator<Symbol> formalParams = funcTable.Symbols.values().iterator();
 
         for(ParamNode param : node.Parameters) {
-            while (formalParams.hasNext()) {
-                Symbol formalParam = formalParams.next();
-
-                if(formalParam.Identifier.equals("constructor"))
-                    continue;
-
-                if(!formalParam.Type.equals(visit(param)))
-                    helper.AddError(node, param.Identifier.Name + " must be of type " + formalParam.Type);
-
-                break;
-            }
 
             //Check if there are any formal parameters left, if not then there has been provided too many arguments
             if(!formalParams.hasNext())
                 helper.AddError(node, "too many arguments");
+
+            while (formalParams.hasNext()) {
+                Symbol formalParam = formalParams.next();
+
+                if(!formalParam.Attribute.equals("Parameter"))
+                    continue;
+
+                if(!formalParam.ActualType.equals(visit(param)) && formalParam.Attribute.equals("Standard"))
+                    helper.AddError(node, param.Identifier.Name + " must be of type " + formalParam.InheritedType);
+
+                break;
+            }
         }
 
         if(formalParams.hasNext() && formalParams.next().Attribute.equals("Parameter")) {

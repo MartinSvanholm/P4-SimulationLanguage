@@ -13,6 +13,7 @@ import ASTNodes.ValueNodes.NumberNode;
 import ASTNodes.ValueNodes.OpNode;
 import ASTNodes.ValueNodes.StringNode;
 import Parser.*;
+import org.antlr.v4.runtime.tree.ParseTree;
 
 public class BuildAstVisitor extends CFGBaseVisitor<Node> {
     String className;
@@ -93,7 +94,8 @@ public class BuildAstVisitor extends CFGBaseVisitor<Node> {
     }
 
     @Override public Node visitDcl(CFGParser.DclContext ctx) {
-        return visitChildren(ctx);}
+        return visit(ctx.getChild(0));
+    }
 
     @Override public Node visitFunctionDcl(CFGParser.FunctionDclContext ctx) {
         FunctionDclNode node = new FunctionDclNode();
@@ -286,6 +288,7 @@ public class BuildAstVisitor extends CFGBaseVisitor<Node> {
         node.Line = ctx.getStart().getLine();
 
         node.identifier = (IdentifierNode) visit(ctx.loopNumber);
+        node.TypeNode = visit(ctx.type());
         if(ctx.numberLiteral() != null)
             node.rangeInt = (NumberNode) visit(ctx.numberLiteral());
         else
@@ -313,7 +316,7 @@ public class BuildAstVisitor extends CFGBaseVisitor<Node> {
     }
 
     @Override public Node visitInfixExpr(CFGParser.InfixExprContext ctx) {
-        InfixExpressionNode node = new InfixExpressionNode();
+        MathExpressionNode node = new MathExpressionNode();
         node.Line = ctx.getStart().getLine();
 
         switch (ctx.op.getType()) {
@@ -498,9 +501,8 @@ public class BuildAstVisitor extends CFGBaseVisitor<Node> {
     @Override public Node visitDclParams(CFGParser.DclParamsContext ctx) {
         ParamNode node = new ParamNode();
         node.Line = ctx.getStart().getLine();
-
-        node.Type = visit(ctx.type());
-        node.Identifier = visit(ctx.identifier());
+        node.Type = visit(ctx.objDcl().type());
+        node.Identifier = visit(ctx.objDcl().identifier());
 
         return node;
     }

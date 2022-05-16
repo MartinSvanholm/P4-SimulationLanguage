@@ -7,6 +7,7 @@ import ASTNodes.DclNodes.*;
 import Main.Error;
 import Main.ErrorHandler;
 import Models.*;
+import VisitorHelpers.TypeCheckHelper;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -14,12 +15,14 @@ import java.util.List;
 
 public class GlobalSymbolTable extends SymbolTable {
     public ErrorHandler ErrorHandler;
+    public TypeCheckHelper helper;
 
     public SymbolTable Vehicle = new SymbolTable("Vehicle", 0, null, "Vehicle", "Class");
     public SymbolTable Node = new SymbolTable("Node", 0, null, "Node", "Class");
     public SymbolTable Road = new SymbolTable("Road", 0, null, "Road", "Class");
     public SymbolTable Simulation = new SymbolTable("Simulation", 0, null, "Simulation", "Class");
     public SymbolTable List = new SymbolTable("List", 0, null, "List", "Class");
+    public SymbolTable AgentTypes = new SymbolTable("VehicleTypes", 0, null, "List", "Class");
 
     public List<SymbolTable> PredifindValues = new ArrayList<SymbolTable>(
             java.util.List.of(Vehicle, Node, Road, Simulation, List)
@@ -31,12 +34,15 @@ public class GlobalSymbolTable extends SymbolTable {
     public GlobalSymbolTable(String name, int lvl, ErrorHandler errorHandler) {
         super(name, lvl);
         ErrorHandler = errorHandler;
+        helper = new TypeCheckHelper(ErrorHandler, this);
     }
 
     public void BuildSymbolTable(ASTNodes.Node ast) {
         InittializeTables();
         ProcessNode(ast);
+    }
 
+    public void Print() {
         PrintTable(Vehicle);
         PrintTable(Node);
         PrintTable(Road);
@@ -95,8 +101,9 @@ public class GlobalSymbolTable extends SymbolTable {
         }
         else if (node instanceof ClassNode)
             Scope = new SymbolTable(((ClassNode) node).Identifier.Name, tempLvl, Scope, ((ClassNode) node).Type.Name, "Class");
-        else
+        else {
             Scope = new SymbolTable(node.Name, tempLvl, this, "Simulation", "Class");
+        }
     }
 
     private void CloseScope(Node node) {
@@ -153,10 +160,7 @@ public class GlobalSymbolTable extends SymbolTable {
         }
 
         if(node instanceof ForLoopNode) {
-            Scope.Symbols.put(((ForLoopNode) node).identifier.Name, new Symbol(
-                    ((ForLoopNode) node).identifier.Name,
-                    "Vehicle", "Car"
-            ));
+            InsertForLoopDcl(((ForLoopNode) node));
             return;
         }
 
@@ -167,30 +171,42 @@ public class GlobalSymbolTable extends SymbolTable {
         }
 
         if(node instanceof ObjDclNode) {
-            String Attribute = GetInheritance(((ObjDclNode) node));
-
-            if(Attribute == null)
-                Attribute = "Standard";
-
             if(((ObjDclNode) node).ObjValue instanceof ConstructorCallNode) {
-                Attribute = ((ConstructorCallNode) ((ObjDclNode) node).ObjValue).Type.Name;
+                String actualType = ((ConstructorCallNode) ((ObjDclNode) node).ObjValue).Type.Name;
+
+                Scope.Symbols.put(((ObjDclNode) node).Identifier.Name, new Symbol(
+                        ((ObjDclNode) node).Identifier.Name,
+                        actualType,
+                        ((ObjDclNode) node).Type.Name,
+                        "Object"
+                ));
+                return;
             }
+
             Scope.Symbols.put(((ObjDclNode) node).Identifier.Name, new Symbol(
                     ((ObjDclNode) node).Identifier.Name,
-                    ((ObjDclNode) node).Type.Name,
-                    Attribute
+                    ((ObjDclNode) node).Type.Name
             ));
-            return;
         }
 
         if(node instanceof ListDclNode) {
             Scope.Symbols.put(((ListDclNode) node).Identifier.Name, new Symbol(
                     ((ListDclNode) node).Identifier.Name,
                     ((ListDclNode) node).Type.Name,
+                    ((ListDclNode) node).Type.Name,
                     "List"
             ));
             return;
         }
+    }
+
+    private void InsertForLoopDcl(ForLoopNode node) {
+        Scope.Symbols.put(node.identifier.Name, new Symbol(
+                node.identifier.Name,
+                node.TypeNode.Name,
+                GetInheritance(node.TypeNode.Name),
+                "ForParameter"
+        ));
     }
 
     private boolean DclAllreadyExist(DclNode node) {
@@ -201,11 +217,8 @@ public class GlobalSymbolTable extends SymbolTable {
         System.out.println("");
         System.out.println(symbolTable.Name + " : " + symbolTable.Type + " " + symbolTable.Attribute + " " + symbolTable.Level);
 
-        Enumeration<String> keys = symbolTable.Symbols.keys();
-
-        while (keys.hasMoreElements()) {
-            Symbol symbol = symbolTable.Symbols.get(keys.nextElement());
-            System.out.println("    " + symbol.Identifier + " " + symbol.Type+" "+symbol.Attribute);
+        for(Symbol symbol : symbolTable.Symbols.values()) {
+            System.out.println("    " + symbol.Identifier + " " + symbol.ActualType + " " + symbol.InheritedType + " " + symbol.Attribute);
         }
 
         if(!symbolTable.Children.isEmpty()) {
@@ -246,21 +259,27 @@ public class GlobalSymbolTable extends SymbolTable {
 
         SymbolTable Print = new SymbolTable("Print", 0, null, "void", "Function");
         Print.Symbols.put("line", new Symbol("line", "string", "Parameter"));
-        this.Children.add(Print);
+        Simulation.Children.add(Print);
 
         SymbolTable Random = new SymbolTable("Random", 0, null, "number", "Function");
         Random.Symbols.put("from", new Symbol("from", "number", "Parameter"));
         Random.Symbols.put("too", new Symbol("too", "number", "Parameter"));
-        this.Children.add(Random);
+        Simulation.Children.add(Random);
 
         SymbolTable Type = new SymbolTable("Type", 0, null, "string", "Function");
-        this.Children.add(Type);
+        Simulation.Children.add(Type);
 
         Simulation.Symbols.put("CurrentTick", new Symbol("CurrentTick", "number"));
+
+
     }
 
-    private String GetInheritance(ObjDclNode node) {
-
+    private String GetInheritance(String className) {
+        SymbolTable table = helper.FindTableByName(this, className, 0);
+        if(table != null)
+            return table.Type;
         return null;
     }
+
+
 }

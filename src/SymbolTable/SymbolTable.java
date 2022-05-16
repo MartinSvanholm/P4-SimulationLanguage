@@ -2,12 +2,13 @@ package SymbolTable;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.LinkedHashMap;
 
 public class SymbolTable {
     public String Name;
     public int Level;
     public String Type;
-    public Hashtable<String, Symbol> Symbols = new Hashtable<>();
+    public LinkedHashMap<String, Symbol> Symbols = new LinkedHashMap<>();
     public ArrayList<SymbolTable> Children = new ArrayList<>();
     public SymbolTable Parent = null;
     public String Attribute;
