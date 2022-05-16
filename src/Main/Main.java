@@ -39,6 +39,9 @@ public class Main {
             flowControl.CheckFlow(astBuilder.AST);
         }
 
+        System.out.println("----------------------------");
+        globalSymbolTable.Print();
+
         if(!errorHandler.HasErrors) {
             typeChecker.CheckTypes(astBuilder.AST);
         }

@@ -32,8 +32,8 @@ Simulation Behavior {
         Road previousRoad;
 
         constructor Create<Car>() {
-            direction = Random(0, 1);
-            if(Random(0,1) == 0) {
+            direction = Simulation.Random(0, 1);
+            if(Simulation.Random(0,1) == 0) {
                 road = townRoad;
                 previousRoad = townRoad;
                 speed = 50;
@@ -55,9 +55,9 @@ Simulation Behavior {
 
         function bool isClearToDrive() {
             bool result = true;
-            for(car in range this.road.carList) {
+            for(Car car in range this.road.carList) {
                 if(car.direction == this.direction) {
-                    if(isCarInFront() == true) {
+                    if(this.isCarInFront(car) == true) {
                         result = false;
                     }
                 }
@@ -66,7 +66,8 @@ Simulation Behavior {
         }
 
         function bool isCarInFront(Car otherCar) {
-            number positionDiff = otherCar.position - this.position;
+            Vehicle hej = Create<Car>();
+            number positionDiff = hej.position - this.position;
             if(positionDiff > 0 && positionDiff < 5) {
                 return true;
             }

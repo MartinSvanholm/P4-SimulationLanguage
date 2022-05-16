@@ -7,19 +7,6 @@ Simulation Environment {
 //Mandatory "behavior" section
 //Here the user defines the classes and their behavior
 Simulation Behavior {
-    Vehicle Car {
-        Node startNode = Create<INode>("fdfd", 5);
-
-        function void Drive() {
-            Node startNode = Create<INode>();
-            startNode.try("dfdfdf", 5);
-        }
-
-        function bool IsClearToDrive() {
-
-        }
-    }
-
     Node INode {
         number x;
 
@@ -29,6 +16,25 @@ Simulation Behavior {
 
         function void try(string k, number j) {
 
+        }
+    }
+
+    Vehicle Car {
+        Node startNode = Create<INode>("fdfd", 5);
+
+        function void Drive() {
+            Node startNode = Create<INode>();
+            startNode.try("dfdfdf", 5);
+            this.IsClearToDrive(startNode);
+        }
+
+        function bool IsClearToDrive(INode test) {
+            List<Node> nodes;
+            for(INode node in range nodes) {
+                node.try("dfdf", 9);
+            }
+
+            test.try("ddf", 8);
         }
     }
 }

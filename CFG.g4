@@ -22,7 +22,7 @@ line: initCondition
 dcl: functionDcl
    | listDcl
    | classDcl
-   | objDcl;
+   | objDcl SemiColon;
    //| primVarDcl;
 
 endCondition: 'EndCondition' codeBlock;
@@ -46,7 +46,7 @@ constructorCall: 'Create<' type '>' '(' (params (Comma params)*)? ')';
 
 //primVarDcl: primType identifier (Equals expr)? SemiColon;
 
-objDcl: type identifier (Equals (constructorCall | expr))? SemiColon;
+objDcl: type identifier (Equals (constructorCall | expr))?;
 
 statement: selectiveCtrl
          | iterativeCtrl
@@ -89,7 +89,7 @@ iterativeCtrl: whileLoop | forLoop;
 // while(Sentinal) { }
 whileLoop: 'while' '('left=expr')' codeBlock;
 
-forLoop: 'for' '(' loopNumber=identifier  'in range' (numberLiteral | rangeNumber=identifier) ')' codeBlock;
+forLoop: 'for' '('type loopNumber=identifier  'in range' (numberLiteral | rangeNumber=identifier) ')' codeBlock;
 
 assignment: identifier Equals (value=identifier | expr) SemiColon;
 
@@ -109,7 +109,7 @@ expr: functionCall                                         # funcExpr
 
 params: (expr | constructorCall);
 
-dclParams: (type identifier);
+dclParams: objDcl;
 
 type: primType | complexType | identifier;
 

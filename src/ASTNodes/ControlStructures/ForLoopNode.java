@@ -12,6 +12,7 @@ import java.util.ArrayList;
 public class ForLoopNode extends ControlNode {
     public String Name = "for";
     public IdentifierNode identifier;
+    public Node TypeNode;
 
     public NumberNode rangeInt;
     public IdentifierNode rangeIdentifier;

@@ -102,11 +102,13 @@ public class FlowControl extends BaseVisitor<String> {
     @Override
     public String visitFunctionNode(FunctionDclNode functionDclNode) {
         prevScopeName = scopeName;
-        scopeName = functionDclNode.Name;
+        scopeName = functionDclNode.Identifier.Name;
 
         if(!canCreateFunction) {
             helper.AddError(functionDclNode, "cannot declare Function in this scope");
         }
+
+        helper.CheckParameterInheritance(functionDclNode, scopeName);
 
         canCreateFunction = false;
         canCreateLogic = true;
@@ -215,6 +217,8 @@ public class FlowControl extends BaseVisitor<String> {
         if(!canCreateLogic){
             helper.AddError(forLoopNode, "can not declare a for-loop in this scope");
         }
+
+        helper.CheckParameterInheritance(forLoopNode, scopeName);
 
         visit(forLoopNode.Body);
         return null;
