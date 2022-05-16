@@ -10,6 +10,9 @@ Simulation Environment {
     NodeOne.connections = tempConnections;
     NodeTwo = NodeOne;
 
+    Simulation.NodeList.Add(NodeOne);
+    Simulation.NodeList.Add(NodeTwo);
+
     TownRoad RoadOne = Create<TownRoad>(50, 500, NodeOne, NodeTwo);
 
     InitCondition<Car>{
@@ -87,7 +90,8 @@ Simulation Behavior {
 
         function void WhileTest(){
             bool testBool = true;
-            while(testBool == true) {
+            bool testBool2 = true;
+            while((testBool == true) or (testBool2 == true)) {
                 Print("xd dinmor");
             }
         }
@@ -97,6 +101,10 @@ Simulation Behavior {
             numList.Add(4);
 
             number x = numList[1];
+        }
+
+        function void Potens() {
+            number x = 2^8;
         }
 
         constructor Create<Car>(){
@@ -140,7 +148,7 @@ Simulation Update {/*
             Print(Vehicle.Square(Simulation.CurrentTick));
         }
         default{
-            Print("Bling Blong");
+            Simulation.Print("Bling Blong");
         }
     }*/
 }

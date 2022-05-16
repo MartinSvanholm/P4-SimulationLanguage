@@ -1,7 +1,16 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace CodeGenTest {
+
+    public class Sim {
+        public int CurrentTick;
+        public Node[] NodeList = new Node[] { };
+        public Road[] RoadList = new Road[] { };
+        public Vehicle[] VehicleList = new Vehicle[] { };
+    }
+
     abstract public class Node {
         public List<Node> connections;
     }

@@ -63,39 +63,25 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
         output += "\n" +
                 "    class Program {\n" +
                 "        static void Main(string[] args) {\n" +
-                "            List<Vehicle> vehicleList = new List<Vehicle>();\n" +
-                "            List<Node> nodeList = InitNodes();\n" +
-                "            List<Road> roadList = InitRoads();\n" +
-                "            Output output = new Output();\n" +
-                "\n" +
-                "            int CurrentTick = 0;\n" +
+                "            Sim Simulation = new Sim();\n";
+
+        currEnviCheck = "";
+        output += visit(programNode.Environment);
+
+        output +=        "            Output output = new Output();\n" +
                 "\n" +
                 "            while(!EndCondition()) {\n" +
                 "                vehicleList = InitVehicles(vehicleList);\n" +
-                "                foreach(Vehicle vehicle in vehicleList) {";
+                "                foreach(Vehicle vehicle in Simulation.VehicleList) {";
 
         output += visit(programNode.Update);
 
         output += "                    output.Run();\n" +
                 "\n" +
                 "                }\n" +
-                "                CurrentTick++;\n" +
+                "                Simulation.CurrentTick++;\n" +
                 "            }\n" +
                 "            output.LogToFile();\n" +
-                "            List<Node> InitNodes() {";
-        //<---------Evironment Section Begin --------->
-        //Environment (Node init)
-        currEnviCheck = "Node";
-        output += visit(programNode.Environment);
-
-        output += "            }\n" +
-                "            \n" +
-                "            List<Road> InitRoads() {";
-        //Environment (Road init)
-        currEnviCheck = "Road";
-        output += visit(programNode.Environment);
-
-        output += "            }\n" +
                 "\n" +
                 "            List<Vehicle> InitVehicles(List<Vehicle> Vehicles) {";
         //Environment (Vehicle init (based on each type))
@@ -235,40 +221,35 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
         String output = "";
         String type = helper.GetSymbolByScopeName(visit(listDclNode.Identifier), scopeName).Type;
 
-        if(!currSection.equals("Environment") || CheckType(type)) {
+        //System.out.println("Jeg tester lige ting");
+        System.out.println(listDclNode.Identifier.getClass());
+        System.out.println(type);
+        System.out.println(CheckType(type));
 
-            System.out.println("Jeg tester lige ting");
-            System.out.println(listDclNode.Identifier.getClass());
-            System.out.println(type);
-            System.out.println(CheckType(type));
-
-            if (visit(listDclNode.Type).equals("number")){
-                type = "float";
-            } else{
-                type = visit(listDclNode.Type);
-            }
-
-            output += type + "[] ";
-            output += visit(listDclNode.Identifier) + " = new " + type + "[] ";
-
-
-            int parAmount = listDclNode.Parameters.size();
-            int currPar = 1;
-
-            output += "{";
-            for (Node params : listDclNode.Parameters) {
-                output += visit(params);
-                if (currPar < parAmount) {
-                    output += ",";
-                }
-
-                currPar++;
-            }
-
-            return output + "};";
+        if (visit(listDclNode.Type).equals("number")){
+            type = "float";
+        } else{
+            type = visit(listDclNode.Type);
         }
 
-        return "";
+        output += type + "[] ";
+        output += visit(listDclNode.Identifier) + " = new " + type + "[] ";
+
+
+        int parAmount = listDclNode.Parameters.size();
+        int currPar = 1;
+
+        output += "{";
+        for (Node params : listDclNode.Parameters) {
+            output += visit(params);
+            if (currPar < parAmount) {
+                output += ",";
+            }
+
+            currPar++;
+        }
+
+        return output + "};";
         }
 
     @Override
@@ -330,7 +311,7 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
     @Override
     public String visitObjDcl(ObjDclNode objDclNode) {
         String output = "";
-        if(currSection.equals("Environment")) {
+        /*if(currSection.equals("Environment")) {
             if (CheckType(visit(objDclNode.Type))) {
                 output += visit(objDclNode.Type) + " " + visit(objDclNode.Identifier);
 
@@ -339,7 +320,7 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
                 }
             }
             return output + ";";
-        }
+        }*/
 
         if (visit(objDclNode.Type).equals("number")) {
             output += "float ";
@@ -427,6 +408,18 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
     @Override
     public String visitAssignmentNode(AssignmentNode assignmentNode) {
         System.out.println("HALLI HALLO!: " + assignmentNode.ValueNode.getClass());
+        String type = "";
+        if (currSection.equals("Environment")) {
+            if(visit(assignmentNode.Identifier).contains(".")) {
+                String tempStr = visit(assignmentNode.Identifier);
+                String[] str = tempStr.split("\\.");
+                type = helper.GetSymbolByScopeName(str[str.length - 2], scopeName).Type;
+            } else {
+                type = helper.GetSymbolByScopeName(visit(assignmentNode.Identifier), scopeName).Type;
+            }
+        }
+
+        System.out.println(type);
         return visit(assignmentNode.Identifier) + " " + visit(assignmentNode.Equals) + " " + visit(assignmentNode.ValueNode) + ";";
     }
 
@@ -451,6 +444,9 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
                 switch (strs[strs.length - 1]) {
                     case "Add":
                         output += AddToList(functionCallNode, strs[0]);
+                        break;
+                    case "Remove":
+                        output += RemoveFromList(functionCallNode, strs[0]);
                         break;
                     default:
                 }
@@ -496,9 +492,17 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
         return output + ")";
     }
 
+    //Please lav det her til en switch senere....
     @Override
     public String visitInfixExpressionNode(InfixExpressionNode infixExpressionNode) {
         System.out.println("POOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOG");
+        String output = "";
+
+        //switch(visit(infixExpressionNode.Operator))
+
+        if(visit(infixExpressionNode.Operator).equals(("^"))) {
+            return "(float)Math.Pow(" + visit(infixExpressionNode.Left) + "," + visit(infixExpressionNode.Right) + ")";
+        }
         System.out.println(infixExpressionNode.Left.getClass());
         return visit(infixExpressionNode.Left) + visit(infixExpressionNode.Operator) + visit(infixExpressionNode.Right);
     }
@@ -506,15 +510,18 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
     @Override
     public String visitLogicalNode(LogicalNode logicalNode) {
         String output = visit(logicalNode.Left);
-
+        System.out.println("BOOLSHIT");
+        System.out.println(visit(logicalNode.Operator));
         switch (visit(logicalNode.Operator)) {
-            case "and":
+            case " and ":
                     output += " &&";
                     break;
-            case "or":
+            case " or ":
                     output += " ||";
+                    break;
             default:
                     output += visit(logicalNode.Operator);
+                    break;
         }
 
         return output + visit(logicalNode.Right);
@@ -523,9 +530,8 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
     @Override
     public String visitMathExpressionNode(MathExpressionNode mathExpressionNode) {
         String output = "";
+        if (visit(mathExpressionNode.Operator).equals("^")) {
 
-        if (visit(mathExpressionNode.Operator) == "^") {
-            output += "Math.Pow(" + visit(mathExpressionNode.Left) + "," + visit(mathExpressionNode.Right) + ")";
         } else {
             output += visit(mathExpressionNode.Left) + visit(mathExpressionNode.Operator) + visit(mathExpressionNode.Right);
         }
@@ -593,16 +599,18 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
 
     @Override
     public String visitObjIdNode(ObjIdNode objIdNode) {
+        System.out.println("Det er her");
+        System.out.println(visit(objIdNode.ObjectNode));
+        System.out.println(visit(objIdNode.Identifier));
+
         //Not implemented
 
-        return "ObjIdNode";
+        return visit(objIdNode.ObjectNode) + "." + visit(objIdNode.Identifier);
     }
 
     @Override
     public String visitThisIdNode(ThisIdNode thisIdNode) {
-        //Not implemented
-
-        return "ThisIdNode";
+        return "this." + visit(thisIdNode.Identifier);
     }
 
     @Override
@@ -655,15 +663,44 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
         return false;
     }
 
-    public String AddToList(FunctionCallNode functionCallNode, String name){
+    public String RemoveFromList(FunctionCallNode functionCallNode, String name){
+        System.out.println("RemoveFromList");
+        String type = "";
+
+        if (currSection.equals("Environment")) {
+            type = helper.GetSymbolByScopeName(name, scopeName).Type;
+        }
+
         String output = "";
 
         System.out.println(scopeName);
         System.out.println(name);
-        System.out.println("big smile " + helper.GetSymbolByScopeName(name, scopeName).Type);
+        System.out.println("big smile " + type);
+
+
+
+        output += name + " = " + name + ".Where((source, index) => index != " + visit(functionCallNode.Parameters.get(0));
+
+        /*output += name + " = " + name + ".Concat(new ";
+        output += type.equals("number") ? "float" : type;
+        output += "[]{";*/
+
+
+
+        return output + ").ToArray()";
+    }
+
+    public String AddToList(FunctionCallNode functionCallNode, String name){
+        String type = helper.GetSymbolByScopeName(name, scopeName).Type;
+
+        String output = "";
+
+        System.out.println(scopeName);
+        System.out.println(name);
+        System.out.println("big smile " + type);
 
         output += name + " = " + name + ".Concat(new ";
-        output += helper.GetSymbolByScopeName(name, scopeName).Type.equals("number") ? "float" : helper.GetSymbolByScopeName(name, scopeName).Type;
+        output += type.equals("number") ? "float" : type;
         output += "[]{";
 
         int parAmount = functionCallNode.Parameters.size();
@@ -679,7 +716,6 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
         }
 
         return output + "}).ToArray()";
-
     }
 
 }
