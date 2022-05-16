@@ -219,7 +219,7 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
     @Override
     public String visitListNode(ListDclNode listDclNode) {
         String output = "";
-        String type = helper.GetSymbolByScopeName(visit(listDclNode.Identifier), scopeName).Type;
+        String type = helper.GetSymbolByScopeName(visit(listDclNode.Identifier), scopeName).ActualType;
 
         //System.out.println("Jeg tester lige ting");
         System.out.println(listDclNode.Identifier.getClass());
@@ -378,9 +378,7 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
     public String visitSwitchBodyNode(SwitchBody switchBody){
         String output = "";
         for (Node cases : switchBody.cases) {
-            output += "case " + visit(cases) + ": ";
-            //Her skal den visit body'en af vores case, men af en eller anden grund er det ikk gemt i vores node...
-            output += " break;";
+            output += visit(cases);
         }
 
         return output;
@@ -388,9 +386,8 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
 
     @Override
     public String visitCaseNode(CaseNode caseNode) {
-        //Har legit ikk rigtig nogen ide om hvad det her overhovedet er xd....
-        //<---------------Den her venter lige til senere--------------->
-        return "";
+        String output = "case " + visit(caseNode.switchValue) + ": ";
+        return output + visit(caseNode.CaseBody) + " break;";
     }
 
     @Override
@@ -413,9 +410,9 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
             if(visit(assignmentNode.Identifier).contains(".")) {
                 String tempStr = visit(assignmentNode.Identifier);
                 String[] str = tempStr.split("\\.");
-                type = helper.GetSymbolByScopeName(str[str.length - 2], scopeName).Type;
+                type = helper.GetSymbolByScopeName(str[str.length - 2], scopeName).ActualType;
             } else {
-                type = helper.GetSymbolByScopeName(visit(assignmentNode.Identifier), scopeName).Type;
+                type = helper.GetSymbolByScopeName(visit(assignmentNode.Identifier), scopeName).ActualType;
             }
         }
 
@@ -495,7 +492,8 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
     //Please lav det her til en switch senere....
     @Override
     public String visitInfixExpressionNode(InfixExpressionNode infixExpressionNode) {
-        System.out.println("POOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOG");
+        System.out.println("INFIX BLEV KALDT");
+        System.out.println(visit(infixExpressionNode.Operator));
         String output = "";
 
         //switch(visit(infixExpressionNode.Operator))
@@ -529,14 +527,17 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
 
     @Override
     public String visitMathExpressionNode(MathExpressionNode mathExpressionNode) {
+        System.out.println("Math dimmer område");
+        System.out.println(visit(mathExpressionNode.Operator));
         String output = "";
-        if (visit(mathExpressionNode.Operator).equals("^")) {
 
-        } else {
-            output += visit(mathExpressionNode.Left) + visit(mathExpressionNode.Operator) + visit(mathExpressionNode.Right);
+        //switch(visit(infixExpressionNode.Operator))
+
+        if(visit(mathExpressionNode.Operator).equals(("^"))) {
+            return "(float)Math.Pow(" + visit(mathExpressionNode.Left) + "," + visit(mathExpressionNode.Right) + ")";
         }
-
-        return output;
+        System.out.println(mathExpressionNode.Left.getClass());
+        return visit(mathExpressionNode.Left) + visit(mathExpressionNode.Operator) + visit(mathExpressionNode.Right);
     }
 
     @Override
@@ -668,7 +669,7 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
         String type = "";
 
         if (currSection.equals("Environment")) {
-            type = helper.GetSymbolByScopeName(name, scopeName).Type;
+            type = helper.GetSymbolByScopeName(name, scopeName).ActualType;
         }
 
         String output = "";
@@ -691,7 +692,7 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
     }
 
     public String AddToList(FunctionCallNode functionCallNode, String name){
-        String type = helper.GetSymbolByScopeName(name, scopeName).Type;
+        String type = helper.GetSymbolByScopeName(name, scopeName).ActualType;
 
         String output = "";
 

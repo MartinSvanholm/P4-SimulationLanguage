@@ -10,8 +10,8 @@ Simulation Environment {
     NodeOne.connections = tempConnections;
     NodeTwo = NodeOne;
 
-    Simulation.NodeList.Add(NodeOne);
-    Simulation.NodeList.Add(NodeTwo);
+    //Simulation.NodeList.Add(NodeOne);
+    //Simulation.NodeList.Add(NodeTwo);
 
     TownRoad RoadOne = Create<TownRoad>(50, 500, NodeOne, NodeTwo);
 
