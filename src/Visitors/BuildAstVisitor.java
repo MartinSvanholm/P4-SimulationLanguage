@@ -412,6 +412,9 @@ public class BuildAstVisitor extends CFGBaseVisitor<Node> {
         node.Line = ctx.getStart().getLine();
         node.ObjectNode = (SimpleIdNode) visit(ctx.objName);
 
+        if(ctx.objId != null)
+            node.ObjIdNode = (ObjIdNode) visit(ctx.objId);
+
         if(ctx.id != null)
             node.Identifier = (SimpleIdNode) visit(ctx.id);
 

@@ -353,7 +353,14 @@ public class ASTPrinterVisitor extends BaseVisitor<SimpleTreeNode>{
 
     @Override
     public SimpleTreeNode visitObjIdNode(ObjIdNode objIdNode) {
-        return new SimpleTreeNode(objIdNode.ObjectNode.Name + "." + objIdNode.Identifier.Name);
+        if(objIdNode.Identifier != null)
+            return new SimpleTreeNode(objIdNode.ObjectNode.Name + "." + objIdNode.Identifier.Name);
+
+        if(objIdNode.ObjIdNode != null) {
+            SimpleTreeNode treeNode = new SimpleTreeNode(objIdNode.ObjectNode.Name + "." + visit(objIdNode.ObjIdNode).content());
+            return treeNode;
+        }
+        return null;
     }
 
     @Override

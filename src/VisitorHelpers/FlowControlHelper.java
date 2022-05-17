@@ -28,6 +28,8 @@ public class FlowControlHelper extends BaseHelper {
         if(node instanceof FunctionDclNode) {
             for(ParamNode param : ((FunctionDclNode) node).Parameters) {
                 SymbolTable inheritedClass = FindTableByName(GlobalSymbolTable, param.Type.Name, 0);
+                if(inheritedClass == null)
+                    return;
                 InsertInheritedTypeIntoSymbol(param.Identifier.Name, ((FunctionDclNode) node).Identifier.Name, inheritedClass.Type);
             }
         }

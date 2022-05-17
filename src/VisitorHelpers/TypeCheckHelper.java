@@ -1,5 +1,6 @@
 package VisitorHelpers;
 
+import ASTNodes.ExprNodes.FunctionCallNode;
 import ASTNodes.Identifier.SimpleIdNode;
 import SymbolTable.Symbol;
 import SymbolTable.SymbolTable;
@@ -30,5 +31,15 @@ public class TypeCheckHelper extends BaseHelper{
 
     public String GetInheritedType(String className) {
         return FindTableByName(GlobalSymbolTable, className, 0).Type;
+    }
+
+    public String CheckList(Symbol property, String identifier) {
+        SymbolTable listTable = FindTableByName(GlobalSymbolTable, "List", 0);
+
+        for(SymbolTable table : listTable.Children) {
+            if(table.Name.equals(identifier))
+                return table.Type;
+        }
+        return typeError + "." + identifier;
     }
 }

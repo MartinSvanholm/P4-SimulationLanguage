@@ -44,6 +44,7 @@ Simulation Behavior {
             Node startNode = Create<INode>();
             startNode.try("dfdfdf", 5);
             this.IsClearToDrive(startNode);
+            Simulation.vehicles.Add(startNode);
         }
 
         function bool IsClearToDrive(INode test) {
