@@ -475,7 +475,7 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
             //}
         }
 
-        if(visit(functionCallNode.Identifier).equals("print")){
+        if(visit(functionCallNode.Identifier).equals("Simulation.Print")){
             return output += PrintFunction(functionCallNode);
         }
 

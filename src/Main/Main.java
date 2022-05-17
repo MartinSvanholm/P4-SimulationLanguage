@@ -28,6 +28,7 @@ public class Main {
         GlobalSymbolTable globalSymbolTable = new GlobalSymbolTable("Global Symbol Table", 0, errorHandler);
         TypeChecker typeChecker = new TypeChecker(errorHandler, globalSymbolTable);
         FlowControl flowControl = new FlowControl(globalSymbolTable, errorHandler);
+        CMDHandler cmdHandler = new CMDHandler();
 
         astBuilder.BuildAST();
 
@@ -44,6 +45,7 @@ public class Main {
 
             CodeGenerator codeGenerator = new CodeGenerator((ProgramNode) astBuilder.AST, errorHandler, globalSymbolTable);
             codeGenerator.GenerateCode();
+            cmdHandler.RunEXE();
         }
 
         if(!errorHandler.HasErrors) {

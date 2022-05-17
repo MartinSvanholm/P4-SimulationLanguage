@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "dgSpecHash": "ZKg1CN7Nj5+9MTJsQpPULzVfrLTjis7AizrYniOfdvPRvXCRWFwt7Zw0Oo0VfTKjXyD+LAjGMo6w8cOIwHNbTw==",
+  "success": true,
+  "projectFilePath": "D:\\UniGit\\P4\\P4-SimulationLanguage\\CSharpRepresentation\\CSharpRepresentation.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\{xXx$420&EMIL£xXx}\\.nuget\\packages\\microsoft.netcore.app.runtime.win-x64\\6.0.5\\microsoft.netcore.app.runtime.win-x64.6.0.5.nupkg.sha512",
+    "C:\\Users\\{xXx$420&EMIL£xXx}\\.nuget\\packages\\microsoft.windowsdesktop.app.runtime.win-x64\\6.0.5\\microsoft.windowsdesktop.app.runtime.win-x64.6.0.5.nupkg.sha512",
+    "C:\\Users\\{xXx$420&EMIL£xXx}\\.nuget\\packages\\microsoft.aspnetcore.app.runtime.win-x64\\6.0.5\\microsoft.aspnetcore.app.runtime.win-x64.6.0.5.nupkg.sha512"
+  ],
+  "logs": []
+}
