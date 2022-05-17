@@ -269,6 +269,9 @@ public class GlobalSymbolTable extends SymbolTable {
         SymbolTable Type = new SymbolTable("Type", 0, null, "string", "Function");
         Simulation.Children.add(Type);
 
+        Symbol vehicles = new Symbol("vehicles", "Vehicle", "List", "Standard");
+        Simulation.Symbols.put("vehicles", vehicles);
+
         Simulation.Symbols.put("CurrentTick", new Symbol("CurrentTick", "number"));
 
 

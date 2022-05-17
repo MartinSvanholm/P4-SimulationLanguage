@@ -9,6 +9,7 @@ import java.util.ArrayList;
 public class ObjIdNode extends IdentifierNode {
     public SimpleIdNode Identifier;
     public SimpleIdNode ObjectNode;
+    public ObjIdNode ObjIdNode;
 
     @Override
     public ArrayList<Node> GetChildren() {
@@ -27,6 +28,8 @@ public class ObjIdNode extends IdentifierNode {
         if(obj.equals("obj"))
             return ObjectNode.Name;
 
+        if(ObjIdNode != null)
+            return ObjIdNode.GetName(obj);
         return Identifier.Name;
     }
 }

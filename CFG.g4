@@ -120,7 +120,7 @@ complexType: 'Vehicle ' | 'Node ' |  'Road ' | listType='List<' type '>';
 
 identifier: objIdentifier | thisIdentifier | simpleIdentifier;
 
-objIdentifier: objName=simpleIdentifier '.' id=simpleIdentifier;
+objIdentifier: objName=simpleIdentifier '.' (objId=objIdentifier | id=simpleIdentifier);
 
 thisIdentifier: 'this' '.' (objIdentifier | simpleIdentifier);
 
