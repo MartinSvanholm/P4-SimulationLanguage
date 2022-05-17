@@ -1,6 +1,6 @@
 //Mandatory "Environment" section
 //This functions as the setup for the simulation
-Simulation Environment {
+Simulation Environment {/*
     IONode NodeOne = Create<IONode>();
     List<IONode> tempConnections{NodeOne};
     IONode NodeTwo = Create<IONode>();
@@ -29,13 +29,13 @@ Simulation Environment {
 
     EndCondition{
         return Simulation.CurrentTick > 100;
-    }
+    } */
 }
 
 //Mandatory "behavior" section
 //Here the user defines the classes and their behavior
 Simulation Behavior {
-    Vehicle Car {
+    /*Vehicle Car {
         number x = 1;
         number y ;
 
@@ -137,7 +137,7 @@ Simulation Behavior {
             this.startNode = startNode;
             this.endNode = endNode;
         }
-    }
+    }*/
 }
 
 //Mandatory "Update" section

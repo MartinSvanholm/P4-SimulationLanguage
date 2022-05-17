@@ -269,8 +269,10 @@ public class GlobalSymbolTable extends SymbolTable {
         SymbolTable Type = new SymbolTable("Type", 0, null, "string", "Function");
         Simulation.Children.add(Type);
 
-        Symbol vehicles = new Symbol("vehicles", "Vehicle", "List", "Standard");
-        Simulation.Symbols.put("vehicles", vehicles);
+        Symbol VehicleList = new Symbol("VehicleList", "Vehicle", "List", "Standard");
+        Simulation.Symbols.put("VehicleList", VehicleList);
+        Symbol NodeList = new Symbol("NodeList", "Node", "List", "Standard");
+        Simulation.Symbols.put("NodeList", NodeList);
 
         Simulation.Symbols.put("CurrentTick", new Symbol("CurrentTick", "number"));
 

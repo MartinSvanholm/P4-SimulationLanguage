@@ -35,6 +35,9 @@ public class Main {
             globalSymbolTable.BuildSymbolTable(astBuilder.AST);
         }
 
+        System.out.println("----------------------------");
+        globalSymbolTable.Print();
+
         if(!errorHandler.HasErrors) {
             ASTPrinter astPrinter = new ASTPrinter((ProgramNode) astBuilder.AST);
             astPrinter.PrintAST();
@@ -46,9 +49,6 @@ public class Main {
         if(!errorHandler.HasErrors) {
             flowControl.CheckFlow(astBuilder.AST);
         }
-
-        System.out.println("----------------------------");
-        globalSymbolTable.Print();
 
         if(!errorHandler.HasErrors) {
             typeChecker.CheckTypes(astBuilder.AST);

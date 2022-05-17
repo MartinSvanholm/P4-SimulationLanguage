@@ -71,7 +71,7 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
         output +=        "            Output output = new Output();\n" +
                 "\n" +
                 "            while(!EndCondition()) {\n" +
-                "                vehicleList = InitVehicles(Simulation.VehicleList);\n" +
+                "                InitVehicles();\n" +
                 "                foreach(Vehicle vehicle in Simulation.VehicleList) {";
 
         output += visit(programNode.Update);
@@ -83,12 +83,11 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
                 "            }\n" +
                 "            output.LogToFile();\n" +
                 "\n" +
-                "            List<Vehicle> InitVehicles(Vehicle[] Vehicles) {";
+                "            void InitVehicles() {";
         //Environment (Vehicle init (based on each type))
         currEnviCheck = "initcondition";
         output += visit(programNode.Environment);
-        output += "                return vehicleList;\n" +
-                "            }\n" +
+        output += "            }\n" +
                 "\n" +
                 "            bool EndCondition() {";
         //Environment (EndCondition)
@@ -103,7 +102,7 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
                 "        \n" +
                 "        public class Output {\n" +
                 "            public string fileName = DateTime.Now.ToString(); //Foreslag\n" +
-                "            public List<string> dataList = new();\n" +
+                "            public List<string> dataList = new List<string>();\n" +
                 "\n" +
                 "            public void Run() {\n" +
                 "                string data = \"\";";
@@ -448,20 +447,32 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
 
         if (visit(functionCallNode.Identifier).contains(".")) {
             String[] strs = visit(functionCallNode.Identifier).split("\\.");
+            String[] newStr = new String[2];
+            String temp = "";
 
-            if(!functionCallNode.Identifier.Name.contains("Simulation")) {
-                switch (strs[strs.length - 1]) {
+            for (int i = 0; i < strs.length - 1; i++) {
+                if(i != 0){
+                    temp += ".";
+                }
+                temp += strs[i];
+            }
+
+            newStr[0] = temp;
+            newStr[1] = strs[strs.length-1];
+
+            //if(!functionCallNode.Identifier.Name.contains("Simulation")) {
+                switch (newStr[1]) {
                     case "Add":
-                        output += AddToList(functionCallNode, strs[0]);
+                        output += AddToList(functionCallNode, newStr[0]);
                         break;
                     case "Remove":
-                        output += RemoveFromList(functionCallNode, strs[0]);
+                        output += RemoveFromList(functionCallNode, strs[strs.length - 2]);
                         break;
                     default:
                 }
 
                 return output;
-            }
+            //}
         }
 
         if(visit(functionCallNode.Identifier).equals("print")){
@@ -615,13 +626,31 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
 
     @Override
     public String visitObjIdNode(ObjIdNode objIdNode) {
-        System.out.println("Det er her");
-        System.out.println(visit(objIdNode.ObjectNode));
-        System.out.println(visit(objIdNode.Identifier));
+        //System.out.println("Det er her");
+        String output = "";
+
+        if (visit(objIdNode.ObjectNode).equals("Simulation")){
+            int i = 1+2;
+            System.out.println("Simu Trigger");
+        }
+
+        output += visit(objIdNode.ObjectNode) + ".";
+
+        //System.out.println(visit(objIdNode.ObjectNode));
+        if (objIdNode.ObjIdNode != null) {
+            System.out.println("ObjId: " + visit(objIdNode.ObjIdNode));
+            System.out.println("Output: " + output + visit(objIdNode.ObjIdNode));
+            return output + visit(objIdNode.ObjIdNode);
+
+        } else {
+            System.out.println("Identi: " + visit(objIdNode.Identifier));
+            System.out.println("Output: " + output + visit(objIdNode.Identifier));
+            return output + visit(objIdNode.Identifier);
+        }
 
         //Not implemented
-
-        return visit(objIdNode.ObjectNode) + "." + visit(objIdNode.Identifier);
+        //return "";
+        //return visit(objIdNode.ObjectNode) + "." + visit(objIdNode.Identifier);
     }
 
     @Override
@@ -633,9 +662,9 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
     public String visitSimpleIdNode(SimpleIdNode simpleIdNode) {
         //Not implemented (Midlertidigt den gamle identifier)
 
-        if (simpleIdNode.Name.contains("Simulation.")) {
+        /*if (simpleIdNode.Name.contains("Simulation.")) {
             return simpleIdNode.Name.split("Simulation.")[1];
-        }
+        } */
 
         return simpleIdNode.Name;
     }
@@ -680,19 +709,9 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
     }
 
     public String RemoveFromList(FunctionCallNode functionCallNode, String name){
-        System.out.println("RemoveFromList");
-        String type = "";
-
-        if (currSection.equals("Environment")) {
-            type = helper.GetSymbolByScopeName(name, scopeName).ActualType;
-        }
+        System.out.println("RemoveFromList: " + name);
 
         String output = "";
-
-        System.out.println(scopeName);
-        System.out.println(name);
-        System.out.println("big smile " + type);
-
 
 
         output += name + " = " + name + ".Where((source, index) => index != " + visit(functionCallNode.Parameters.get(0));
@@ -711,7 +730,16 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
     }
 
     public String AddToList(FunctionCallNode functionCallNode, String name){
-        String type = helper.GetSymbolByScopeName(name, scopeName).ActualType;
+        System.out.println("AddToList name: " + name);
+
+        if(name.contains("Simulation")){
+            prevScopeName = scopeName;
+            scopeName = "Simulation";
+        }
+
+        String[] strArr = name.split("\\.");
+
+        String type = helper.GetSymbolByScopeName(strArr[strArr.length-1], scopeName).ActualType;
 
         String output = "";
 
@@ -735,6 +763,9 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
             currPar++;
         }
 
+        if (name.contains("Simulation")) {
+            scopeName = prevScopeName;
+        }
         return output + "}).ToArray()";
     }
 
