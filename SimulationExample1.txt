@@ -103,10 +103,20 @@ Simulation Behavior {
 }
 
 Simulation Update {
-    if(vehicle.isClearToDrive()) {
-        vehicle.Drive();
-    } else {
-        vehicle.Brake();
+    switch(vehicle.Type) {
+        case "Car" {
+            //Checks if the agent is clear to drive, with the function "IsClearToDrive"
+            if (vehicle.isClearToDrive()) {
+                //Tells the agent to drive, with the function "Drive"
+                vehicle.Drive();
+            } else {
+                //Tells the agent to break, with the function "Break"
+                vehicle.Break();
+            }
+        }
+        default {
+            //Default case. This should in theory never be triggered
+        }
     }
 }
 
