@@ -71,7 +71,7 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
         output +=        "            Output output = new Output();\n" +
                 "\n" +
                 "            while(!EndCondition()) {\n" +
-                "                vehicleList = InitVehicles(vehicleList);\n" +
+                "                vehicleList = InitVehicles(Simulation.VehicleList);\n" +
                 "                foreach(Vehicle vehicle in Simulation.VehicleList) {";
 
         output += visit(programNode.Update);
@@ -83,7 +83,7 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
                 "            }\n" +
                 "            output.LogToFile();\n" +
                 "\n" +
-                "            List<Vehicle> InitVehicles(List<Vehicle> Vehicles) {";
+                "            List<Vehicle> InitVehicles(Vehicle[] Vehicles) {";
         //Environment (Vehicle init (based on each type))
         currEnviCheck = "initcondition";
         output += visit(programNode.Environment);
@@ -386,7 +386,19 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
 
     @Override
     public String visitCaseNode(CaseNode caseNode) {
-        String output = "case " + visit(caseNode.switchValue) + ": ";
+        String output = "";
+        if (visit(caseNode.switchValue).equals("default")){
+            output += visit(caseNode.switchValue) + ": ";
+        } else {
+            output = "case " + visit(caseNode.switchValue) + ": ";
+        }
+
+
+        //String output = "case " + visit(caseNode.switchValue) + ": ";
+
+
+
+
         return output + visit(caseNode.CaseBody) + " break;";
     }
 
@@ -452,6 +464,9 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
             }
         }
 
+        if(visit(functionCallNode.Identifier).equals("print")){
+            return output += PrintFunction(functionCallNode);
+        }
 
         output = visit(functionCallNode.Identifier) + "(";
 
@@ -689,6 +704,10 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
 
 
         return output + ").ToArray()";
+    }
+
+    public String PrintFunction(FunctionCallNode functionCallNode){
+        return "Console.WriteLine(" + visit(functionCallNode.Parameters.get(0)) + ");";
     }
 
     public String AddToList(FunctionCallNode functionCallNode, String name){

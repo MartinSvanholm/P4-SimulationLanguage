@@ -12,7 +12,7 @@ namespace CodeGenTest {
     }
 
     abstract public class Node {
-        public List<Node> connections;
+        public Node[] connections;
     }
 
     abstract public class Vehicle {

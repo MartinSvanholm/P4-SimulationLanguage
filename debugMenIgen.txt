@@ -49,8 +49,8 @@ Simulation Behavior {
 
         function number InLineFunc(number x) {
             number y = 2;
-            Square(x) + y;
-            x + y;
+            x = Square(x) + y;
+            y = x + y;
             y = Square(x) + y;
 
             return Square(x) + x;
@@ -92,7 +92,7 @@ Simulation Behavior {
             bool testBool = true;
             bool testBool2 = true;
             while((testBool == true) or (testBool2 == true)) {
-                Print("xd dinmor");
+                print("xddinmor");
             }
         }
 
@@ -145,10 +145,10 @@ Simulation Behavior {
 Simulation Update {/*
     switch(Vehicle.type){
         case Car{
-            Print(Vehicle.Square(Simulation.CurrentTick));
+            print(Vehicle.Square(Simulation.CurrentTick));
         }
         default{
-            Simulation.Print("Bling Blong");
+            print("Bling Blong");
         }
     }*/
 }
