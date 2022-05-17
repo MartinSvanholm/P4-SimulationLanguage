@@ -14,7 +14,7 @@ public class GlobalSymbolTable extends SymbolTable {
     public ErrorHandler ErrorHandler;
 
     public Vehicle Vehicle;
-    public Node Node;
+    public Models.Node Node;
     public Road Road;
 
     private SymbolTable Scope;
@@ -31,7 +31,7 @@ public class GlobalSymbolTable extends SymbolTable {
         PrintTable(this);
     }
 
-    private void ProcessNode(Node node) {
+    private void ProcessNode(Models.Node node) {
         if(node instanceof SectionNode || node instanceof FunctionDclNode || node instanceof ClassNode) {
             OpenScope(node);
         } else if(node instanceof ObjDclNode || node instanceof ListDclNode || node instanceof ConstructorDclNode) {
@@ -40,7 +40,7 @@ public class GlobalSymbolTable extends SymbolTable {
 
         if(node != null) {
             if (node.GetChildren() != null) {
-                for(Node tempNode : node.GetChildren()) {
+                for(Models.Node tempNode : node.GetChildren()) {
                     ProcessNode(tempNode);
                 }
             }
@@ -53,7 +53,7 @@ public class GlobalSymbolTable extends SymbolTable {
         }
     }
 
-    private void OpenScope(Node node) {
+    private void OpenScope(Models.Node node) {
         if(node instanceof ClassNode) {
             for(SymbolTable symbolTable : Scope.Children) {
                 if(symbolTable.Name.equals(((ClassNode) node).Identifier.Name)) {
@@ -75,7 +75,7 @@ public class GlobalSymbolTable extends SymbolTable {
         tempLvl ++;
         if(node instanceof FunctionDclNode) {
             Scope = new SymbolTable(((DclNode) node).Identifier.Name, tempLvl, Scope, ((FunctionDclNode) node).Type.Name);
-            for(Node param : ((FunctionDclNode) node).Parameters) {
+            for(Models.Node param : ((FunctionDclNode) node).Parameters) {
                 InsertSymbol(param);
             }
         }
@@ -85,7 +85,7 @@ public class GlobalSymbolTable extends SymbolTable {
             Scope = new SymbolTable(node.Name, tempLvl, this, "Simulation");
     }
 
-    private void CloseScope(Node node) {
+    private void CloseScope(Models.Node node) {
         if(node instanceof ClassNode) {
             for(SymbolTable symbolTable : Scope.Children) {
                 if(symbolTable.Name.equals(((ClassNode) node).Identifier.Name)) {
@@ -105,7 +105,7 @@ public class GlobalSymbolTable extends SymbolTable {
         Scope = Scope.Parent;
     }
 
-    private void InsertSymbol(Node node) {
+    private void InsertSymbol(Models.Node node) {
         if(node instanceof ParamNode) {
             Scope.Symbols.put(((ParamNode) node).Identifier.Name, new Symbol(
                     ((ParamNode) node).Identifier.Name,
