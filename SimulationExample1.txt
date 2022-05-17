@@ -1,16 +1,18 @@
 Simulation Environment {
     Node startNode = Create<IONode>();
     Node endNode = Create<IONode>();
+
     Road townRoad = Create<TownRoad>(50, 1000, startNode, endNode);
     Road countryRoad = Create<LandevejRoad>(80, 1000, startNode, endNode);
 
     List<Node> IONodes {startNode, endNode};
+    List<Node> intersectionConnections {startNode, endNode};
 
     List<Road> roads {townRoad, countryRoad};
 
     InitCondition<Car> {
         if(Simulation.CurrentTick % 5 == 0) {
-            //Simulation.Vehicles.Add(Create<Car>());
+            Simulation.vehicles.Add(Create<Car>(townRoad, countryRoad));
         }
     }
 
@@ -28,10 +30,10 @@ Simulation Behavior {
         number direction;
         number brakeDistance = 10;
         number speed;
-        Road road = Create<TownRoad>();
+        Road road;
         Road previousRoad;
 
-        constructor Create<Car>() {
+        constructor Create<Car>(Road townRoad, Road countryRoad) {
             direction = Simulation.Random(0, 1);
             if(Simulation.Random(0,1) == 0) {
                 road = townRoad;
