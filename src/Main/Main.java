@@ -45,7 +45,7 @@ public class Main {
 
             CodeGenerator codeGenerator = new CodeGenerator((ProgramNode) astBuilder.AST, errorHandler, globalSymbolTable);
             codeGenerator.GenerateCode();
-            cmdHandler.RunEXE();
+            //cmdHandler.RunEXE();
         }
 
         if(!errorHandler.HasErrors) {

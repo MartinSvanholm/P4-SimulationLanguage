@@ -11,6 +11,7 @@ namespace CodeGenTest {
         public Vehicle[] VehicleList = new Vehicle[] { };
     }
 
+    /*
     abstract public class Node {
         public Node[] connections;
     }
@@ -29,4 +30,4 @@ namespace CodeGenTest {
         public float length;
         public Node startNode;
         public Node endNode;
-    }
+    } */

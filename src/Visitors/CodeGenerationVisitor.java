@@ -44,6 +44,10 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
     private String scopeName = "Global";
     private  String prevScopeName = "";
 
+    private  ArrayList<String> nodeMethods = new ArrayList<>();
+    private  ArrayList<String> vehicleMethods = new ArrayList<>();
+    private  ArrayList<String> roadMethods = new ArrayList<>();
+
     private ArrayList<String> nodeTypes = new ArrayList<>();
     private ArrayList<String> roadTypes = new ArrayList<>();
     private ArrayList<String> vehicleTypes = new ArrayList<>();
@@ -59,6 +63,11 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
         String output = io.ReadFile("Header.txt");
 
         output += visit(programNode.Behavior);
+
+        output += setupAbstractClasses("Node");
+        output += setupAbstractClasses("Road");
+        output += setupAbstractClasses("Vehicle");
+
 
         output += "\n" +
                 "    class Program {\n" +
@@ -179,9 +188,14 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
     public String visitFunctionNode(FunctionDclNode functionDclNode) {
         prevScopeName = scopeName;
         scopeName = functionDclNode.Identifier.Name;
+        System.out.println("visitFuncDec: " + currSection);
         System.out.println("Curr Scope: " + scopeName);
+        String savedStr = "";
+        String output = "";
 
-        String output = "public ";
+        if(currSection.equals("Behavior")){
+            savedStr += "virtual ";
+        }
 
         if(functionDclNode.Type == null) {
             output += "void ";
@@ -209,10 +223,44 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
 
         output += "){";
 
+        if (currSection.equals("Behavior")) {
+            System.out.println("Inde i if");
+            System.out.println(prevScopeName);
+            savedStr += output;
+            output = "override " + output;
+            if(!visit(functionDclNode.Type).equals("void")){
+                if(visit(functionDclNode.Type).equals("number")) {
+                    savedStr += "return 0f;";
+                } else {
+                    savedStr += "return null;";
+                }
+            }
+
+            savedStr += "}";
+
+
+            switch (helper.FindTableByName(globalSymbolTable, prevScopeName, 0).Type){
+                case "Vehicle":
+                    System.out.println("KIGHERDU: " + vehicleMethods.contains("public " + savedStr));
+                    if (!vehicleMethods.contains("public " + savedStr)) vehicleMethods.add("public " + savedStr);
+                    break;
+                case "Node":
+                    if (!nodeMethods.contains("public " + savedStr)) nodeMethods.add("public " + savedStr);
+                    break;
+                case "Road":
+                    if (!roadMethods.contains("public " + savedStr)) roadMethods.add("public " + savedStr);
+                    break;
+                default:
+                    System.out.println("Shit broke");
+                    break;
+            }
+
+        }
+
         output += visit(functionDclNode.Body) + "}";
 
         scopeName = prevScopeName;
-        return output;
+        return "public " + output;
     }
 
     @Override
@@ -369,7 +417,17 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
 
     @Override
     public String visitSwitchNode(SwitchNode switchNode) {
-        String output = "switch(" + visit(switchNode.switchValue) + "){";
+
+        String output = "";
+        String switchValue = visit(switchNode.switchValue);
+
+        if (switchValue.contains(".type")) {
+            output += "string[] tempArr = vehicle.GetType().ToString().Split(\".\"); \n";
+            output += "string type = tempArr[tempArr.Length - 1]; \n";
+            switchValue = "type";
+        }
+
+        output += "switch(" + switchValue + "){";
         return output + visit(switchNode.Body) + "}";
     }
 
@@ -388,6 +446,8 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
         String output = "";
         if (visit(caseNode.switchValue).equals("default")){
             output += visit(caseNode.switchValue) + ": ";
+        } else if (vehicleTypes.contains(visit(caseNode.switchValue)) || nodeTypes.contains(visit(caseNode.switchValue)) || roadTypes.contains(visit(caseNode.switchValue))){
+            output = "case \"" + visit(caseNode.switchValue) + "\": ";
         } else {
             output = "case " + visit(caseNode.switchValue) + ": ";
         }
@@ -444,6 +504,7 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
     @Override
     public String visitFunctionCallNode(FunctionCallNode functionCallNode) {
         String output = "";
+        boolean breakBool = false;
 
         if (visit(functionCallNode.Identifier).contains(".")) {
             String[] strs = visit(functionCallNode.Identifier).split("\\.");
@@ -469,15 +530,36 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
                         output += RemoveFromList(functionCallNode, strs[strs.length - 2]);
                         break;
                     default:
+
+                        //System.out.println("BRUH: " + visit(functionCallNode.Identifier));
+                        if(visit(functionCallNode.Identifier).equals("Simulation.Print")){
+                            return output + PrintFunction(functionCallNode);
+                        }
+
+                        //Det her er super fucking redundant
+                        output = visit(functionCallNode.Identifier) + "(";
+
+                        int parAmount = functionCallNode.Parameters.size();
+                        int currPar = 1;
+
+                        for (Node params : functionCallNode.Parameters) {
+                            output += visit(params);
+                            if (currPar < parAmount) {
+                                output += ",";
+                            }
+
+                            currPar++;
+                        }
+
+                        return output + ")";
                 }
+
+
 
                 return output;
             //}
         }
 
-        if(visit(functionCallNode.Identifier).equals("Simulation.Print")){
-            return output += PrintFunction(functionCallNode);
-        }
 
         output = visit(functionCallNode.Identifier) + "(";
 
@@ -767,6 +849,42 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
             scopeName = prevScopeName;
         }
         return output + "}).ToArray()";
+    }
+
+    public String setupAbstractClasses(String type) {
+        String output = "";
+
+        output += "abstract public class " + type + " {";
+
+        switch (type) {
+            case "Vehicle":
+                output += "        public float length;\n" +
+                        "        public float acceleration;\n" +
+                        "        public List<Node> path;\n";
+                for(String s:vehicleMethods){
+                    output += s + "\n";
+                }
+                break;
+            case "Node":
+                output += "public Node[] connections;";
+                for(String s:nodeMethods){
+                    output += s + "\n";
+                }
+                break;
+            case "Road":
+                output += "public float length;\n" +
+                          "public Node startNode;\n" +
+                          "public Node endNode;";
+                for(String s:roadMethods){
+                    output += s + "\n";
+            }
+                break;
+            default:
+                System.out.println("Shit broke");
+                break;
+        }
+
+        return output + "}";
     }
 
 }

@@ -50,6 +50,7 @@ Simulation Behavior {
         function number InLineFunc(number x) {
             number y = 2;
             x = Square(x) + y;
+            x = Square(Square(x));
             y = x + y;
             y = Square(x) + y;
 
@@ -92,7 +93,7 @@ Simulation Behavior {
             bool testBool = true;
             bool testBool2 = true;
             while((testBool == true) or (testBool2 == true)) {
-                print("xddinmor");
+                Simulation.Print("xddinmor");
             }
         }
 
@@ -142,21 +143,21 @@ Simulation Behavior {
 
 //Mandatory "Update" section
 //Here the main simulation logic is defined. Works as a foreach loop, looping over all instansiated agents
-Simulation Update {/*
-    switch(Vehicle.type){
+Simulation Update {
+    switch(vehicle.type){
         case Car{
-            print(Vehicle.Square(Simulation.CurrentTick));
+            Simulation.Print(vehicle.Square(Simulation.CurrentTick));
         }
         default{
-            print("Bling Blong");
+            Simulation.Print("Bling Blong");
         }
-    }*/
+    }
 
-    print("Poggers");
+    //Simulation.Print("Poggers");
 }
 
 //Mandatory "Output" section
 //Here the user defines what and how data is extracted from the simulation
 Simulation Output {
-    Output.Log("EKS DEE");
+    //Output.Log("EKS DEE");
 }
