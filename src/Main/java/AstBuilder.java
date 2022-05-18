@@ -1,5 +1,3 @@
-package Main;
-
 import ASTNodes.Node;
 import ASTNodes.ProgramNode;
 import Parser.CFGLexer;

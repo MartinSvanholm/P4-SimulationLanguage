@@ -9,9 +9,10 @@ import ASTNodes.ValueNodes.NumberNode;
 import ASTNodes.ValueNodes.OpNode;
 import ASTNodes.ValueNodes.StringNode;
 import ASTVisitors.BaseVisitor;
-import Main.Error;
-import Main.ErrorHandler;
-import SymbolTable.*;
+import SymbolTable.GlobalSymbolTable;
+import SymbolTable.Symbol;
+import SymbolTable.SymbolTable;
+
 
 import java.util.Enumeration;
 

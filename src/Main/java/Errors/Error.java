@@ -1,4 +1,4 @@
-package Main;
+package Errors;
 
 public class Error {
     public int Line;

@@ -1,8 +1,8 @@
-package Testing;
-
-
 import ASTNodes.*;
-import ASTNodes.ControlStructures.*;
+import ASTNodes.ControlStructures.ElseIfNode;
+import ASTNodes.ControlStructures.IfElseNode;
+import ASTNodes.ControlStructures.SwitchNode;
+import ASTNodes.ControlStructures.WhileLoopNode;
 import ASTNodes.DclNodes.ConstructorDclNode;
 import ASTNodes.DclNodes.ListDclNode;
 import ASTNodes.DclNodes.ObjDclNode;
@@ -10,16 +10,20 @@ import ASTNodes.ExprNodes.ExpressionNode;
 import ASTNodes.ValueNodes.BoolNode;
 import ASTNodes.ValueNodes.NumberNode;
 import ASTNodes.ValueNodes.StringNode;
-import Main.ErrorHandler;
 import SymbolTable.GlobalSymbolTable;
+import SymbolTable.Symbol;
 import SymbolTable.SymbolTable;
 import Visitors.TypeChecker;
-import org.junit.jupiter.api.*;
-import SymbolTable.Symbol;
+import ErrorHandler;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.experimental.categories.Category;
 
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@Category(IntegrationTest.class)
 public class TypeCheckTest {
     GlobalSymbolTable globalSymbolTable;
     TypeChecker tc;

@@ -1,5 +1,3 @@
-package Main;
-
 import ASTNodes.ProgramNode;
 import ASTVisitors.ASTPrinterVisitor;
 import hu.webarticum.treeprinter.SimpleTreeNode;

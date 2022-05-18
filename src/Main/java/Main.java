@@ -1,5 +1,3 @@
-package Main;
-
 import ASTNodes.ProgramNode;
 import SymbolTable.*;
 import Visitors.TypeChecker;
