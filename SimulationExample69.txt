@@ -1,0 +1,114 @@
+Simulation Environment {
+    Node startNode = Create<IONode>();
+    Node endNode = Create<IONode>();
+
+    Road townRoad = Create<TownRoad>(50, 1000, startNode, endNode);
+    Road countryRoad = Create<LandevejRoad>(80, 1000, startNode, endNode);
+
+    List<Node> IONodes {startNode, endNode};
+    List<Node> intersectionConnections {startNode, endNode};
+
+    List<Road> roads {townRoad, countryRoad};
+
+    InitCondition<Car> {
+        if(Simulation.CurrentTick % 5 == 0) {
+            Simulation.VehicleList.Add(Create<Car>(townRoad, countryRoad));
+        }
+    }
+
+    EndCondition{
+        return Simulation.CurrentTick > 100;
+    }
+}
+
+Simulation Behavior {
+    Node IONode {
+
+    }
+
+    Vehicle Car {
+        number direction;
+        number brakeDistance = 10;
+        number speed;
+        Road road;
+        Road previousRoad;
+
+        constructor Create<Car>(Road townRoad, Road countryRoad) {
+            direction = 1;
+            road = townRoad;
+            previousRoad = townRoad;
+            speed = 50;
+        }
+
+        function void Drive() {
+            this.speed = this.road.speedLimit;
+            this.position = this.position + this.speed;
+        }
+
+        function void Brake() {
+            this.speed = 0;
+        }
+
+        function bool isClearToDrive() {
+            bool result = true;
+            return result;
+        }
+
+        function bool isCarInFront(Car otherCar) {
+            Vehicle hej = Create<Car>();
+            number positionDiff = hej.position - this.position;
+            if(positionDiff > 0 && positionDiff < 5) {
+                return true;
+            }
+            return false;
+        }
+
+        function void newSpeedLimit() {
+            if(this.road.speedLimit < this.previousRoad.speedLimit && this.speed > this.road.speedLimit) {
+                this.speed = this.road.speedLimit;
+            }
+        }
+    }
+
+    Road TownRoad {
+        number speedLimit;
+        constructor Create<TownRoad>(number speedLimit, number length, Node startNode, Node endNode) {
+            this.speedLimit = speedLimit;
+            this.length = length;
+            this.startNode = startNode;
+            this.endNode = endNode;
+        }
+    }
+
+    Road LandevejRoad {
+        number speedLimit;
+        constructor Create<LandevejRoad>(number speedLimit, number length, Node startNode, Node endNode) {
+            this.speedLimit = speedLimit;
+            this.length = length;
+            this.startNode = startNode;
+            this.endNode = endNode;
+        }
+    }
+}
+
+Simulation Update {
+    switch(vehicle.Type) {
+        case "Car" {
+            //Checks if the agent is clear to drive, with the function "IsClearToDrive"
+            if (vehicle.isClearToDrive()) {
+                //Tells the agent to drive, with the function "Drive"
+                vehicle.Drive();
+            } else {
+                //Tells the agent to break, with the function "Break"
+                vehicle.Break();
+            }
+        }
+        default {
+            //Default case. This should in theory never be triggered
+        }
+    }
+}
+
+Simulation Output {
+
+}

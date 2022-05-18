@@ -737,7 +737,14 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
 
     @Override
     public String visitThisIdNode(ThisIdNode thisIdNode) {
-        return "this." + visit(thisIdNode.Identifier);
+
+        String output = "this.";
+
+        if (thisIdNode.ObjNode != null) {
+            return output + visit(thisIdNode.ObjNode);
+        } else {
+            return output + visit(thisIdNode.Identifier);
+        }
     }
 
     @Override
