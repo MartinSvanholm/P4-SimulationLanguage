@@ -1,5 +1,0 @@
-D:\UniGit\P4\P4-SimulationLanguage\TestTest\CSharpRepresentation.exe
-D:\UniGit\P4\P4-SimulationLanguage\TestTest\CSharpRepresentation.dll
-D:\UniGit\P4\P4-SimulationLanguage\TestTest\CSharpRepresentation.deps.json
-D:\UniGit\P4\P4-SimulationLanguage\TestTest\CSharpRepresentation.runtimeconfig.json
-D:\UniGit\P4\P4-SimulationLanguage\TestTest\CSharpRepresentation.pdb

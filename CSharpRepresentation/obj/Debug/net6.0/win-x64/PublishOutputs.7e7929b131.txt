@@ -1,2 +1,0 @@
-D:\UniGit\P4\P4-SimulationLanguage\TestTest\CSharpRepresentation.pdb
-D:\UniGit\P4\P4-SimulationLanguage\TestTest\CSharpRepresentation.exe

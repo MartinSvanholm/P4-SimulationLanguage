@@ -21,6 +21,6 @@ public class CodeGenerator {
         CodeGenerationVisitor codeGenerationVisitor = new CodeGenerationVisitor(errorHandler, globalSymbolTable);
         String str = codeGenerationVisitor.visitProgramNode(AST);
 
-        io.WriteFile("GeneratedCode.cs", str);
+        io.WriteFile("Program.cs", str);
     }
 }
