@@ -303,6 +303,9 @@ public class TypeChecker extends BaseVisitor<String> {
             if(property == null)
                 return typeError + "." + objIdNode.ObjectNode.Name;
 
+            if(property.InheritedType.equals("Agent"))
+                return helper.TypeCheckAgent(objIdNode.Identifier.Name, objIdNode);
+
             //Gets the table of the property's class.
             classTable = helper.FindTableByName(GlobalSymbolTable, property.ActualType, 0);
         }

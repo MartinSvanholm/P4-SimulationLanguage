@@ -4,7 +4,6 @@ import ASTNodes.*;
 import ASTNodes.ControlStructures.*;
 import ASTNodes.DclNodes.*;
 import ASTNodes.ExprNodes.*;
-import ASTNodes.Identifier.IdentifierNode;
 import ASTNodes.ValueNodes.BoolNode;
 import ASTNodes.ValueNodes.NumberNode;
 import ASTNodes.ValueNodes.OpNode;
@@ -12,6 +11,7 @@ import ASTNodes.ValueNodes.StringNode;
 import ASTVisitors.BaseVisitor;
 import Main.ErrorHandler;
 import SymbolTable.GlobalSymbolTable;
+import SymbolTable.*;
 import VisitorHelpers.FlowControlHelper;
 
 public class FlowControl extends BaseVisitor<String> {
@@ -58,7 +58,13 @@ public class FlowControl extends BaseVisitor<String> {
                 canCreateClass = true;
                 canCreateInitCondition = true;
             }
-            case "Update", "Output" -> {
+            case "Update" -> {
+                canCreateVar = true;
+                canCreateLogic = true;
+                SymbolTable updateTable = helper.FindTableByName(GlobalSymbolTable, "Update", 0);
+                updateTable.Symbols.put("vehicle", new Symbol("vehicle", "Vehicle", "Agent", "Standard"));
+            }
+            case "Output" -> {
                 canCreateVar = true;
                 canCreateLogic = true;
             }
