@@ -1,6 +1,5 @@
 package Testing;
 
-import src.*;
 import ASTNodes.*;
 import ASTNodes.ControlStructures.*;
 import ASTNodes.DclNodes.ConstructorDclNode;

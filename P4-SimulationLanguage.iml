@@ -7,6 +7,19 @@
       <sourceFolder url="file://$MODULE_DIR$/src/Main/java" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/Main/resources" type="java-resource" />
       <sourceFolder url="file://$MODULE_DIR$/src/test/java" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/src/ASTNodes" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/ASTNodes/ControlStructures" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/ASTNodes/DclNodes" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/ASTNodes/ExprNodes" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/ASTNodes/ValueNodes" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/ASTVisitors" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/META-INF" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/Main" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/Models" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/Parser" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/SymbolTable" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/Testing" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/src/Visitors" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
     </content>
     <orderEntry type="jdk" jdkName="18" jdkType="JavaSDK" />
@@ -21,7 +34,7 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="module-library">
+    <orderEntry type="module-library" exported="">
       <library name="JUnit5.8.1">
         <CLASSES>
           <root url="jar://$MAVEN_REPOSITORY$/org/junit/jupiter/junit-jupiter/5.8.1/junit-jupiter-5.8.1.jar!/" />
@@ -37,7 +50,7 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="library" scope="TEST" name="Maven: junit:junit:4.13.2" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.hamcrest:hamcrest-core:1.3" level="project" />
+    <orderEntry type="library" exported="" scope="TEST" name="Maven: junit:junit:4.13.2" level="project" />
+    <orderEntry type="library" exported="" scope="TEST" name="Maven: org.hamcrest:hamcrest-core:1.3" level="project" />
   </component>
 </module>
