@@ -55,7 +55,7 @@ Simulation Behavior {
         }
 
         function bool isCarInFront(Car otherCar) {
-            Vehicle hej = Create<Car>();
+            Vehicle hej = otherCar;
             number positionDiff = hej.position - this.position;
             if(positionDiff > 0 && positionDiff < 5) {
                 return true;
@@ -93,14 +93,14 @@ Simulation Behavior {
 
 Simulation Update {
     switch(vehicle.Type) {
-        case "Car" {
+        case Car {
             //Checks if the agent is clear to drive, with the function "IsClearToDrive"
             if (vehicle.isClearToDrive()) {
                 //Tells the agent to drive, with the function "Drive"
                 vehicle.Drive();
             } else {
                 //Tells the agent to break, with the function "Break"
-                vehicle.Break();
+                vehicle.Brake();
             }
         }
         default {

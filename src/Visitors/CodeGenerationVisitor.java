@@ -188,8 +188,6 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
     public String visitFunctionNode(FunctionDclNode functionDclNode) {
         prevScopeName = scopeName;
         scopeName = functionDclNode.Identifier.Name;
-        System.out.println("visitFuncDec: " + currSection);
-        System.out.println("Curr Scope: " + scopeName);
         String savedStr = "";
         String output = "";
 
@@ -224,15 +222,22 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
         output += "){";
 
         if (currSection.equals("Behavior")) {
-            System.out.println("Inde i if");
-            System.out.println(prevScopeName);
             savedStr += output;
             output = "override " + output;
             if(!visit(functionDclNode.Type).equals("void")){
-                if(visit(functionDclNode.Type).equals("number")) {
-                    savedStr += "return 0f;";
-                } else {
-                    savedStr += "return null;";
+                switch (visit(functionDclNode.Type)) {
+                    case "number":
+                        savedStr += "return 0f;";
+                        break;
+                    case "bool":
+                        savedStr += "return false;";
+                        break;
+                    case "string":
+                        savedStr += "return \"\";";
+                        break;
+                    default:
+                        savedStr += "return null;";
+                        break;
                 }
             }
 
@@ -241,7 +246,6 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
 
             switch (helper.FindTableByName(globalSymbolTable, prevScopeName, 0).Type){
                 case "Vehicle":
-                    System.out.println("KIGHERDU: " + vehicleMethods.contains("public " + savedStr));
                     if (!vehicleMethods.contains("public " + savedStr)) vehicleMethods.add("public " + savedStr);
                     break;
                 case "Node":
@@ -267,11 +271,6 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
     public String visitListNode(ListDclNode listDclNode) {
         String output = "";
         String type = helper.GetSymbolByScopeName(visit(listDclNode.Identifier), scopeName).ActualType;
-
-        //System.out.println("Jeg tester lige ting");
-        System.out.println(listDclNode.Identifier.getClass());
-        System.out.println(type);
-        System.out.println(CheckType(type));
 
         if (visit(listDclNode.Type).equals("number")){
             type = "float";
@@ -303,7 +302,6 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
     public String visitClassNode(ClassNode classNode) {
         prevScopeName = scopeName;
         scopeName = classNode.Identifier.Name;
-        System.out.println("Curr Scope: " + scopeName);
 
         switch (visit(classNode.Type)) {
             case "Road":
@@ -324,7 +322,6 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
 
         output += ":" + visit(classNode.Type) + "{";
 
-        System.out.println(visit(classNode.Type) + " " + visit(classNode.Identifier) + " Class body start");
         output += visit(classNode.Body);
 
         scopeName = prevScopeName;
@@ -421,7 +418,7 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
         String output = "";
         String switchValue = visit(switchNode.switchValue);
 
-        if (switchValue.contains(".type")) {
+        if (switchValue.contains(".Type")) {
             output += "string[] tempArr = vehicle.GetType().ToString().Split(\".\"); \n";
             output += "string type = tempArr[tempArr.Length - 1]; \n";
             switchValue = "type";
@@ -463,8 +460,20 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
 
     @Override
     public String visitForLoopNode(ForLoopNode forLoopNode) {
-        //<---------------Den her venter lige til senere--------------->
-        return "";
+        String type = visit(forLoopNode.TypeNode);
+        String output = "foreach(";
+
+        if(type.equals("number")) {
+            output += "float ";
+        } else {
+            output += type + " ";
+        }
+
+        output += visit(forLoopNode.identifier) + " in " + visit(forLoopNode.rangeIdentifier) + "){";
+
+        output += visit(forLoopNode.Body);
+
+        return output + "}";
     }
 
     @Override
@@ -475,7 +484,6 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
 
     @Override
     public String visitAssignmentNode(AssignmentNode assignmentNode) {
-        System.out.println("HALLI HALLO!: " + assignmentNode.ValueNode.getClass());
         String type = "";
         if (currSection.equals("Environment")) {
             if(visit(assignmentNode.Identifier).contains(".")) {
@@ -487,7 +495,6 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
             }
         }
 
-        System.out.println(type);
         return visit(assignmentNode.Identifier) + " " + visit(assignmentNode.Equals) + " " + visit(assignmentNode.ValueNode) + ";";
     }
 
@@ -530,8 +537,6 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
                         output += RemoveFromList(functionCallNode, strs[strs.length - 2]);
                         break;
                     default:
-
-                        //System.out.println("BRUH: " + visit(functionCallNode.Identifier));
                         if(visit(functionCallNode.Identifier).equals("Simulation.Print")){
                             return output + PrintFunction(functionCallNode);
                         }
@@ -600,8 +605,6 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
     //Please lav det her til en switch senere....
     @Override
     public String visitInfixExpressionNode(InfixExpressionNode infixExpressionNode) {
-        System.out.println("INFIX BLEV KALDT");
-        System.out.println(visit(infixExpressionNode.Operator));
         String output = "";
 
         //switch(visit(infixExpressionNode.Operator))
@@ -609,15 +612,12 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
         if(visit(infixExpressionNode.Operator).equals(("^"))) {
             return "(float)Math.Pow(" + visit(infixExpressionNode.Left) + "," + visit(infixExpressionNode.Right) + ")";
         }
-        System.out.println(infixExpressionNode.Left.getClass());
         return visit(infixExpressionNode.Left) + visit(infixExpressionNode.Operator) + visit(infixExpressionNode.Right);
     }
 
     @Override
     public String visitLogicalNode(LogicalNode logicalNode) {
         String output = visit(logicalNode.Left);
-        System.out.println("BOOLSHIT");
-        System.out.println(visit(logicalNode.Operator));
         switch (visit(logicalNode.Operator)) {
             case " and ":
                     output += " &&";
@@ -635,8 +635,6 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
 
     @Override
     public String visitMathExpressionNode(MathExpressionNode mathExpressionNode) {
-        System.out.println("Math dimmer område");
-        System.out.println(visit(mathExpressionNode.Operator));
         String output = "";
 
         //switch(visit(infixExpressionNode.Operator))
@@ -644,7 +642,6 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
         if(visit(mathExpressionNode.Operator).equals(("^"))) {
             return "(float)Math.Pow(" + visit(mathExpressionNode.Left) + "," + visit(mathExpressionNode.Right) + ")";
         }
-        System.out.println(mathExpressionNode.Left.getClass());
         return visit(mathExpressionNode.Left) + visit(mathExpressionNode.Operator) + visit(mathExpressionNode.Right);
     }
 
@@ -708,25 +705,18 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
 
     @Override
     public String visitObjIdNode(ObjIdNode objIdNode) {
-        //System.out.println("Det er her");
         String output = "";
 
         if (visit(objIdNode.ObjectNode).equals("Simulation")){
             int i = 1+2;
-            System.out.println("Simu Trigger");
         }
 
         output += visit(objIdNode.ObjectNode) + ".";
 
-        //System.out.println(visit(objIdNode.ObjectNode));
         if (objIdNode.ObjIdNode != null) {
-            System.out.println("ObjId: " + visit(objIdNode.ObjIdNode));
-            System.out.println("Output: " + output + visit(objIdNode.ObjIdNode));
             return output + visit(objIdNode.ObjIdNode);
 
         } else {
-            System.out.println("Identi: " + visit(objIdNode.Identifier));
-            System.out.println("Output: " + output + visit(objIdNode.Identifier));
             return output + visit(objIdNode.Identifier);
         }
 
@@ -798,7 +788,6 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
     }
 
     public String RemoveFromList(FunctionCallNode functionCallNode, String name){
-        System.out.println("RemoveFromList: " + name);
 
         String output = "";
 
@@ -819,7 +808,6 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
     }
 
     public String AddToList(FunctionCallNode functionCallNode, String name){
-        System.out.println("AddToList name: " + name);
 
         if(name.contains("Simulation")){
             prevScopeName = scopeName;
@@ -831,10 +819,6 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
         String type = helper.GetSymbolByScopeName(strArr[strArr.length-1], scopeName).ActualType;
 
         String output = "";
-
-        System.out.println(scopeName);
-        System.out.println(name);
-        System.out.println("big smile " + type);
 
         output += name + " = " + name + ".Concat(new ";
         output += type.equals("number") ? "float" : type;

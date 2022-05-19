@@ -108,6 +108,13 @@ Simulation Behavior {
             number x = 2^8;
         }
 
+        function void ForTest() {
+            List<number> numList {1,2,3};
+            for(number x in range numList) {
+                Simulation.Print(x);
+            }
+        }
+
         constructor Create<Car>(){
             this.length = 10;
             this.acceleration = 200;
@@ -144,7 +151,7 @@ Simulation Behavior {
 //Mandatory "Update" section
 //Here the main simulation logic is defined. Works as a foreach loop, looping over all instansiated agents
 Simulation Update {
-    switch(vehicle.type){
+    switch(vehicle.Type){
         case Car{
             Simulation.Print(vehicle.Square(Simulation.CurrentTick));
         }
