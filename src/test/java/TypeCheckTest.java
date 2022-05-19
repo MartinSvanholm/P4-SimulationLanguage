@@ -14,7 +14,7 @@ import SymbolTable.GlobalSymbolTable;
 import SymbolTable.Symbol;
 import SymbolTable.SymbolTable;
 import Visitors.TypeChecker;
-import ErrorHandler;
+import Main.ErrorHandler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
