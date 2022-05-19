@@ -35,8 +35,12 @@ public class FlowControlHelper extends BaseHelper {
         }
 
         if(node instanceof ForLoopNode) {
-            SymbolTable inheritedClass = FindTableByName(GlobalSymbolTable, ((ForLoopNode) node).TypeNode.Name, 0);
-            InsertInheritedTypeIntoSymbol(((ForLoopNode) node).identifier.Name, scopeName, inheritedClass.Type);
+            if(!((ForLoopNode) node).TypeNode.Name.equals("number") && !((ForLoopNode) node).TypeNode.Name.equals("string")) {
+                SymbolTable inheritedClass = FindTableByName(GlobalSymbolTable, ((ForLoopNode) node).TypeNode.Name, 0);
+                InsertInheritedTypeIntoSymbol(((ForLoopNode) node).identifier.Name, scopeName, inheritedClass.Type);
+            } else {
+                InsertInheritedTypeIntoSymbol(((ForLoopNode) node).identifier.Name, scopeName, "base");
+            }
         }
     }
 }
