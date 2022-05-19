@@ -99,12 +99,13 @@ public class TypeChecker extends BaseVisitor<String> {
 
     @Override
     public String visitListNode(ListDclNode listDclNode) {
+        System.out.println(listDclNode.Line);
         if(helper.IsBaseType(listDclNode.Type.Name)) {
             for(ParamNode node : listDclNode.Parameters) {
                 String paramtype = visit(node);
                 if(paramtype.equals(typeError)) {
                     helper.AddError(node, node.Identifier.Name + " has never been declared");
-                } else if(!listDclNode.Type.Name.equals(helper.GetInheritedType(paramtype)))
+                } else if(!paramtype.equals("number") && !paramtype.equals("string") && !listDclNode.Type.Name.equals(helper.GetInheritedType(paramtype)))
                     helper.AddError(node, node.Identifier.Name + " must be of type " + listDclNode.Type.Name);
             }
         } else {
@@ -259,7 +260,6 @@ public class TypeChecker extends BaseVisitor<String> {
 
     @Override
     public String visitFunctionCallNode(FunctionCallNode functionCallNode) {
-        System.out.println(functionCallNode.Line);
         String[] funcType = visit(functionCallNode.Identifier).split("\\.");
 
         if(funcType[0].equals(typeError)) {

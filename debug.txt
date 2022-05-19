@@ -37,6 +37,13 @@ Simulation Behavior {
 
             test.try("ddf", 8);
         }
+
+        function void ForTest() {
+            List<number> numList {1, 2, 3};
+            for(number x in range numList) {
+                Simulation.Print(x);
+            }
+        }
     }
 }
 
