@@ -4,13 +4,19 @@ import ASTNodes.*;
 import ASTNodes.ControlStructures.*;
 import ASTNodes.DclNodes.*;
 import ASTNodes.ExprNodes.*;
+import ASTNodes.Identifier.IdentifierNode;
+import ASTNodes.Identifier.ObjIdNode;
+import ASTNodes.Identifier.SimpleIdNode;
+import ASTNodes.Identifier.ThisIdNode;
 import ASTNodes.ValueNodes.BoolNode;
 import ASTNodes.ValueNodes.NumberNode;
 import ASTNodes.ValueNodes.OpNode;
 import ASTNodes.ValueNodes.StringNode;
 import Parser.*;
+import org.antlr.v4.runtime.tree.ParseTree;
 
 public class BuildAstVisitor extends CFGBaseVisitor<Node> {
+    String className;
 
     @Override public Node visitProgram(CFGParser.ProgramContext ctx) {
         ProgramNode node = new ProgramNode();
@@ -88,28 +94,14 @@ public class BuildAstVisitor extends CFGBaseVisitor<Node> {
     }
 
     @Override public Node visitDcl(CFGParser.DclContext ctx) {
-        return visitChildren(ctx);}
+        return visit(ctx.getChild(0));
+    }
 
     @Override public Node visitFunctionDcl(CFGParser.FunctionDclContext ctx) {
         FunctionDclNode node = new FunctionDclNode();
         node.Line = ctx.getStart().getLine();
 
         node.Type = visit(ctx.type());
-        node.Identifier = (IdentifierNode) visit(ctx.identifier());
-
-        for(var paramChild : ctx.dclParams()) {
-            node.Parameters.add((ParamNode) visit(paramChild));
-        }
-
-        node.Body = (BodyNode) visit(ctx.codeBlock());
-
-        return node;
-    }
-
-    @Override public Node visitProcedureDcl(CFGParser.ProcedureDclContext ctx) {
-        FunctionDclNode node = new FunctionDclNode();
-        node.Line = ctx.getStart().getLine();
-
         node.Identifier = (IdentifierNode) visit(ctx.identifier());
 
         for(var paramChild : ctx.dclParams()) {
@@ -141,7 +133,10 @@ public class BuildAstVisitor extends CFGBaseVisitor<Node> {
 
         node.Type = visit(ctx.type());
         node.Identifier = (IdentifierNode) visit(ctx.identifier());
+
+        className = node.Identifier.Name;
         node.Body = (BodyNode) visit(ctx.codeBlock());
+        className = null;
 
         return node;
     }
@@ -212,8 +207,8 @@ public class BuildAstVisitor extends CFGBaseVisitor<Node> {
         node.condition = (ExpressionNode) visit(ctx.expr());
         node.Body = (BodyNode) visit(ctx.codeBlock());
 
-        if(ctx.right != null)
-            node.ElseIf = (ElseIfNode) visitElseIfStmt(ctx.right);
+        if(ctx.elseIfStmt() != null)
+            node.ElseIf = (ElseIfNode) visit(ctx.elseIfStmt());
 
         return node;
     }
@@ -227,8 +222,8 @@ public class BuildAstVisitor extends CFGBaseVisitor<Node> {
         } else {
             node.condition = (ExpressionNode) visit(ctx.expr());
             node.Body = (BodyNode) visit(ctx.codeBlock());
-            if(ctx.left != null)
-                node.ElseIf = (ElseIfNode) visitElseIfStmt(ctx.right);
+            if(ctx.elseIfStmt() != null)
+                node.ElseIf = (ElseIfNode) visitElseIfStmt(ctx.elseIfStmt());
         }
 
         return node;
@@ -253,8 +248,24 @@ public class BuildAstVisitor extends CFGBaseVisitor<Node> {
         node.Name = "cases";
         node.Line = ctx.getStart().getLine();
 
+        int i = 0;
         for(var switchCase : ctx.switchcase()) {
-            node.cases.add(visit(switchCase));
+            CaseNode caseNode = new CaseNode();
+            caseNode.CaseBody = (BodyNode) visit(ctx.codeBlock(i));
+            caseNode.switchValue = visit(switchCase);
+            caseNode.Name = visit(switchCase).Name;
+            node.cases.add(caseNode);
+            i++;
+        }
+
+        if(ctx.defaultCode != null) {
+            CaseNode Default = new CaseNode();
+            Default.CaseBody = (BodyNode) visit(ctx.defaultCode);
+            StringNode value = new StringNode();
+            value.Name = "default";
+            Default.switchValue = value;
+            Default.Name = "default";
+            node.cases.add(Default);
         }
 
         return node;
@@ -277,6 +288,7 @@ public class BuildAstVisitor extends CFGBaseVisitor<Node> {
         node.Line = ctx.getStart().getLine();
 
         node.identifier = (IdentifierNode) visit(ctx.loopNumber);
+        node.TypeNode = visit(ctx.type());
         if(ctx.numberLiteral() != null)
             node.rangeInt = (NumberNode) visit(ctx.numberLiteral());
         else
@@ -304,7 +316,7 @@ public class BuildAstVisitor extends CFGBaseVisitor<Node> {
     }
 
     @Override public Node visitInfixExpr(CFGParser.InfixExprContext ctx) {
-        InfixExpressionNode node = new InfixExpressionNode();
+        MathExpressionNode node = new MathExpressionNode();
         node.Line = ctx.getStart().getLine();
 
         switch (ctx.op.getType()) {
@@ -391,6 +403,46 @@ public class BuildAstVisitor extends CFGBaseVisitor<Node> {
 
     @Override public Node visitIdentifierExpr(CFGParser.IdentifierExprContext ctx) { return visitChildren(ctx); }
 
+    @Override public Node visitIdentifier(CFGParser.IdentifierContext ctx) {
+        return visitChildren(ctx);
+    }
+
+    @Override public Node visitObjIdentifier(CFGParser.ObjIdentifierContext ctx) {
+        ObjIdNode node = new ObjIdNode();
+        node.Line = ctx.getStart().getLine();
+        node.ObjectNode = (SimpleIdNode) visit(ctx.objName);
+
+        if(ctx.objId != null)
+            node.ObjIdNode = (ObjIdNode) visit(ctx.objId);
+
+        if(ctx.id != null)
+            node.Identifier = (SimpleIdNode) visit(ctx.id);
+
+        return node;
+    }
+
+    @Override public Node visitThisIdentifier(CFGParser.ThisIdentifierContext ctx) {
+        ThisIdNode node = new ThisIdNode();
+        node.Line = ctx.getStart().getLine();
+        node.ClassName = className;
+
+        if(ctx.simpleIdentifier() != null)
+            node.Identifier = (SimpleIdNode) visit(ctx.simpleIdentifier());
+        else if(ctx.objIdentifier() != null)
+            node.ObjNode = (ObjIdNode) visit(ctx.objIdentifier());
+
+        return node;
+    }
+
+    @Override public Node visitSimpleIdentifier(CFGParser.SimpleIdentifierContext ctx) {
+        SimpleIdNode node = new SimpleIdNode();
+        node.Line = ctx.getStart().getLine();
+
+        node.Name = ctx.getText();
+
+        return node;
+    }
+
     @Override public Node visitCompareExpr(CFGParser.CompareExprContext ctx) {
         CompareNode node = new CompareNode();
         node.Line = ctx.getStart().getLine();
@@ -452,9 +504,8 @@ public class BuildAstVisitor extends CFGBaseVisitor<Node> {
     @Override public Node visitDclParams(CFGParser.DclParamsContext ctx) {
         ParamNode node = new ParamNode();
         node.Line = ctx.getStart().getLine();
-
-        node.Type = (TypeNode) visit(ctx.type());
-        node.Identifier = visit(ctx.identifier());
+        node.Type = visit(ctx.objDcl().type());
+        node.Identifier = visit(ctx.objDcl().identifier());
 
         return node;
     }
@@ -475,19 +526,10 @@ public class BuildAstVisitor extends CFGBaseVisitor<Node> {
         node.Line = ctx.getStart().getLine();
 
         if(ctx.listType != null) {
-            node.Name = "List<" + visit(ctx.type()).Value.strip() + ">";
+            node.Name = "List<" + visit(ctx.type()).Name.strip() + ">";
         } else {
             node.Name = ctx.getText().strip();
         }
-
-        return node;
-    }
-
-    @Override public Node visitIdentifier(CFGParser.IdentifierContext ctx) {
-        IdentifierNode node = new IdentifierNode();
-        node.Line = ctx.getStart().getLine();
-
-        node.Name = ctx.getText().strip();
 
         return node;
     }
