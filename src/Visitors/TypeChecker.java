@@ -260,6 +260,9 @@ public class TypeChecker extends BaseVisitor<String> {
 
     @Override
     public String visitFunctionCallNode(FunctionCallNode functionCallNode) {
+        if(functionCallNode.Identifier.GetName("").equals("Print"))
+            return null;
+
         String[] funcType = visit(functionCallNode.Identifier).split("\\.");
 
         if(funcType[0].equals(typeError)) {
