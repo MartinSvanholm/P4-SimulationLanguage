@@ -72,7 +72,8 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
         output += "\n" +
                 "    class Program {\n" +
                 "        static void Main(string[] args) {\n" +
-                "            Sim Simulation = new Sim();\n";
+                "            Sim Simulation = new Sim();\n" +
+                "            Random Rand = new Random();";
 
         currEnviCheck = "";
         output += visit(programNode.Environment);
@@ -272,6 +273,13 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
         String output = "";
         String type = helper.GetSymbolByScopeName(visit(listDclNode.Identifier), scopeName).ActualType;
 
+        System.out.println("LISTTING");
+        System.out.println("curr: " + scopeName);
+        System.out.println("prev: " + prevScopeName);
+        if(vehicleTypes.contains(scopeName) || nodeTypes.contains(scopeName) || roadTypes.contains(scopeName)) {
+            output += "public ";
+        }
+
         if (visit(listDclNode.Type).equals("number")){
             type = "float";
         } else{
@@ -293,6 +301,14 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
             }
 
             currPar++;
+        }
+
+        if(vehicleTypes.contains(scopeName) && !vehicleMethods.contains(output + "};")) {
+            vehicleMethods.add(output + "};");
+        } else if(nodeTypes.contains(scopeName) && !nodeMethods.contains(output + "};")) {
+            nodeMethods.add(output + "};");
+        } else if(roadTypes.contains(scopeName) && !roadMethods.contains(output + "};")) {
+            roadMethods.add(output + "};");
         }
 
         return output + "};";
@@ -366,6 +382,13 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
             return output + ";";
         }*/
 
+        System.out.println("curr: " + scopeName);
+        System.out.println("prev: " + prevScopeName);
+
+        if(vehicleTypes.contains(scopeName) || nodeTypes.contains(scopeName) || roadTypes.contains(scopeName)) {
+            output += "public ";
+        }
+
         if (visit(objDclNode.Type).equals("number")) {
             output += "float ";
         } else {
@@ -381,6 +404,15 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
                 output += " = " + visit(objDclNode.ObjValue);
             }
         }
+
+        if(vehicleTypes.contains(scopeName) && !vehicleMethods.contains(output + ";")) {
+            vehicleMethods.add(output + ";");
+        } else if(nodeTypes.contains(scopeName) && !nodeMethods.contains(output + ";")) {
+            nodeMethods.add(output + ";");
+        } else if(roadTypes.contains(scopeName) && !roadMethods.contains(output + ";")) {
+            roadMethods.add(output + ";");
+        }
+
 
         return output + ";";
     }
@@ -539,6 +571,10 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
                     default:
                         if(visit(functionCallNode.Identifier).equals("Simulation.Print")){
                             return output + PrintFunction(functionCallNode);
+                        }
+
+                        if(visit(functionCallNode.Identifier).equals("Simulation.Random")){
+                            return output + RandomFunction(functionCallNode);
                         }
 
                         //Det her er super fucking redundant
@@ -807,6 +843,10 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
         return "Console.WriteLine(" + visit(functionCallNode.Parameters.get(0)) + ");";
     }
 
+    public String RandomFunction(FunctionCallNode functionCallNode){
+        return "(float)Rand.NextDouble() * (" + visit(functionCallNode.Parameters.get(1)) + " - " + visit(functionCallNode.Parameters.get(0)) + ") + " + visit(functionCallNode.Parameters.get(0)) +"";
+    }
+
     public String AddToList(FunctionCallNode functionCallNode, String name){
 
         if(name.contains("Simulation")){
@@ -839,6 +879,7 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
         if (name.contains("Simulation")) {
             scopeName = prevScopeName;
         }
+
         return output + "}).ToArray()";
     }
 
@@ -849,7 +890,7 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
 
         switch (type) {
             case "Vehicle":
-                output += "        public float length;\n" +
+                output += "   public Random Rand = new Random();     public float length;\n" +
                         "        public float acceleration;\n" +
                         "        public List<Node> path;\n";
                 for(String s:vehicleMethods){
@@ -857,13 +898,13 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
                 }
                 break;
             case "Node":
-                output += "public Node[] connections;";
+                output += "public Random Rand = new Random();public Node[] connections;";
                 for(String s:nodeMethods){
                     output += s + "\n";
                 }
                 break;
             case "Road":
-                output += "public float length;\n" +
+                output += "public Random Rand = new Random();public float length;\n" +
                           "public Node startNode;\n" +
                           "public Node endNode;";
                 for(String s:roadMethods){

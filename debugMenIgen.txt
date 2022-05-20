@@ -160,6 +160,8 @@ Simulation Update {
         }
     }
 
+    Simulation.Print(Simulation.Random(0,10));
+
     //Simulation.Print("Poggers");
 }
 

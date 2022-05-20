@@ -12,7 +12,7 @@ Simulation Environment {
 
     InitCondition<Car> {
         if(Simulation.CurrentTick % 5 == 0) {
-            Simulation.vehicles.Add(Create<Car>(townRoad, countryRoad));
+            Simulation.VehicleList.Add(Create<Car>(townRoad, countryRoad));
         }
     }
 
@@ -30,19 +30,20 @@ Simulation Behavior {
         number direction;
         number brakeDistance = 10;
         number speed;
+        number position;
         Road road;
         Road previousRoad;
 
         constructor Create<Car>(Road townRoad, Road countryRoad) {
             direction = Simulation.Random(0, 1);
-            if(Simulation.Random(0,1) == 0) {
+            if(Simulation.Random(0,1) > 0.5) {
                 road = townRoad;
                 previousRoad = townRoad;
                 speed = 50;
             } else {
                 road = countryRoad;
                 previousRoad = countryRoad;
-                speed = 80;
+                speed = 50;
             }
         }
 
@@ -68,8 +69,7 @@ Simulation Behavior {
         }
 
         function bool isCarInFront(Car otherCar) {
-            Vehicle hej = Create<Car>();
-            number positionDiff = hej.position - this.position;
+            number positionDiff = this.position - this.position;
             if(positionDiff > 0 && positionDiff < 5) {
                 return true;
             }
@@ -85,6 +85,7 @@ Simulation Behavior {
 
     Road TownRoad {
         number speedLimit;
+        List<Vehicle> carList;
         constructor Create<TownRoad>(number speedLimit, number length, Node startNode, Node endNode) {
             this.speedLimit = speedLimit;
             this.length = length;
@@ -95,6 +96,7 @@ Simulation Behavior {
 
     Road LandevejRoad {
         number speedLimit;
+        List<Vehicle> carList;
         constructor Create<LandevejRoad>(number speedLimit, number length, Node startNode, Node endNode) {
             this.speedLimit = speedLimit;
             this.length = length;
@@ -113,7 +115,7 @@ Simulation Update {
                 vehicle.Drive();
             } else {
                 //Tells the agent to break, with the function "Break"
-                vehicle.Break();
+                vehicle.Brake();
             }
         }
         default {
