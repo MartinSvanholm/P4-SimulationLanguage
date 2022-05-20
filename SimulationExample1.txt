@@ -15,7 +15,7 @@ Simulation Environment {
         }
     }
 
-    EndCondition{
+    EndCondition {
         return Simulation.CurrentTick > 100;
     }
 }
@@ -120,6 +120,7 @@ Simulation Update {
             if (vehicle.isClearToDrive()) {
                 //Tells the agent to drive, with the function "Drive"
                 vehicle.Drive();
+                Simulation.Print();
             } else {
                 //Tells the agent to break, with the function "Break"
                 vehicle.Brake();
