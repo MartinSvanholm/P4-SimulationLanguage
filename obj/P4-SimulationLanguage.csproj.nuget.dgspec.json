@@ -1,24 +1,24 @@
 {
   "format": 1,
   "restore": {
-    "D:\\UniGit\\P4\\P4-SimulationLanguage\\P4-SimulationLanguage.csproj": {}
+    "C:\\Users\\arthu\\c-programmer\\github\\P4-SimulationLanguage\\P4-SimulationLanguage.csproj": {}
   },
   "projects": {
-    "D:\\UniGit\\P4\\P4-SimulationLanguage\\P4-SimulationLanguage.csproj": {
+    "C:\\Users\\arthu\\c-programmer\\github\\P4-SimulationLanguage\\P4-SimulationLanguage.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\UniGit\\P4\\P4-SimulationLanguage\\P4-SimulationLanguage.csproj",
+        "projectUniqueName": "C:\\Users\\arthu\\c-programmer\\github\\P4-SimulationLanguage\\P4-SimulationLanguage.csproj",
         "projectName": "Simulation",
-        "projectPath": "D:\\UniGit\\P4\\P4-SimulationLanguage\\P4-SimulationLanguage.csproj",
-        "packagesPath": "C:\\Users\\{xXx$420&EMIL£xXx}\\.nuget\\packages\\",
-        "outputPath": "D:\\UniGit\\P4\\P4-SimulationLanguage\\obj\\",
+        "projectPath": "C:\\Users\\arthu\\c-programmer\\github\\P4-SimulationLanguage\\P4-SimulationLanguage.csproj",
+        "packagesPath": "C:\\Users\\arthu\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\arthu\\c-programmer\\github\\P4-SimulationLanguage\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
           "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
         ],
         "configFilePaths": [
-          "C:\\Users\\{xXx$420&EMIL£xXx}\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\arthu\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],

@@ -4,7 +4,6 @@ Simulation Environment {
 
     Road townRoad = Create<TownRoad>(50, 1000, startNode, endNode);
     Road countryRoad = Create<LandevejRoad>(80, 1000, startNode, endNode);
-
     List<Node> IONodes {startNode, endNode};
     List<Node> intersectionConnections {startNode, endNode};
 
@@ -12,7 +11,7 @@ Simulation Environment {
 
     InitCondition<Car> {
         if(Simulation.CurrentTick % 5 == 0) {
-            Simulation.VehicleList.Add(Create<Car>(townRoad, countryRoad));
+            Simulation.VehicleList.Add(Create<Car>(townRoad, countryRoad, Simulation.VehicleList.Length));
         }
     }
 
@@ -27,6 +26,7 @@ Simulation Behavior {
     }
 
     Vehicle Car {
+        number id;
         number direction;
         number brakeDistance = 10;
         number speed;
@@ -34,7 +34,8 @@ Simulation Behavior {
         Road road;
         Road previousRoad;
 
-        constructor Create<Car>(Road townRoad, Road countryRoad) {
+        constructor Create<Car>(Road townRoad, Road countryRoad, number id) {
+        this.id = id;
             direction = Simulation.Random(0, 1);
             if(Simulation.Random(0,1) > 0.5) {
                 road = townRoad;
@@ -50,6 +51,12 @@ Simulation Behavior {
         function void Drive() {
             this.speed = this.road.speedLimit;
             this.position = this.position + this.speed;
+            Simulation.Print("WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW");
+            Simulation.Print(this.id);
+            Simulation.Print(this.position);
+            Simulation.Print(this.speed);
+            Simulation.Print(this.road.speedLimit);
+
         }
 
         function void Brake() {

@@ -1,12 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "oADDCqsL5pRvrfhTn0///ALHl6O6UkFBQaJENWWCWZrXFt4li7cyYbmEAfkH/wEJGbpLdIRtQBFqJwm0A9qOhQ==",
+  "dgSpecHash": "T67ENQjhFu7r7RnuaHOaFOv5yxqQZ9LGY4xvPApJkmw1Yd40s+YhidUdDMrcEFSh6xVvU5oUtH0snsxv3cH7iw==",
   "success": true,
-  "projectFilePath": "D:\\UniGit\\P4\\P4-SimulationLanguage\\P4-SimulationLanguage.csproj",
+  "projectFilePath": "C:\\Users\\arthu\\c-programmer\\github\\P4-SimulationLanguage\\P4-SimulationLanguage.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\{xXx$420&EMIL£xXx}\\.nuget\\packages\\microsoft.netcore.app.runtime.win-x64\\6.0.5\\microsoft.netcore.app.runtime.win-x64.6.0.5.nupkg.sha512",
-    "C:\\Users\\{xXx$420&EMIL£xXx}\\.nuget\\packages\\microsoft.windowsdesktop.app.runtime.win-x64\\6.0.5\\microsoft.windowsdesktop.app.runtime.win-x64.6.0.5.nupkg.sha512",
-    "C:\\Users\\{xXx$420&EMIL£xXx}\\.nuget\\packages\\microsoft.aspnetcore.app.runtime.win-x64\\6.0.5\\microsoft.aspnetcore.app.runtime.win-x64.6.0.5.nupkg.sha512"
+    "C:\\Users\\arthu\\.nuget\\packages\\microsoft.netcore.app.runtime.win-x64\\6.0.5\\microsoft.netcore.app.runtime.win-x64.6.0.5.nupkg.sha512",
+    "C:\\Users\\arthu\\.nuget\\packages\\microsoft.windowsdesktop.app.runtime.win-x64\\6.0.5\\microsoft.windowsdesktop.app.runtime.win-x64.6.0.5.nupkg.sha512",
+    "C:\\Users\\arthu\\.nuget\\packages\\microsoft.aspnetcore.app.runtime.win-x64\\6.0.5\\microsoft.aspnetcore.app.runtime.win-x64.6.0.5.nupkg.sha512"
   ],
   "logs": []
 }

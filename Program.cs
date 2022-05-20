@@ -31,13 +31,14 @@ namespace CodeGenTest {
         public Node startNode;
         public Node endNode;
     } */
-public class IONode:Node{}public class Car:Vehicle{public float direction;public float brakeDistance = 10f;public float speed;public float position;public Road road;public Road previousRoad;public Car(Road townRoad,Road countryRoad){direction = (float)Rand.NextDouble() * (1 - 0) + 0;if((float)Rand.NextDouble() * (1 - 0) + 0>0.5){road = townRoad;previousRoad = townRoad;speed = 50;}else{road = countryRoad;previousRoad = countryRoad;speed = 50;}}public override void Drive(){this.speed = this.road.speedLimit;this.position = this.position+this.speed;}public override void Brake(){this.speed = 0;}public override bool isClearToDrive(){bool result = true;foreach(Car car in this.road.carList){if(car.direction==this.direction){if(this.isCarInFront(car)==true){result = false;}}}return result;}public override bool isCarInFront(Car otherCar){float positionDiff = this.position-this.position;if(positionDiff>0&&positionDiff<5){return true;}return false;}public override void newSpeedLimit(){if(this.road.speedLimit<this.previousRoad.speedLimit&&this.speed>this.road.speedLimit){this.speed = this.road.speedLimit;}}}public class TownRoad:Road{public float speedLimit;public Vehicle[] carList = new Vehicle[] {};public TownRoad(float speedLimit,float length,Node startNode,Node endNode){this.speedLimit = speedLimit;this.length = length;this.startNode = startNode;this.endNode = endNode;}}public class LandevejRoad:Road{public float speedLimit;public Vehicle[] carList = new Vehicle[] {};public LandevejRoad(float speedLimit,float length,Node startNode,Node endNode){this.speedLimit = speedLimit;this.length = length;this.startNode = startNode;this.endNode = endNode;}}abstract public class Node {public Random Rand = new Random();public Node[] connections;}abstract public class Road {public Random Rand = new Random();public float length;
+public class IONode:Node{}public class Car:Vehicle{public Car(Road townRoad,Road countryRoad,float id){this.id = id;direction = (float)Rand.NextDouble() * (1 - 0) + 0;if((float)Rand.NextDouble() * (1 - 0) + 0>0.5){road = townRoad;previousRoad = townRoad;speed = 50;}else{road = countryRoad;previousRoad = countryRoad;speed = 50;}}public override void Drive(){this.speed = this.road.speedLimit;this.position = this.position+this.speed;Console.WriteLine("WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW");;Console.WriteLine(this.id);;Console.WriteLine(this.position);;Console.WriteLine(this.speed);;Console.WriteLine(this.road.speedLimit);;}public override void Brake(){this.speed = 0;}public override bool isClearToDrive(){bool result = true;foreach(Car car in this.road.carList){if(car.direction==this.direction){if(this.isCarInFront(car)==true){result = false;}}}return result;}public override bool isCarInFront(Car otherCar){float positionDiff = this.position-this.position;if(positionDiff>0&&positionDiff<5){return true;}return false;}public override void newSpeedLimit(){if(this.road.speedLimit<this.previousRoad.speedLimit&&this.speed>this.road.speedLimit){this.speed = this.road.speedLimit;}}}public class TownRoad:Road{public Vehicle[] carList = new Vehicle[] {};public TownRoad(float speedLimit,float length,Node startNode,Node endNode){this.speedLimit = speedLimit;this.length = length;this.startNode = startNode;this.endNode = endNode;}}public class LandevejRoad:Road{public Vehicle[] carList = new Vehicle[] {};public LandevejRoad(float speedLimit,float length,Node startNode,Node endNode){this.speedLimit = speedLimit;this.length = length;this.startNode = startNode;this.endNode = endNode;}}abstract public class Node {public Random Rand = new Random();public Node[] connections;}abstract public class Road {public Random Rand = new Random();public float length;
 public Node startNode;
 public Node endNode;public float speedLimit;
 public Vehicle[] carList = new Vehicle[] {};
 }abstract public class Vehicle {   public Random Rand = new Random();     public float length;
         public float acceleration;
         public List<Node> path;
+public float id;
 public float direction;
 public float brakeDistance = 10f;
 public float speed;
@@ -66,7 +67,7 @@ switch(type){case "Car": if(vehicle.isClearToDrive()){vehicle.Drive();}else{vehi
             }
             output.LogToFile();
 
-            void InitVehicles() {if(Simulation.CurrentTick%5==0){Simulation.VehicleList = Simulation.VehicleList.Concat(new Vehicle[]{new Car(townRoad,countryRoad)}).ToArray();}            }
+            void InitVehicles() {if(Simulation.CurrentTick%5==0){Simulation.VehicleList = Simulation.VehicleList.Concat(new Vehicle[]{new Car(townRoad,countryRoad,Simulation.VehicleList.Length)}).ToArray();}            }
 
             bool EndCondition() {return Simulation.CurrentTick>100;            }
         }

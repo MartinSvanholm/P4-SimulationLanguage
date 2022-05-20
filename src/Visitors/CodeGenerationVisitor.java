@@ -405,12 +405,21 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
             }
         }
 
-        if(vehicleTypes.contains(scopeName) && !vehicleMethods.contains(output + ";")) {
-            vehicleMethods.add(output + ";");
-        } else if(nodeTypes.contains(scopeName) && !nodeMethods.contains(output + ";")) {
-            nodeMethods.add(output + ";");
-        } else if(roadTypes.contains(scopeName) && !roadMethods.contains(output + ";")) {
-            roadMethods.add(output + ";");
+        if(vehicleTypes.contains(scopeName)) {
+            if(!vehicleMethods.contains(output + ";")) {
+                vehicleMethods.add(output + ";");
+            }
+            return "";
+        } else if(nodeTypes.contains(scopeName)) {
+            if(!nodeMethods.contains(output + ";")) {
+                nodeMethods.add(output + ";");
+            }
+            return "";
+        } else if(roadTypes.contains(scopeName)) {
+            if(!roadMethods.contains(output + ";")) {
+                roadMethods.add(output + ";");
+            }
+            return "";
         }
 
 
@@ -568,6 +577,9 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
                     case "Remove":
                         output += RemoveFromList(functionCallNode, strs[strs.length - 2]);
                         break;
+                    case "Length":
+                        output += LengthOfList(functionCallNode, strs[strs.length - 2]);
+                        return output;
                     default:
                         if(visit(functionCallNode.Identifier).equals("Simulation.Print")){
                             return output + PrintFunction(functionCallNode);
@@ -881,6 +893,10 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
         }
 
         return output + "}).ToArray()";
+    }
+
+    public String LengthOfList(FunctionCallNode functionCallNode, String name){
+        return name + ".Length";
     }
 
     public String setupAbstractClasses(String type) {
