@@ -852,6 +852,7 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
     }
 
     public String PrintFunction(FunctionCallNode functionCallNode){
+        System.out.println(functionCallNode.Line);
         return "Console.WriteLine(" + visit(functionCallNode.Parameters.get(0)) + ");";
     }
 

@@ -42,11 +42,6 @@ public class Main {
         if(!errorHandler.HasErrors) {
             ASTPrinter astPrinter = new ASTPrinter((ProgramNode) astBuilder.AST);
             astPrinter.PrintAST();
-
-            CodeGenerator codeGenerator = new CodeGenerator((ProgramNode) astBuilder.AST, errorHandler, globalSymbolTable);
-            codeGenerator.GenerateCode();
-            cmdHandler.dotnetCompilse();
-            cmdHandler.RunEXE();
         }
 
         if(!errorHandler.HasErrors) {
@@ -55,6 +50,13 @@ public class Main {
 
         if(!errorHandler.HasErrors) {
             typeChecker.CheckTypes(astBuilder.AST);
+        }
+
+        if(!errorHandler.HasErrors){
+            CodeGenerator codeGenerator = new CodeGenerator((ProgramNode) astBuilder.AST, errorHandler, globalSymbolTable);
+            codeGenerator.GenerateCode();
+            cmdHandler.dotnetCompilse();
+            cmdHandler.RunEXE();
         }
 
         errorHandler.PrintErrors();
