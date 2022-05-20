@@ -4,8 +4,6 @@ import ASTNodes.*;
 import ASTNodes.ControlStructures.ForLoopNode;
 import ASTNodes.Node;
 import ASTNodes.DclNodes.*;
-import Main.Error;
-import Main.ErrorHandler;
 import Models.*;
 import VisitorHelpers.TypeCheckHelper;
 
@@ -51,7 +49,7 @@ public class GlobalSymbolTable extends SymbolTable {
         PrintTable(this);
     }
 
-    private void ProcessNode(Node node) {
+    private void ProcessNode(Models.Node node) {
         if(node instanceof SectionNode || node instanceof FunctionDclNode || node instanceof ClassNode) {
             OpenScope(node);
         } else if(node instanceof ObjDclNode || node instanceof ListDclNode || node instanceof ConstructorDclNode || node instanceof ForLoopNode) {
@@ -60,7 +58,7 @@ public class GlobalSymbolTable extends SymbolTable {
 
         if(node != null) {
             if (node.GetChildren() != null) {
-                for(Node tempNode : node.GetChildren()) {
+                for(Models.Node tempNode : node.GetChildren()) {
                     ProcessNode(tempNode);
                 }
             }
@@ -73,7 +71,7 @@ public class GlobalSymbolTable extends SymbolTable {
         }
     }
 
-    private void OpenScope(Node node) {
+    private void OpenScope(Models.Node node) {
         if(node instanceof ClassNode) {
             for(SymbolTable symbolTable : Scope.Children) {
                 if(symbolTable.Name.equals(((ClassNode) node).Identifier.Name)) {
@@ -95,7 +93,7 @@ public class GlobalSymbolTable extends SymbolTable {
         tempLvl ++;
         if(node instanceof FunctionDclNode) {
             Scope = new SymbolTable(((DclNode) node).Identifier.Name, tempLvl, Scope, ((FunctionDclNode) node).Type.Name, "Function");
-            for(Node param : ((FunctionDclNode) node).Parameters) {
+            for(Models.Node param : ((FunctionDclNode) node).Parameters) {
                 InsertSymbol(param);
             }
         }
@@ -106,7 +104,7 @@ public class GlobalSymbolTable extends SymbolTable {
         }
     }
 
-    private void CloseScope(Node node) {
+    private void CloseScope(Models.Node node) {
         if(node instanceof ClassNode) {
             for(SymbolTable symbolTable : Scope.Children) {
                 if(symbolTable.Name.equals(((ClassNode) node).Identifier.Name)) {
@@ -126,7 +124,7 @@ public class GlobalSymbolTable extends SymbolTable {
         Scope = Scope.Parent;
     }
 
-    private void InsertSymbol(Node node) {
+    private void InsertSymbol(Models.Node node) {
         if(node instanceof ParamNode) {
             if(Scope.Symbols.containsKey(((ParamNode) node).Identifier.Name)) {
                 ErrorHandler.HasErrors = true;

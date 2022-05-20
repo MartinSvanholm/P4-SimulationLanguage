@@ -1,5 +1,3 @@
-package Main;
-
 import ASTNodes.Node;
 import ASTNodes.ProgramNode;
 import Parser.CFGLexer;
@@ -11,8 +9,7 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import java.io.IOException;
 import java.nio.file.NoSuchFileException;
 
-import static Main.Main.ANSI_RED;
-import static Main.Main.ANSI_RESET;
+
 import static org.antlr.v4.runtime.CharStreams.fromFileName;
 
 public class AstBuilder {
@@ -56,7 +53,7 @@ public class AstBuilder {
             CST = Parser.program();
         } catch (
                 NoSuchFileException exception) {
-            System.out.println(ANSI_RED + "File does not exist" + ANSI_RESET);
+            System.out.println(Main.ANSI_RED + "File does not exist" + Main.ANSI_RESET);
 
         } catch (
                 IOException e) {

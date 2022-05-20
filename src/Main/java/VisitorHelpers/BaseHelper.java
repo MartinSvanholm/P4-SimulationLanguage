@@ -1,8 +1,6 @@
 package VisitorHelpers;
 
 import ASTNodes.Node;
-import Main.Error;
-import Main.ErrorHandler;
 import SymbolTable.GlobalSymbolTable;
 import SymbolTable.*;
 

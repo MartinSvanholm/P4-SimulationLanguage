@@ -2,7 +2,7 @@ package it;
 
 import ASTNodes.ValueNodes.BoolNode;
 import ASTNodes.ValueNodes.NumberNode;
-import Main.ErrorHandler;
+import ErrorHandler;
 import SymbolTable.GlobalSymbolTable;
 import SymbolTable.SymbolTable;
 import Visitors.TypeChecker;
