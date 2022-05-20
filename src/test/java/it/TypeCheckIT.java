@@ -44,7 +44,7 @@ public class TypeCheckIT {
 
     @Test
     @DisplayName("Type check test")
-    void testTypeCheck(){
+    public void testTypeCheck(){
         TypeChecker tc = new TypeChecker(new ErrorHandler(), globalSymbolTable);
 
         assertEquals("Test1Success", "Test1Success");
