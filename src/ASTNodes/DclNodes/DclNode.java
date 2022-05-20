@@ -1,9 +1,8 @@
 package ASTNodes.DclNodes;
 
 import ASTNodes.*;
+import ASTNodes.Identifier.IdentifierNode;
 import ASTVisitors.IBaseVisitor;
-
-import java.util.ArrayList;
 
 public abstract class DclNode extends Node {
     public String Name;

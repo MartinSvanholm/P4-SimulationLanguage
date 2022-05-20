@@ -1,25 +1,25 @@
-package ASTNodes;
+package ASTNodes.ControlStructures;
 
-import ASTNodes.ExprNodes.ExpressionNode;
+import ASTNodes.Node;
 import ASTVisitors.IBaseVisitor;
 import ASTVisitors.IYATSIVisitor;
 
 import java.util.ArrayList;
 
-public class CaseNode extends Node {
-    public Node switchValue;
+public class SwitchBody extends Node {
+    public ArrayList<Node> cases = new ArrayList<>();
 
     @Override
     public <T> T accept(IBaseVisitor<? extends T> visitor) {
         if(visitor instanceof IYATSIVisitor) {
-            return ((IYATSIVisitor<? extends T>) visitor).visitCaseNode(this);
+            return ((IYATSIVisitor<? extends T>) visitor).visitSwitchBodyNode(this);
         } else return null;
     }
 
     @Override
     public ArrayList<Node> GetChildren() {
         Children = new ArrayList<>();
-        Children.add(switchValue);
+        Children.addAll(cases);
 
         return Children;
     }

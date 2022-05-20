@@ -20,10 +20,9 @@ line: initCondition
     ;
 
 dcl: functionDcl
-   | procedureDcl
    | listDcl
    | classDcl
-   | objDcl;
+   | objDcl SemiColon;
    //| primVarDcl;
 
 endCondition: 'EndCondition' codeBlock;
@@ -36,8 +35,6 @@ initCondition: 'InitCondition<' type '>' codeBlock;
 */
 functionDcl: 'function' type identifier '(' (dclParams (Comma dclParams)*)? ')' codeBlock;
 
-procedureDcl: 'function' identifier '(' (dclParams (Comma dclParams)*)? ')' codeBlock;
-
 //  List<Road> roadList {Road1, Road2};
 listDcl: 'List<' type '>' identifier ('{' params (Comma params)* '}')? SemiColon;
 
@@ -49,7 +46,7 @@ constructorCall: 'Create<' type '>' '(' (params (Comma params)*)? ')';
 
 //primVarDcl: primType identifier (Equals expr)? SemiColon;
 
-objDcl: type identifier (Equals (constructorCall | expr))? SemiColon;
+objDcl: type identifier (Equals (constructorCall | expr))?;
 
 statement: selectiveCtrl
          | iterativeCtrl
@@ -83,7 +80,7 @@ switchStmt: 'switch' '(' expr ')' switchBody;
             x = 0;
     }
 */
-switchBody: '{' ('case' switchcase codeBlock )+ ('default' codeBlock)? '}';
+switchBody: '{' ('case ' switchcase codeBlock )+ ('default' defaultCode=codeBlock)? '}';
 
 switchcase: expr;
 
@@ -92,7 +89,7 @@ iterativeCtrl: whileLoop | forLoop;
 // while(Sentinal) { }
 whileLoop: 'while' '('left=expr')' codeBlock;
 
-forLoop: 'for' '(' loopNumber=identifier  'in range' (numberLiteral | rangeNumber=identifier) ')' codeBlock;
+forLoop: 'for' '('type loopNumber=identifier  'in range' (numberLiteral | rangeNumber=identifier) ')' codeBlock;
 
 assignment: identifier Equals (value=identifier | expr) SemiColon;
 
@@ -110,20 +107,26 @@ expr: functionCall                                         # funcExpr
     | identifier                                           #identifierExpr
     ;
 
-functionCall: identifier '(' (params (Comma params)*)? ')';
-
 params: (expr | constructorCall);
 
-dclParams: (type identifier);
+dclParams: objDcl;
 
 type: primType | complexType | identifier;
 
 primType: 'number ' | 'string ' | 'bool ';
 
 // Node node = Nodes[RandomInt(0, IONode.length)];
-complexType: 'Vehicle' | 'Node' | listType='List<' type '>';
+complexType: 'Vehicle ' | 'Node ' |  'Road ' | listType='List<' type '>';
 
-identifier: Letter (Letter | Number*) ('.' identifier)*;
+identifier: objIdentifier | thisIdentifier | simpleIdentifier;
+
+objIdentifier: objName=simpleIdentifier '.' (objId=objIdentifier | id=simpleIdentifier);
+
+thisIdentifier: 'this' '.' (objIdentifier | simpleIdentifier);
+
+simpleIdentifier: Letter (Letter | Number*);
+
+functionCall: identifier '(' (params (Comma params)*)? ')';
 
 literal: numberLiteral
        | stringLiteral

@@ -1,9 +1,6 @@
 package ASTNodes.ControlStructures;
 
-import ASTNodes.BodyNode;
-import ASTNodes.ExprNodes.ExpressionNode;
 import ASTNodes.Node;
-import ASTNodes.SwitchBody;
 import ASTVisitors.IBaseVisitor;
 import ASTVisitors.IYATSIVisitor;
 
