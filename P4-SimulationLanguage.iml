@@ -7,19 +7,8 @@
       <sourceFolder url="file://$MODULE_DIR$/src/Main/java" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/Main/resources" type="java-resource" />
       <sourceFolder url="file://$MODULE_DIR$/src/test/java" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/src/ASTNodes" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/ASTNodes/ControlStructures" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/ASTNodes/DclNodes" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/ASTNodes/ExprNodes" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/ASTNodes/ValueNodes" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/ASTVisitors" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/META-INF" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/Main" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/Models" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/Parser" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/SymbolTable" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/Testing" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/src/Visitors" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
     </content>
     <orderEntry type="jdk" jdkName="18" jdkType="JavaSDK" />
