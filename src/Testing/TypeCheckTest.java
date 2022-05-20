@@ -1,21 +1,24 @@
 package Testing;
 
-import ASTNodes.*;
+import ASTNodes.AssignmentNode;
+import ASTNodes.BodyNode;
 import ASTNodes.ControlStructures.*;
 import ASTNodes.DclNodes.ConstructorDclNode;
 import ASTNodes.DclNodes.ListDclNode;
 import ASTNodes.DclNodes.ObjDclNode;
 import ASTNodes.ExprNodes.ExpressionNode;
+import ASTNodes.Identifier.IdentifierNode;
+import ASTNodes.ParamNode;
+import ASTNodes.TypeNode;
 import ASTNodes.ValueNodes.BoolNode;
 import ASTNodes.ValueNodes.NumberNode;
 import ASTNodes.ValueNodes.StringNode;
 import Main.ErrorHandler;
 import SymbolTable.GlobalSymbolTable;
+import SymbolTable.Symbol;
 import SymbolTable.SymbolTable;
 import Visitors.TypeChecker;
 import org.junit.jupiter.api.*;
-import SymbolTable.Symbol;
-
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
