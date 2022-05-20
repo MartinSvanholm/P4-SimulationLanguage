@@ -6,11 +6,9 @@ import ASTNodes.Node;
 import ASTNodes.DclNodes.*;
 import Main.Error;
 import Main.ErrorHandler;
-import Models.*;
 import VisitorHelpers.TypeCheckHelper;
 
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.List;
 
 public class GlobalSymbolTable extends SymbolTable {
