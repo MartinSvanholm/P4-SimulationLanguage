@@ -1,13 +1,14 @@
 package ASTNodes;
 
+import ASTNodes.Identifier.IdentifierNode;
 import ASTVisitors.IBaseVisitor;
 import ASTVisitors.IYATSIVisitor;
 
 import java.util.ArrayList;
 
 public class ParamNode extends Node {
-
-    public TypeNode Type;
+    public String Name = "Parameter";
+    public Node Type;
     public Node Identifier;
 
     @Override
@@ -23,10 +24,5 @@ public class ParamNode extends Node {
         Children.add(Identifier);
 
         return Children;
-    }
-
-
-    public ParamNode() {
-        Name = "Parameter";
     }
 }

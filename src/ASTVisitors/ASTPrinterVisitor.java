@@ -4,11 +4,18 @@ import ASTNodes.*;
 import ASTNodes.ControlStructures.*;
 import ASTNodes.DclNodes.*;
 import ASTNodes.ExprNodes.*;
+import ASTNodes.Identifier.IdentifierNode;
+import ASTNodes.Identifier.ObjIdNode;
+import ASTNodes.Identifier.SimpleIdNode;
+import ASTNodes.Identifier.ThisIdNode;
 import ASTNodes.ValueNodes.BoolNode;
 import ASTNodes.ValueNodes.NumberNode;
 import ASTNodes.ValueNodes.OpNode;
 import ASTNodes.ValueNodes.StringNode;
+import Parser.CFGLexer;
 import hu.webarticum.treeprinter.SimpleTreeNode;
+
+import java.util.ArrayList;
 
 public class ASTPrinterVisitor extends BaseVisitor<SimpleTreeNode>{
     @Override
@@ -186,7 +193,7 @@ public class ASTPrinterVisitor extends BaseVisitor<SimpleTreeNode>{
     public SimpleTreeNode visitCaseNode(CaseNode caseNode) {
         SimpleTreeNode treeNode = new SimpleTreeNode(caseNode.Name);
 
-        treeNode.addChild(visit(caseNode.switchValue));
+        treeNode.addChild(visit(caseNode.CaseBody));
 
         return treeNode;
     }
@@ -332,8 +339,6 @@ public class ASTPrinterVisitor extends BaseVisitor<SimpleTreeNode>{
     public SimpleTreeNode visitBodyNode(BodyNode bodyNode) {
         SimpleTreeNode treeNode = new SimpleTreeNode(bodyNode.Name);
 
-        int i = 0;
-
         for(Node line : bodyNode.Lines) {
             treeNode.addChild(visit(line));
         }
@@ -347,8 +352,28 @@ public class ASTPrinterVisitor extends BaseVisitor<SimpleTreeNode>{
     }
 
     @Override
-    public SimpleTreeNode visitIdentifierNode(IdentifierNode identifierNode) {
-        return new SimpleTreeNode(identifierNode.Name);
+    public SimpleTreeNode visitObjIdNode(ObjIdNode objIdNode) {
+        if(objIdNode.Identifier != null)
+            return new SimpleTreeNode(objIdNode.ObjectNode.Name + "." + objIdNode.Identifier.Name);
+
+        if(objIdNode.ObjIdNode != null) {
+            SimpleTreeNode treeNode = new SimpleTreeNode(objIdNode.ObjectNode.Name + "." + visit(objIdNode.ObjIdNode).content());
+            return treeNode;
+        }
+        return null;
+    }
+
+    @Override
+    public SimpleTreeNode visitThisIdNode(ThisIdNode thisIdNode) {
+        if(thisIdNode.Identifier != null)
+            return new SimpleTreeNode(thisIdNode.ClassName + "." + thisIdNode.Identifier.Name);
+        else
+            return new SimpleTreeNode(thisIdNode.ClassName + "." + thisIdNode.ObjNode.ObjectNode.Name + "." + thisIdNode.ObjNode.Identifier.Name);
+    }
+
+    @Override
+    public SimpleTreeNode visitSimpleIdNode(SimpleIdNode simpleIdNode) {
+        return new SimpleTreeNode(simpleIdNode.Name);
     }
 
     @Override

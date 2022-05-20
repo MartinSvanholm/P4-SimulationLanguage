@@ -1,0 +1,82 @@
+Simulation Environment {
+    Node startNode = Create<IONode>();
+    Node endNode = Create<IONode>();
+    Road road1 = Create<Road1>();
+    Road road2 = Create<Road2>();
+
+    List<Node> IONodes {startNode, endNode};
+
+    List<Road> roads {road1, road2};
+
+
+
+    EndCondition{return Simulation.CurrentTick > 100;}
+}
+
+Simulation Behavior {
+    TownRoad RoadOne = Create<TownRoad>(50, 100, NodeOne,NodeTwo);
+
+
+    LandevejRoad RoadTwo = Create<TownRoad>(80, 1000, NodeOne, NodeTwo);
+
+    Vehicle Car {
+        number direction;
+        number brakeDistance = 10;
+
+        constructor Create<Car>() {
+            direction = Random(0, 1);
+        }
+    }
+
+    Road TownRoad {
+        number speedLimit;
+        constructor Create<TownRoad>(number speedLimit, number length, Node startNode, Node endNode) {
+            this.speedLimit = speedLimit;
+            this.length = length;
+            this.startNode = startNode;
+            this.endNode = endNode;
+        }
+    }
+
+    Road LandevejRoad {
+        number speedLimit;
+        constructor Create<TownRoad>(number speedLimit, number length, Node startNode, Node endNode) {
+            this.speedLimit = speedLimit;
+            this.length = length;
+            this.startNode = startNode;
+            this.endNode = endNode;
+        }
+    }
+
+    function bool isClearToDrive(Car car1, Road road) {
+        for(car in range road.carList) {
+            if(car.direction == car1.direction) {
+                if(!isCarInFront()) {
+                    return true;
+                }
+                return false;
+            }
+        }
+    }
+
+    function bool isCarInFront(Car car1, Car car2) {
+        number positionDiff = car2.position - car1.position;
+        if(positionDiff > 0 && positionDiff < 10) {
+            return true;
+        }
+        return false;
+    }
+}
+
+Simulation Update {
+    if(vehicle.isClearToDrive()) {
+        vehicle.brrr();
+    } else {
+        vehicle.breeeeee();
+    }
+}
+
+Simulation Output {
+
+}
+

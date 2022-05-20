@@ -4,6 +4,10 @@ import ASTNodes.*;
 import ASTNodes.ControlStructures.*;
 import ASTNodes.DclNodes.*;
 import ASTNodes.ExprNodes.*;
+import ASTNodes.Identifier.IdentifierNode;
+import ASTNodes.Identifier.ObjIdNode;
+import ASTNodes.Identifier.SimpleIdNode;
+import ASTNodes.Identifier.ThisIdNode;
 import ASTNodes.ValueNodes.BoolNode;
 import ASTNodes.ValueNodes.NumberNode;
 import ASTNodes.ValueNodes.OpNode;
@@ -151,7 +155,17 @@ public class BaseVisitor<T> extends AbstractBaseVisitor<T> implements IYATSIVisi
     }
 
     @Override
-    public T visitIdentifierNode(IdentifierNode identifierNode) {
+    public T visitObjIdNode(ObjIdNode objIdNode) {
+        return null;
+    }
+
+    @Override
+    public T visitThisIdNode(ThisIdNode thisIdNode) {
+        return null;
+    }
+
+    @Override
+    public T visitSimpleIdNode(SimpleIdNode simpleIdNode) {
         return null;
     }
 
