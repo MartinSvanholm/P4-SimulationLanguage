@@ -13,13 +13,13 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.13.2</version>
-            <scope>Testing</scope>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
-            <version>5.0.0-M5</version>
-            <scope>Testing</scope>
+            <version>5.0.0-M6</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
@@ -36,7 +36,7 @@
                     </dependency>
                 </dependencies>
                 <configuration>
-                    <groups>IntegrationTest</groups>
+                    <groups>unit.IntegrationTest</groups>
                 </configuration>
                 <executions>
                     <execution>

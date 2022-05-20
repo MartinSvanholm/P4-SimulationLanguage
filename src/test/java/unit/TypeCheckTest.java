@@ -1,4 +1,4 @@
-package Testing;
+package unit;
 
 import ASTNodes.AssignmentNode;
 import ASTNodes.BodyNode;
@@ -18,6 +18,7 @@ import SymbolTable.GlobalSymbolTable;
 import SymbolTable.Symbol;
 import SymbolTable.SymbolTable;
 import Visitors.TypeChecker;
+import org.junit.experimental.categories.Category;
 import org.junit.jupiter.api.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
