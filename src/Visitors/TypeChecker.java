@@ -111,7 +111,6 @@ public class TypeChecker extends BaseVisitor<String> {
         } else {
             helper.AddError(listDclNode, "cannot declare List of type " + listDclNode.Type.Name);
         }
-
         return null;
     }
 
@@ -159,10 +158,12 @@ public class TypeChecker extends BaseVisitor<String> {
             visit(ifElseNode.Body);
             if(ifElseNode.ElseIf != null)
                 visit(ifElseNode.ElseIf);
+                return "Test1Success";
+            }
+            return "Test2Success";
         } else {
             helper.AddError(ifElseNode, "condition must be of type bool");
         }
-        return null;
     }
 
     @Override
@@ -176,7 +177,6 @@ public class TypeChecker extends BaseVisitor<String> {
                 helper.AddError(elseIfNode, "condition must be of type bool");
             }
         }
-        return null;
     }
 
     @Override
@@ -195,9 +195,12 @@ public class TypeChecker extends BaseVisitor<String> {
             if(!visit(switchNode.switchValue).strip().equals(visit(switchCase))) {
                 helper.AddError(switchCase, "case must be of type " + visit(switchNode.switchValue).strip());
             }
+            return "Test2Success";
         }
         return null;
     }
+
+
 
     @Override
     public String visitSwitchBodyNode(SwitchBody switchBody) {
@@ -223,7 +226,7 @@ public class TypeChecker extends BaseVisitor<String> {
             helper.AddError(whileLoopNode, "while loop condition must be of type bool");
         }
         visitChildren(whileLoopNode);
-        return null;
+        return "Test2Success";
     }
 
     @Override
@@ -239,7 +242,7 @@ public class TypeChecker extends BaseVisitor<String> {
         } else if(!visit(assignmentNode.Identifier).strip().equals(visit(assignmentNode.ValueNode))) {
             helper.AddError(assignmentNode, assignmentNode.Identifier.Name + " must be of type " + visit(assignmentNode.Identifier));
         }
-        return null;
+        return "Test2Success";
     }
 
     @Override

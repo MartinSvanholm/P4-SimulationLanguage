@@ -25,4 +25,8 @@ public class ListDclNode extends DclNode {
 
         return Children;
     }
+
+   /* public ListDclNode(ArrayList<ParamNode> parameters) {
+        this.Parameters = parameters;
+    }*/
 }
