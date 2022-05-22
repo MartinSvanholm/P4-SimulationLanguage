@@ -21,11 +21,11 @@ import java.util.Iterator;
 
 public class TypeChecker extends BaseVisitor<String> {
     private final GlobalSymbolTable GlobalSymbolTable;
-    String scopeName = "Global";
+    public String scopeName = "Global";
     String prevScopeName;
     String typeError = "error";
     int CheckForPredifinedValues = 1;
-    private final TypeCheckHelper helper;
+    public TypeCheckHelper helper;
 
     public TypeChecker(ErrorHandler errorHandler, GlobalSymbolTable globalSymbolTable) {
         GlobalSymbolTable = globalSymbolTable;
@@ -158,12 +158,10 @@ public class TypeChecker extends BaseVisitor<String> {
             visit(ifElseNode.Body);
             if(ifElseNode.ElseIf != null)
                 visit(ifElseNode.ElseIf);
-                return "Test1Success";
-            }
-            return "Test2Success";
         } else {
             helper.AddError(ifElseNode, "condition must be of type bool");
         }
+        return null;
     }
 
     @Override
@@ -177,6 +175,7 @@ public class TypeChecker extends BaseVisitor<String> {
                 helper.AddError(elseIfNode, "condition must be of type bool");
             }
         }
+        return null;
     }
 
     @Override

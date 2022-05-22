@@ -1,50 +1,15 @@
 //Mandatory "Environment" section
 //This functions as the setup for the simulation
 Simulation Environment {
+    function number Test() {
 
+    }
 }
 
 //Mandatory "behavior" section
 //Here the user defines the classes and their behavior
 Simulation Behavior {
-    Node INode {
-        number x;
 
-        constructor Create<INode>(string k, number l) {
-
-        }
-
-        function void try(string k, number j) {
-
-        }
-    }
-
-    Vehicle Car {
-        Node startNode = Create<INode>("fdfd", 5);
-
-        function void Drive() {
-            Node startNode = Create<INode>();
-            startNode.try("dfdfdf", 5);
-            this.IsClearToDrive(startNode);
-            Simulation.vehicles.Add(startNode);
-        }
-
-        function bool IsClearToDrive(INode test) {
-            List<Node> nodes;
-            for(INode node in range nodes) {
-                node.try("dfdf", 9);
-            }
-
-            test.try("ddf", 8);
-        }
-
-        function void ForTest() {
-            List<number> numList {1, 2, 3};
-            for(number x in range numList) {
-                Simulation.Print(x);
-            }
-        }
-    }
 }
 
 //Mandatory "Update" section
