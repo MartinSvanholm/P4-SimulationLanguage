@@ -19,7 +19,7 @@ interface IntegrationTest{}
 public class TypeCheckIT {
 
     GlobalSymbolTable globalSymbolTable;
-
+    TypeChecker tc;
     BoolNode boolNode;
     NumberNode numberNode;
 
@@ -36,17 +36,17 @@ public class TypeCheckIT {
 
         globalSymbolTable.Children.add(environment);
 
-
+        tc = new TypeChecker(new ErrorHandler(), globalSymbolTable);
 
         boolNode = new BoolNode();
         numberNode = new NumberNode();
     }
 
     @Test
-    @DisplayName("Type check test")
-    public void testTypeCheck(){
-        TypeChecker tc = new TypeChecker(new ErrorHandler(), globalSymbolTable);
+    @DisplayName("Object IT")
+    public void objectCheck(){
 
+        
         assertEquals("Test1Success", "Test1Success");
     }
 

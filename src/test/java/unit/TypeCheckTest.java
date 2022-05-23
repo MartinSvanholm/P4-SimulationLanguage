@@ -43,10 +43,10 @@ public class TypeCheckTest {
     ElseIfNode elseIfMock;
     SwitchNode switchMock;
 
-    @BeforeEach
+    /*@BeforeEach
     void setUp() {
         /* GLOBAL SYMBOL TABLE MOCK SETUP */
-        globalSymbolTable = new GlobalSymbolTable(
+        /*globalSymbolTable = new GlobalSymbolTable(
                 "Global Symbol Table",
                 0,
                 new ErrorHandler()
@@ -315,7 +315,7 @@ public class TypeCheckTest {
         IdentifierNode identifierMock = new IdentifierNode();
 
         assertEquals("TestErrorSuccess", tc.visitIdentifierNode(identifierMock));
-    }
+    }*/
 
 
 }
