@@ -36,14 +36,14 @@ public class Main {
             globalSymbolTable.BuildSymbolTable(astBuilder.AST);
         }
 
-        System.out.println("----------------------------");
-        globalSymbolTable.Print();
-
+        //System.out.println("----------------------------");
+        //globalSymbolTable.Print();
+        /*
         if(!errorHandler.HasErrors) {
             ASTPrinter astPrinter = new ASTPrinter((ProgramNode) astBuilder.AST);
             astPrinter.PrintAST();
         }
-
+        */
         if(!errorHandler.HasErrors) {
             flowControl.CheckFlow(astBuilder.AST);
         }

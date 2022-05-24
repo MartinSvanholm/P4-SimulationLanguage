@@ -99,7 +99,7 @@ public class TypeChecker extends BaseVisitor<String> {
 
     @Override
     public String visitListNode(ListDclNode listDclNode) {
-        System.out.println(listDclNode.Line);
+        //System.out.println(listDclNode.Line);
         if(helper.IsBaseType(listDclNode.Type.Name)) {
             for(ParamNode node : listDclNode.Parameters) {
                 String paramtype = visit(node);

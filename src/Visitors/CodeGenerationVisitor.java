@@ -136,10 +136,10 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
     public String visitSectionNode(SectionNode sectionNode){
         prevScopeName = scopeName;
         scopeName = sectionNode.Name;
-        System.out.println("Curr Scope: " + scopeName);
+        //System.out.println("Curr Scope: " + scopeName);
 
         String output = "";
-        System.out.println("Section:) : " + sectionNode.Name);
+        //System.out.println("Section:) : " + sectionNode.Name);
         currSection = sectionNode.Name;
 
         for(Node line : sectionNode.Lines) {
@@ -256,7 +256,7 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
                     if (!roadMethods.contains("public " + savedStr)) roadMethods.add("public " + savedStr);
                     break;
                 default:
-                    System.out.println("Shit broke");
+                    //System.out.println("Shit broke");
                     break;
             }
 
@@ -273,9 +273,9 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
         String output = "";
         String type = helper.GetSymbolByScopeName(visit(listDclNode.Identifier), scopeName).ActualType;
 
-        System.out.println("LISTTING");
-        System.out.println("curr: " + scopeName);
-        System.out.println("prev: " + prevScopeName);
+        //System.out.println("LISTTING");
+        //System.out.println("curr: " + scopeName);
+        //System.out.println("prev: " + prevScopeName);
         if(vehicleTypes.contains(scopeName) || nodeTypes.contains(scopeName) || roadTypes.contains(scopeName)) {
             output += "public ";
         }
@@ -330,7 +330,7 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
                 nodeTypes.add(visit(classNode.Identifier));
                 break;
             default:
-                System.out.println("ShitBroke");
+                //System.out.println("ShitBroke");
                 break;
         }
 
@@ -382,8 +382,8 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
             return output + ";";
         }*/
 
-        System.out.println("curr: " + scopeName);
-        System.out.println("prev: " + prevScopeName);
+        //System.out.println("curr: " + scopeName);
+        //System.out.println("prev: " + prevScopeName);
 
         if(vehicleTypes.contains(scopeName) || nodeTypes.contains(scopeName) || roadTypes.contains(scopeName)) {
             output += "public ";
@@ -717,22 +717,22 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
     public String visitBodyNode(BodyNode bodyNode) {
         String output = "";
 
-        System.out.println("Body Entered!");
+        //System.out.println("Body Entered!");
 
         for(Node line : bodyNode.Lines) {
-            System.out.println(line.getClass());
-            System.out.println(ExpressionNode.class.isAssignableFrom(line.getClass()));
-            System.out.println(visit(line));
-            System.out.println("");
+            //System.out.println(line.getClass());
+            //System.out.println(ExpressionNode.class.isAssignableFrom(line.getClass()));
+            //System.out.println(visit(line));
+            //System.out.println("");
             output += visit(line);
 
             if (ExpressionNode.class.isAssignableFrom(line.getClass())) {
                 output += ";";
             }
         }
-        System.out.println("----------------------------------");
-        System.out.println(output);
-        System.out.println("----------------------------------");
+        //System.out.println("----------------------------------");
+        //System.out.println(output);
+        //System.out.println("----------------------------------");
         return output;
     }
 
@@ -852,7 +852,7 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
     }
 
     public String PrintFunction(FunctionCallNode functionCallNode){
-        System.out.println(functionCallNode.Line);
+        //System.out.println(functionCallNode.Line);
         return "Console.WriteLine(" + visit(functionCallNode.Parameters.get(0)) + ");";
     }
 
@@ -929,7 +929,7 @@ public class CodeGenerationVisitor extends BaseVisitor<String> {
             }
                 break;
             default:
-                System.out.println("Shit broke");
+                //System.out.println("Shit broke");
                 break;
         }
 

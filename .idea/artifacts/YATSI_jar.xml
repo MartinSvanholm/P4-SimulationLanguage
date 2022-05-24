@@ -1,0 +1,10 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="YATSI:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/YATSI_jar</output-path>
+    <root id="archive" name="P4-SimulationLanguage.jar">
+      <element id="module-output" name="P4-SimulationLanguage" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/antlr-4.10.1-complete.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/hu/webarticum/tree-printer/2.0.0/tree-printer-2.0.0.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>
