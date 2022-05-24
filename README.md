@@ -1,4 +1,4 @@
-## Installation##
+## Installation
 1. Download and install dotnet 6.0 from Microsoft (https://dotnet.microsoft.com/en-us/download/dotnet/6.0)
 2. Download and install jdk18(https://www.oracle.com/java/technologies/downloads/#jdk18-windows)
 3. Open the console, and cd to this directory
