@@ -3,9 +3,7 @@ package Testing;
 
 import ASTNodes.*;
 import ASTNodes.ControlStructures.*;
-import ASTNodes.DclNodes.ConstructorDclNode;
-import ASTNodes.DclNodes.ListDclNode;
-import ASTNodes.DclNodes.ObjDclNode;
+import ASTNodes.DclNodes.*;
 import ASTNodes.ExprNodes.ExpressionNode;
 import ASTNodes.ExprNodes.LogicalNode;
 import ASTNodes.ExprNodes.MathExpressionNode;
@@ -64,7 +62,60 @@ public class TypeCheckTest {
 
         boolNode = new BoolNode();
         numberNode = new NumberNode();
+    }
 
+    @Test
+    @DisplayName("EndCondition type check")
+    void testEndCondition() {
+        EndConditionNode endCondMock = new EndConditionNode();
+        ReturnNode returnNode = new ReturnNode();
+        returnNode.expressionNode = new NumberNode();
+        endCondMock.Body = new BodyNode();
+        endCondMock.Body.Children.add(returnNode);
+
+        tc.visitEndCondition(endCondMock);
+        assertEquals("return must be of type bool", tc.helper.ErrorHandler.Errors.get(0).Message);
+    }
+
+    @Test
+    @DisplayName("EndCondition type check 2")
+    void testEndCondition2() {
+        EndConditionNode endCondMock = new EndConditionNode();
+        ReturnNode returnNode = new ReturnNode();
+        returnNode.expressionNode = new BoolNode();
+        endCondMock.Body = new BodyNode();
+        endCondMock.Body.Children.add(returnNode);
+
+        assertEquals(null, tc.visitEndCondition(endCondMock));
+    }
+
+    @Test
+    @DisplayName("InitCondition type check 2")
+    void testInitCondition() {
+        InitConditionNode initCondMock = new InitConditionNode();
+        initCondMock.type = new TypeNode();
+        initCondMock.type.Name = "nonexistenttable";
+
+        tc.visitInitCondition(initCondMock);
+        assertEquals("nonexistenttable has not been declared", tc.helper.ErrorHandler.Errors.get(0).Message);
+    }
+
+    @Test
+    @DisplayName("Function test 1")
+    void testFunction() {
+        FunctionDclNode funcDclMock = new FunctionDclNode();
+        funcDclMock.Identifier = new SimpleIdNode();
+
+        funcDclMock.Body = new BodyNode();
+        ReturnNode returnNode = new ReturnNode();
+        returnNode.Name = "number";
+        returnNode.expressionNode = new NumberNode();
+        funcDclMock.Body.Children.add(returnNode);
+        funcDclMock.Type = new TypeNode();
+        funcDclMock.Type.Name = "string";
+
+        tc.visitFunctionNode(funcDclMock);
+        assertEquals("return must be of type string", tc.helper.ErrorHandler.Errors.get(0).Message);
     }
 
     @Test
@@ -72,33 +123,10 @@ public class TypeCheckTest {
     void testListCheck() {
         ListDclNode listDclMock = new ListDclNode();
         listDclMock.Type = new TypeNode();
-        listDclMock.Type.Name = "number";
-        ParamNode param = new ParamNode();
-        param.Type = new NumberNode();
-        param.Type.Name = "error";
-        param.Identifier = new SimpleIdNode();
-        param.Identifier.Name = "identifier";
-        listDclMock.Parameters.add(param);
-
-        Symbol sym = new Symbol("n", "number");
-        globalSymbolTable.Children.get(0).Symbols.put("n", sym);
+        listDclMock.Type.Name = "List<string>";
 
         tc.visitListNode(listDclMock);
-        assertEquals("identifier has never been declared" ,tc.helper.ErrorHandler.Errors.get(0));
-    }
-
-    @Test
-    @DisplayName("List type check 2")
-    void testListCheck2() {
-        ListDclNode listDclMock = new ListDclNode();
-        listDclMock.Type = new TypeNode();
-        listDclMock.Type.Name = "number";
-        ParamNode param = new ParamNode();
-        param.Type.Name = "number";
-        param.Identifier.Name = "identifier";
-        listDclMock.Parameters.add(param);
-
-        assertEquals("identifier must be of type number" ,tc.helper.ErrorHandler.Errors.get(0));
+        assertEquals("cannot declare List of type List<string>", tc.helper.ErrorHandler.Errors.get(0).Message);
     }
 
     @Test
@@ -106,15 +134,18 @@ public class TypeCheckTest {
     void testConstructorCheck() {
         ConstructorDclNode constructorMock = new ConstructorDclNode();
 
-
-        SymbolTable table = new SymbolTable("tablename", 1);
-        table.Name = "tablename";
+        SymbolTable table = new SymbolTable("Vehicle", 0);
         globalSymbolTable.Children.add(table);
 
-        constructorMock.Type = new TypeNode();
-        constructorMock.Type.Name = "tablename";
+        tc.scopeName = "Vehicle";
 
-        assertEquals("Test1Success", tc.visitConstructorNode(constructorMock));
+        constructorMock.Type = new TypeNode();
+        constructorMock.Type.Name = "Road";
+        constructorMock.Body = new BodyNode();
+
+
+        tc.visitConstructorNode(constructorMock);
+        assertEquals("constructor must be of type Vehicle", tc.helper.ErrorHandler.Errors.get(0).Message);
     }
 
     @Test
@@ -122,20 +153,42 @@ public class TypeCheckTest {
     void testConstructorCheck2() {
         ConstructorDclNode constructorMock = new ConstructorDclNode();
 
+        SymbolTable table = new SymbolTable("Vehicle", 0);
+        globalSymbolTable.Children.add(table);
+
+        tc.scopeName = "tablename";
+
         constructorMock.Type = new TypeNode();
-        assertEquals("Test2Success", tc.visitConstructorNode(constructorMock));
+        constructorMock.Type.Name = "Vehicle";
+        constructorMock.Body = new BodyNode();
+
+
+        tc.visitConstructorNode(constructorMock);
+        assertEquals("Vehicle has not been declared", tc.helper.ErrorHandler.Errors.get(0).Message);
     }
 
     @Test
     @DisplayName("Object dcl type check")
     void testObjectDclCheck() {
         ObjDclNode objDclMock = new ObjDclNode();
+        objDclMock.Identifier = new IdentifierNode() {
+            @Override
+            public String GetName(String obj) {
+                return null;
+            }
+
+            @Override
+            public ArrayList<Node> GetChildren() {
+                return null;
+            }
+        };
+        objDclMock.Identifier.Name = "identifier";
         objDclMock.ObjValue = new NumberNode();
         objDclMock.Type = new TypeNode();
-        //objDclMock.Identifier = new IdentifierNode(); // Prevents crash
         objDclMock.Type.Name = "string";
 
-        assertEquals("Test1Success", tc.visitObjDcl(objDclMock));
+        tc.visitObjDcl(objDclMock);
+        assertEquals("identifier must be of type string", tc.helper.ErrorHandler.Errors.get(0).Message);
     }
 
     @Test
@@ -144,10 +197,10 @@ public class TypeCheckTest {
         ObjDclNode objDclMock = new ObjDclNode();
         objDclMock.ObjValue = new NumberNode();
         objDclMock.Type = new TypeNode();
-        //objDclMock.Identifier = new IdentifierNode(); // Prevents crash if test fails
-        objDclMock.Type.Name = "number";
+        objDclMock.Type.Name = "List";
 
-        assertEquals("Test2Success", tc.visitObjDcl(objDclMock));
+        tc.visitObjDcl(objDclMock);
+        assertEquals("cannot declare variable of type List", tc.helper.ErrorHandler.Errors.get(0).Message);
     }
 
     @Test
@@ -155,12 +208,14 @@ public class TypeCheckTest {
     void testIfElseCheck() {
         ifElseMock = new IfElseNode();
         ifElseMock.condition = boolNode;
+        ifElseMock.Body = new BodyNode();
 
         elseIfMock = new ElseIfNode();
         elseIfMock.condition = boolNode;
+        elseIfMock.Body = new BodyNode();
         ifElseMock.ElseIf = elseIfMock;
 
-        assertEquals("Test1Success", tc.visitIfElseNode(ifElseMock));
+        assertEquals(null, tc.visitIfElseNode(ifElseMock));
     }
 
 
@@ -170,28 +225,21 @@ public class TypeCheckTest {
         ifElseMock = new IfElseNode();
         ifElseMock.condition = boolNode;
 
-        assertEquals("Test2Success", tc.visitIfElseNode(ifElseMock));
     }
 
-    @Test
-    @DisplayName("If/else type check 3")
-    void testIfElseCheck3() {
-        ifElseMock = new IfElseNode();
-        ifElseMock.condition = numberNode;
-
-        assertEquals("Test3Success", tc.visitIfElseNode(ifElseMock));
-    }
 
     @Test
     @DisplayName("ElseIf type check 1")
     void testElseIfCheck() {
         elseIfMock = new ElseIfNode();
         elseIfMock.condition = boolNode;
+        elseIfMock.Body = new BodyNode();
 
         elseIfMock.ElseIf = new ElseIfNode();
         elseIfMock.ElseIf.condition = boolNode;
+        elseIfMock.ElseIf.Body = new BodyNode();
 
-        assertEquals("Test1Success", tc.visitElseIfNode(elseIfMock));
+        assertEquals(null, tc.visitElseIfNode(elseIfMock));
     }
 
     @Test
@@ -200,40 +248,40 @@ public class TypeCheckTest {
         elseIfMock = new ElseIfNode();
         elseIfMock.condition = boolNode;
 
-        assertEquals("Test2Success", tc.visitElseIfNode(elseIfMock));
     }
 
     @Test
-    @DisplayName("ElseIf type check 3")
-    void testElseIfCheck3() {
-        elseIfMock = new ElseIfNode();
-        elseIfMock.condition = numberNode;
-
-        assertEquals("Test3Success", tc.visitElseIfNode(elseIfMock));
-    }
-
-    @Test
-    @DisplayName("Switch type check 1")
+    @DisplayName("Switch type check")
     void testSwitchCheck() {
         switchMock = new SwitchNode();
+        switchMock.Value = "number";
         switchMock.Body = new SwitchBody();
+        switchMock.Body.Children.add(new NumberNode());
+        switchMock.Body.Children.add(new StringNode());
         switchMock.Body.cases.add(new NumberNode());
-        switchMock.Body.cases.add(new NumberNode());
-        switchMock.switchValue = new StringNode();
+        switchMock.Body.cases.add(new StringNode());
+        switchMock.switchValue = new NumberNode();
 
-        assertEquals("Test1Success", tc.visitSwitchNode(switchMock));
+        tc.visitSwitchNode(switchMock);
+        assertEquals("case must be of type number", tc.helper.ErrorHandler.Errors.get(0).Message);
     }
 
     @Test
-    @DisplayName("Switch type check 2")
-    void testSwitchCheck2() {
+    @DisplayName("switch type check 3")
+    void testSwitchCheck3() {
         switchMock = new SwitchNode();
+        switchMock.Value = "number";
         switchMock.Body = new SwitchBody();
+        switchMock.Body.Children.add(new NumberNode());
+        switchMock.Body.Children.add(new NumberNode());
+        CaseNode defaultCase = new CaseNode();
+        defaultCase.Name = "default";
+        switchMock.Body.Children.add((defaultCase));
         switchMock.Body.cases.add(new NumberNode());
-        switchMock.Body.cases.add(new NumberNode());
+        switchMock.Body.cases.add(new StringNode());
         switchMock.switchValue = new NumberNode();
 
-        assertEquals("Test2Success", tc.visitSwitchNode(switchMock));
+        assertEquals(null, tc.visitSwitchNode(switchMock));
     }
 
     @Test
@@ -241,20 +289,10 @@ public class TypeCheckTest {
     void testWhileLoop1() {
         WhileLoopNode whileMock = new WhileLoopNode();
         whileMock.condition = new NumberNode();
-
-        assertEquals("Test1Success", tc.visitWhileLoopNode(whileMock));
-    }
-
-    @Test
-    @DisplayName("While loop type check 2")
-    void testWhileLoop2() {
-        WhileLoopNode whileMock = new WhileLoopNode();
-        whileMock.condition = new BoolNode();
-
-        // To avoid exception on visitChildren(whileLoopNode) call
         whileMock.Body = new BodyNode();
 
-        assertEquals("Test2Success", tc.visitWhileLoopNode(whileMock));
+        tc.visitWhileLoopNode(whileMock);
+        assertEquals("while loop condition must be of type bool", tc.helper.ErrorHandler.Errors.get(0).Message);
     }
 
     @Test
@@ -284,8 +322,14 @@ public class TypeCheckTest {
         SymbolTable func = new SymbolTable("function", 2);
         func.Type = "function";
 
-        globalSymbolTable.Children.add(func);
-        assertEquals("error", tc.visitSimpleIdNode(simpleIdmock));
+        globalSymbolTable.Children.get(0).Children.add(func);
+        assertEquals("function", tc.visitSimpleIdNode(simpleIdmock));
+    }
+
+    @Test
+    @DisplayName("Simple Id type check 3")
+    void testSimpleId3() {
+
     }
 
     @Test
@@ -318,71 +362,16 @@ public class TypeCheckTest {
     @Test
     @DisplayName("Assignment test 1")
     void testAssignment1() {
-        /*
-        // Insert variable into symbol table
-        Symbol sym = new Symbol("n", "string");
-        globalSymbolTable.Children.get(0).Symbols.put("n", sym);
-        tc.Level = 1;
+        AssignmentNode assignMock = new AssignmentNode();
+        assignMock.Identifier = new SimpleIdNode();
+        assignMock.Identifier.Name = "n";
 
-        // Create mock object of assignmentNode
-        AssignmentNode assignmentMock = new AssignmentNode();
-        assignmentMock.Identifier = new IdentifierNode();
-        assignmentMock.Identifier.Name = "n";
-        assignmentMock.ValueNode = new NumberNode();
+        tc.scopeName = "Environment";
 
-        assertEquals("Test1Success", tc.visitAssignmentNode(assignmentMock)); */
+        assignMock.ValueNode = new StringNode();
+
+        tc.visitAssignmentNode(assignMock);
+        assertEquals("n must be of type number", tc.helper.ErrorHandler.Errors.get(0).Message);
     }
-
-    @Test
-    @DisplayName("Assignment test 2")
-    void testAssignment2() {
-        /*
-        // Insert variable into symbol table
-        Symbol sym = new Symbol("n", "number");
-        globalSymbolTable.Children.get(0).Symbols.put("n", sym);
-        tc.Level = 1;
-
-        // Create mock object of assignmentNode
-        AssignmentNode assignmentMock = new AssignmentNode();
-        assignmentMock.Identifier = new IdentifierNode();
-        assignmentMock.Identifier.Name = "n";
-        assignmentMock.ValueNode = new NumberNode();
-
-        assertEquals("Test2Success", tc.visitAssignmentNode(assignmentMock)); */
-    }
-
-    @Test
-    @DisplayName("Identifier test 1")
-    void testIdentifier() {
-        /*
-        IdentifierNode identifierMock = new IdentifierNode();
-
-        Symbol sym = new Symbol("i", "number");
-        globalSymbolTable.Children.get(0).Symbols.put("i", sym);
-        tc.Level = 1;
-        identifierMock.Name = "i";
-
-        assertEquals("number", tc.visitIdentifierNode(identifierMock));*/
-    }
-
-    @Test
-    @DisplayName("Identifier test 2")
-    void testIdentifier2() {
-        //IdentifierNode identifierMock = new IdentifierNode();
-
-        //identifierMock.Name = "Environment";
-
-        //assertEquals("Simulation", tc.visitIdentifierNode(identifierMock));
-    }
-
-    @Test
-    @DisplayName("Identifier test 3")
-    void testIdentifier3() {
-        //IdentifierNode identifierMock = new IdentifierNode();
-
-        //assertEquals("TestErrorSuccess", tc.visitIdentifierNode(identifierMock));
-    }
-
-
 }
 

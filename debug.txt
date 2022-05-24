@@ -1,8 +1,9 @@
 //Mandatory "Environment" section
 //This functions as the setup for the simulation
 Simulation Environment {
-    function number Test() {
-
+    function string Test() {
+        string text = "3";
+        text = 3;
     }
 }
 

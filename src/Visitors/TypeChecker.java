@@ -129,7 +129,7 @@ public class TypeChecker extends BaseVisitor<String> {
     public String visitConstructorNode(ConstructorDclNode constructorDclNode) {
         SymbolTable table = helper.FindTableByName(GlobalSymbolTable, scopeName, 0);
 
-        if (table != null) {
+        if(table != null) {
             if(!table.Name.equals(constructorDclNode.Type.Name))
                 helper.AddError(constructorDclNode, "constructor must be of type " + table.Name);
         } else {
@@ -159,6 +159,7 @@ public class TypeChecker extends BaseVisitor<String> {
             if(ifElseNode.ElseIf != null)
                 visit(ifElseNode.ElseIf);
         } else {
+            // ---------------- hvornår kommer den herind ---------------
             helper.AddError(ifElseNode, "condition must be of type bool");
         }
         return null;
@@ -172,6 +173,7 @@ public class TypeChecker extends BaseVisitor<String> {
                 if(elseIfNode.ElseIf != null)
                     visit(elseIfNode.ElseIf);
             } else {
+                // ---------------- hvornår kommer den herind ---------------
                 helper.AddError(elseIfNode, "condition must be of type bool");
             }
         }
@@ -194,7 +196,6 @@ public class TypeChecker extends BaseVisitor<String> {
             if(!visit(switchNode.switchValue).strip().equals(visit(switchCase))) {
                 helper.AddError(switchCase, "case must be of type " + visit(switchNode.switchValue).strip());
             }
-            return "Test2Success";
         }
         return null;
     }
@@ -225,7 +226,7 @@ public class TypeChecker extends BaseVisitor<String> {
             helper.AddError(whileLoopNode, "while loop condition must be of type bool");
         }
         visitChildren(whileLoopNode);
-        return "Test2Success";
+        return null;
     }
 
     @Override
@@ -241,7 +242,7 @@ public class TypeChecker extends BaseVisitor<String> {
         } else if(!visit(assignmentNode.Identifier).strip().equals(visit(assignmentNode.ValueNode))) {
             helper.AddError(assignmentNode, assignmentNode.Identifier.Name + " must be of type " + visit(assignmentNode.Identifier));
         }
-        return "Test2Success";
+        return null;
     }
 
     @Override
