@@ -21,11 +21,11 @@ import java.util.Iterator;
 
 public class TypeChecker extends BaseVisitor<String> {
     private final GlobalSymbolTable GlobalSymbolTable;
-    String scopeName = "Global";
+    public String scopeName = "Global";
     String prevScopeName;
     String typeError = "error";
     int CheckForPredifinedValues = 1;
-    private final TypeCheckHelper helper;
+    public TypeCheckHelper helper;
 
     public TypeChecker(ErrorHandler errorHandler, GlobalSymbolTable globalSymbolTable) {
         GlobalSymbolTable = globalSymbolTable;
@@ -111,7 +111,6 @@ public class TypeChecker extends BaseVisitor<String> {
         } else {
             helper.AddError(listDclNode, "cannot declare List of type " + listDclNode.Type.Name);
         }
-
         return null;
     }
 
@@ -130,7 +129,7 @@ public class TypeChecker extends BaseVisitor<String> {
     public String visitConstructorNode(ConstructorDclNode constructorDclNode) {
         SymbolTable table = helper.FindTableByName(GlobalSymbolTable, scopeName, 0);
 
-        if (table != null) {
+        if(table != null) {
             if(!table.Name.equals(constructorDclNode.Type.Name))
                 helper.AddError(constructorDclNode, "constructor must be of type " + table.Name);
         } else {
@@ -160,6 +159,7 @@ public class TypeChecker extends BaseVisitor<String> {
             if(ifElseNode.ElseIf != null)
                 visit(ifElseNode.ElseIf);
         } else {
+            // ---------------- hvornår kommer den herind ---------------
             helper.AddError(ifElseNode, "condition must be of type bool");
         }
         return null;
@@ -173,6 +173,7 @@ public class TypeChecker extends BaseVisitor<String> {
                 if(elseIfNode.ElseIf != null)
                     visit(elseIfNode.ElseIf);
             } else {
+                // ---------------- hvornår kommer den herind ---------------
                 helper.AddError(elseIfNode, "condition must be of type bool");
             }
         }
@@ -198,6 +199,8 @@ public class TypeChecker extends BaseVisitor<String> {
         }
         return null;
     }
+
+
 
     @Override
     public String visitSwitchBodyNode(SwitchBody switchBody) {

@@ -25,4 +25,9 @@ public class ParamNode extends Node {
 
         return Children;
     }
+
+
+    public ParamNode() {
+        Name = "Parameter";
+    }
 }
